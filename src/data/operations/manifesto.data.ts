@@ -1,7 +1,18 @@
 export const manifesto = [
-  "Understand the requirement before coding.",
-  "Break interfaces and workflows into maintainable components.",
-  "Treat API and data-flow behavior as part of the product—not an afterthought.",
-  "Debug root causes using browser/network evidence.",
-  "Validate complete workflows before considering work finished.",
+  {
+    title: "Understand before building",
+    body: "Clarify the requirement, user goal, data flow, and expected outcome before implementation."
+  },
+  {
+    title: "Design for maintainability",
+    body: "Break interfaces and workflows into reusable components with clear responsibilities and shared styling patterns."
+  },
+  {
+    title: "Treat data flow as product behavior",
+    body: "API requests, validation, loading, errors, and persistence are part of the user experience, not secondary implementation details."
+  },
+  {
+    title: "Debug from evidence",
+    body: "Use DevTools, network traces, logs, and reproducible steps to isolate root causes before applying fixes."
+  }
 ];

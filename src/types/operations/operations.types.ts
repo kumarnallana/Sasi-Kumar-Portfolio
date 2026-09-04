@@ -1,5 +1,5 @@
 export type Operation = {
   name: string;
   detail: string;
-  status: "ACTIVE" | "RESEARCH" | "EXPERIMENTING";
+  status: "ACTIVE" | "COMPLETED" | "EXPLORING" | "RESEARCH" | "EXPERIMENTING";
 };

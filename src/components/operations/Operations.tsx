@@ -11,6 +11,8 @@ gsap.registerPlugin(ScrollTrigger);
 
 const STATUS_COLOR: Record<Operation["status"], string> = {
   ACTIVE: "var(--cyan)",
+  COMPLETED: "var(--line-dim)",
+  EXPLORING: "var(--amber)",
   RESEARCH: "var(--amber)",
   EXPERIMENTING: "var(--amber-bright)",
 };
@@ -54,18 +56,21 @@ export default function Operations() {
           <span className="h-px w-8 bg-cyan" />
           OPERATING PHILOSOPHY
         </div>
-        {manifesto.map((line, i) => (
-          <p
-            key={line}
-            className={`manifesto-line font-display text-2xl font-semibold leading-[1.18] md:text-4xl ${
-              i === manifesto.length - 1
-                ? "text-cyan glow-cyan"
-                : "text-paper/90"
-            }`}
-          >
-            {line}
-          </p>
-        ))}
+        <p className="manifesto-line mb-8 text-paper-dim max-w-lg">
+          The engineering habits I use to turn requirements into maintainable, testable product work.
+        </p>
+        <div className="flex flex-col gap-6">
+          {manifesto.map((line, i) => (
+            <div key={line.title} className="manifesto-line">
+              <div className="font-display text-xl font-semibold text-paper mb-1">
+                {String(i + 1).padStart(2, '0')} / {line.title}
+              </div>
+              <div className="text-paper-dim/90 max-w-xl">
+                {line.body}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* current operations - live status */}
