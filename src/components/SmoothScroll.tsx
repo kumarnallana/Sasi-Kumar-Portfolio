@@ -13,6 +13,11 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) return;
 
+    // Clean up legacy #architect anchor if present in URL bar
+    if (typeof window !== "undefined" && window.location.hash === "#architect") {
+      window.history.replaceState(null, "", "#profile");
+    }
+
     const lenis = new Lenis({
       duration: 1.15,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),

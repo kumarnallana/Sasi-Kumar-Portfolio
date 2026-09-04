@@ -17,7 +17,8 @@ const CHAPTER: Record<string, string> = {
   principles: "GUIDING PRINCIPLES",
   systems: "DEPLOYED SYSTEMS",
   signals: "OPEN SIGNALS",
-  architect: "THE ARCHITECT",
+  profile: "OPERATOR PROFILE",
+  architect: "OPERATOR PROFILE",
   comms: "ESTABLISH COMMS",
 };
 

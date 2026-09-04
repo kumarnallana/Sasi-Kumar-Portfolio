@@ -51,6 +51,8 @@ export default function About() {
       ref={ref}
       className="relative mx-auto max-w-6xl px-6 py-24 md:px-10"
     >
+      {/* Anchor alias to ensure backward compatibility with lingering #architect URL hashes */}
+      <span id="architect" className="sr-only pointer-events-none absolute -top-24" aria-hidden="true" />
       <SectionHeader
         index="04"
         title="PROFILE"
@@ -70,6 +72,7 @@ export default function About() {
               src="/logos/sasi-portrait-glasses-candidate-rgb.png"
               alt="Nallana Sasi Kumar Portrait"
               fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover object-top opacity-90 mix-blend-screen grayscale transition-all duration-700 hover:grayscale-0 hover:opacity-100"
             />
             {/* Tech annotations over portrait */}

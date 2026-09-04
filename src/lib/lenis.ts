@@ -13,9 +13,16 @@ export function getLenis() {
 }
 
 export function scrollToSection(id: string) {
-  const sel = id.startsWith("#") ? id : `#${id}`;
+  let target = id;
+  if (target === "architect" || target === "#architect") {
+    target = "profile";
+  }
+  const sel = target.startsWith("#") ? target : `#${target}`;
   if (instance) {
-    instance.scrollTo(sel, { offset: 0, duration: 1.2 });
+    const el = document.querySelector(sel);
+    if (el) {
+      instance.scrollTo(el as HTMLElement, { offset: 0, duration: 1.2 });
+    }
   } else {
     document.querySelector(sel)?.scrollIntoView({ behavior: "smooth" });
   }
