@@ -1,5 +1,17 @@
-import { DiagramNode, DiagramEdge } from "./diagram.types";
-import { Reconstruction } from "./reconstruction.types";
+export type ArchitectureStep = {
+  id: string;
+  title: string;
+  subtitle: string;
+  details?: string[];
+};
+
+export type ProofItem = {
+  id: string;
+  metric: string;
+  label: string;
+  title: string;
+  description: string;
+};
 
 export type Project = {
   id: string;
@@ -12,9 +24,9 @@ export type Project = {
   stack: string[];
   metrics: { value: string; label: string }[];
   highlights: string[];
-  diagram?: { nodes: DiagramNode[]; edges: DiagramEdge[] };
-  detail?: { nodes: DiagramNode[]; edges: DiagramEdge[] };
-  reconstruction?: Reconstruction;
+  image?: string;
+  architecture?: ArchitectureStep[];
+  proof?: ProofItem[];
   expandedStack?: Record<string, string[]>;
   links?: {
     live?: string;
