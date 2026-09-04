@@ -10,7 +10,15 @@ export async function getGitHubPortfolioData(): Promise<GitHubPortfolioData> {
 
   const token = process.env.GITHUB_TOKEN;
   if (!token) {
-    throw new Error("GITHUB_TOKEN is not defined in environment variables");
+    console.warn("GITHUB_TOKEN is not defined in environment variables. Returning empty fallback data.");
+    return {
+      publicReposCount: 0,
+      followersCount: 0,
+      totalCommitContributions: 0,
+      totalPullRequestContributions: 0,
+      pinnedRepositories: [],
+      recentRepositories: [],
+    };
   }
 
   const response = await fetch("https://api.github.com/graphql", {

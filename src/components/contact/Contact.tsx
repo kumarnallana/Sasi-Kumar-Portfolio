@@ -248,7 +248,7 @@ export default function Contact() {
       {/* footer */}
       <div className="mt-24 flex flex-wrap items-center justify-between gap-4 border-t border-line-faint pt-6 tech-label">
         <span>
-          © {new Date().getFullYear()} {identity.name.toUpperCase()}
+          © 2026 {identity.name.toUpperCase()}
         </span>
         <span>DRAWING NO. NSK-2026 · END OF SCHEMATIC</span>
         <span className="text-cyan">UPLINK · STABLE</span>
