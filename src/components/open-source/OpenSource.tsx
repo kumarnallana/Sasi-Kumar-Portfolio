@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { github } from "@/data/github/github-display.data";
-import SectionHeader from "@/shared/components/SectionHeader";
+import SectionHeader from "@/components/shared/SectionHeader";
 import { sound } from "@/lib/sound";
 import { useQuery } from "@tanstack/react-query";
 

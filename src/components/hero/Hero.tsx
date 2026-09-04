@@ -6,13 +6,13 @@ import { gsap } from "gsap";
 import { systemStats } from "@/data/hero/system-stats.data";
 import { stackStory } from "@/data/stack-story/stack-story.data";
 import { identity } from "@/data/profile/profile.data";
-import Typewriter from "@/shared/components/Typewriter";
+import Typewriter from "@/components/shared/Typewriter";
 
 const HeroStackGlobe = dynamic(
-  () => import("@/modules/stack-story/three/HeroStackGlobe"),
+  () => import("@/components/stack-story/three/HeroStackGlobe"),
   { ssr: false },
 );
-const StackStory = dynamic(() => import("@/modules/stack-story/components/StackStory"), {
+const StackStory = dynamic(() => import("@/components/stack-story/StackStory"), {
   ssr: false,
 });
 

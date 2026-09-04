@@ -4,9 +4,9 @@ import { useRef } from "react";
 import dynamic from "next/dynamic";
 import { sound } from "@/lib/sound";
 import { stackStory } from "@/data/stack-story/stack-story.data";
-import type { GlobeControls, HoverNode } from "@/modules/stack-story/three/StackGlobe";
+import type { GlobeControls, HoverNode } from "@/components/stack-story/three/StackGlobe";
 
-const StackGlobe = dynamic(() => import("@/modules/stack-story/three/StackGlobe"), {
+const StackGlobe = dynamic(() => import("@/components/stack-story/three/StackGlobe"), {
   ssr: false,
 });
 

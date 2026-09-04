@@ -1,54 +1,6 @@
-export type DiagramNode = {
-  id: string;
-  label: string;
-  sub?: string;
-  x: number;
-  y: number;
-  kind: "client" | "edge" | "service" | "data" | "external" | "ai";
-};
-
-export type DiagramEdge = {
-  from: string;
-  to: string;
-  label?: string;
-};
-
-export type ReconPhase = {
-  at: string;
-  title: string;
-  note: string;
-  add: string[];
-  commit: string;
-  stress?: string;
-  stressMsg?: string;
-  resolve?: string;
-  fix?: string;
-};
-
-export type Reconstruction = {
-  graph: { nodes: DiagramNode[]; edges: DiagramEdge[] };
-  phases: ReconPhase[];
-};
-
-export type Project = {
-  id: string;
-  index: string;
-  name: string;
-  client?: string;
-  year: string;
-  classification: string;
-  summary: string;
-  stack: string[];
-  metrics: { value: string; label: string }[];
-  highlights: string[];
-  diagram?: { nodes: DiagramNode[]; edges: DiagramEdge[] };
-  detail?: { nodes: DiagramNode[]; edges: DiagramEdge[] };
-  reconstruction?: Reconstruction;
-  links?: {
-    live?: string;
-    github?: string;
-  };
-};
+import type { Project } from "@/types/projects/project.types";
+import type { DiagramNode, DiagramEdge } from "@/types/projects/diagram.types";
+import type { ReconPhase, Reconstruction } from "@/types/projects/reconstruction.types";
 
 export const projects: Project[] = [
   {

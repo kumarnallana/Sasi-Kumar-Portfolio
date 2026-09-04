@@ -1,4 +1,4 @@
-import type { ProfileIdentity } from "./profile.types";
+import type { ProfileIdentity } from "@/types/profile/profile.types";
 
 export const identity: ProfileIdentity = {
   name: "Nallana Sasi Kumar",

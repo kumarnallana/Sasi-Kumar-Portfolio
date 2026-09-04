@@ -6,14 +6,6 @@ export const github = {
   followers: 0, // Hydrated by query
 };
 
-export type Repo = {
-  name: string;
-  desc: string;
-  lang: string;
-  stars: number;
-  url: string;
-  tag: string;
-};
-
+import type { Repo } from "@/types/github/github.types";
 // Initial empty/fallback array - will be replaced by TanStack Query
 export const repos: Repo[] = [];

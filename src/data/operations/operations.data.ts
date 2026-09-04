@@ -1,9 +1,4 @@
-export type Operation = {
-  name: string;
-  detail: string;
-  status: "ACTIVE" | "RESEARCH" | "EXPERIMENTING";
-};
-
+import type { Operation } from "@/types/operations/operations.types";
 export const operations: Operation[] = [
   {
     name: "Corporate Web Platform",

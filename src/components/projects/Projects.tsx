@@ -4,9 +4,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { projects, type Project } from "@/data/projects/projects.data";
-import BlueprintDiagram from "@/modules/projects/components/BlueprintDiagram";
-import Reconstruction from "@/modules/projects/components/Reconstruction";
-import SectionHeader from "@/shared/components/SectionHeader";
+import BlueprintDiagram from "@/components/projects/BlueprintDiagram";
+import Reconstruction from "@/components/projects/Reconstruction";
+import SectionHeader from "@/components/shared/SectionHeader";
 import { sound } from "@/lib/sound";
 
 gsap.registerPlugin(ScrollTrigger);

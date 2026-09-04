@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { identity } from "@/data/profile/profile.data";
-import SoundToggle from "@/core/audio/SoundToggle";
+import SoundToggle from "@/components/audio/SoundToggle";
 
 function Corner({ className }: { className: string }) {
   return (

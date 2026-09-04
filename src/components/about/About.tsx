@@ -1,6 +1,6 @@
 "use client";
 
-import SectionHeader from "@/shared/components/SectionHeader";
+import SectionHeader from "@/components/shared/SectionHeader";
 import { achievements } from "@/data/profile/achievements.data";
 import { experience } from "@/data/profile/experience.data";
 import { skillGroups } from "@/data/profile/skills.data";

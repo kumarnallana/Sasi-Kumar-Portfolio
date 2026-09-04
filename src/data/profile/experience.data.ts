@@ -1,11 +1,4 @@
-export type Experience = {
-  role: string;
-  period: string;
-  company: string;
-  mode: string;
-  points: string[];
-};
-
+import type { Experience } from "@/types/profile/experience.types";
 export const experience: Experience[] = [
   {
     role: "Web Developer Intern",

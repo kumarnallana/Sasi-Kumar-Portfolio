@@ -1,13 +1,4 @@
-export type StackLayer = {
-  code: string;
-  role: string;
-  title: string;
-  narrative: string;
-  items: string[];
-  accent: "cyan" | "amber";
-  status?: "LIVE" | "EXPLORING";
-};
-
+import type { StackLayer } from "@/types/stack-story/stack-story.types";
 export const stackLayers: StackLayer[] = [
   {
     code: "L1",
