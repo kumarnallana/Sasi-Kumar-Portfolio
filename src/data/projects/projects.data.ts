@@ -4,31 +4,30 @@ export const projects: Project[] = [
   {
     id: "zylxy",
     index: "SYS-01",
-    name: "Zylxy Technologies — Corporate Website & CRM Consulting Platform",
+    name: "Zylxy Technologies: Corporate Website and CRM Platform",
     client: "Zylxy Technology Pvt. Ltd.",
     year: "2026",
-    classification: "WEB DEVELOPMENT · CORPORATE PLATFORM · CRM WORKFLOWS",
+    classification: "CORPORATE WEB PLATFORM · CRM WORKFLOWS · NEXT.JS",
     summary:
-      "A production-focused corporate website and CRM consulting platform built using Next.js and React. I worked on translating business requirements into responsive web interfaces, reusable components, lead-generation forms and API-driven workflows while improving the maintainability and structure of the application.",
+      "During my internship at Zylxy Technology, I contributed to a corporate website and CRM consulting platform using Next.js and React. My work focused on reusable responsive UI, lead-generation forms, REST integrations, and end-to-end debugging.",
     stack: [
       "Next.js",
-      "React.js",
+      "React",
       "JavaScript",
       "Tailwind CSS",
       "Server Actions",
       "REST APIs",
-      "Lucide React",
-      "Framer Motion"
+      "Lucide React"
     ],
     metrics: [
-      { value: "3", label: "Months Internship" },
-      { value: "14+", label: "Service Flows" }
+      { value: "3 MO", label: "Web Development Internship" },
+      { value: "14+", label: "Service and Consultation Flows" }
     ],
     highlights: [
-      "Reusable responsive components and centralized styling/configuration",
-      "Lead-generation workflows and consultation forms via Server Actions",
-      "Modular, domain-oriented form architecture",
-      "End-to-end integration and production debugging via DevTools",
+      "Built reusable responsive UI components with centralized Tailwind CSS styling.",
+      "Implemented lead-generation and consultation workflows using Next.js Server Actions and REST APIs.",
+      "Refactored complex forms into modular components organized around business requirements.",
+      "Diagnosed end-to-end integration issues using browser DevTools and Network inspection."
     ],
     product: {
       alt: "Zylxy Technologies Corporate Website Preview",
@@ -38,34 +37,34 @@ export const projects: Project[] = [
       {
         label: "CLIENT",
         title: "Next.js / React",
-        details: ["UI Components", "State Management"]
+        details: ["UI Components", "Responsive Interfaces"]
       },
       {
         label: "APPLICATION",
         title: "Forms + Server Actions",
-        details: ["Validation", "Routing"]
+        details: ["Validation", "Submission Workflows"]
       },
       {
         label: "INTEGRATIONS",
         title: "REST / CRM",
-        details: ["HubSpot API", "Authentication"]
+        details: ["API Communication", "Lead Data"]
       },
       {
         label: "OUTCOME",
         title: "Lead Capture",
-        details: ["Conversion", "Analytics"]
+        details: ["Service Workflows", "Consultation Forms"]
       }
     ],
     proof: [
       {
         value: "14+",
-        label: "Service Flows",
-        description: "Developed end-to-end form structures natively mapping directly to the client's CRM ecosystem."
+        label: "Service Workflows",
+        description: "Structured service and consultation forms to support CRM-driven lead capture."
       },
       {
         value: "Next.js",
         label: "Server Actions",
-        description: "Implemented headless integration boundaries keeping private keys exclusively on the server."
+        description: "Kept form submission and integration logic on the server to isolate sensitive configuration."
       }
     ],
     links: {
@@ -75,12 +74,12 @@ export const projects: Project[] = [
   {
     id: "mini-social",
     index: "SYS-02",
-    name: "Mini Social — Full-Stack Social Platform",
-    client: "3W Full-Stack Assessment",
+    name: "Mini Social: Full-Stack Social Platform",
+    client: "3W Assessment",
     year: "2026",
-    classification: "FULL-STACK ASSESSMENT · AUTHENTICATION · SOCIAL INTERACTIONS · API ARCHITECTURE",
+    classification: "FULL-STACK ASSESSMENT · AUTHENTICATION · SOCIAL FEATURES · MONGODB",
     summary:
-      "A full-stack social application developed for the 3W Full-Stack Internship Assessment using React, Express and MongoDB.\n\nThe system implements credential-based authentication, protected social feeds, image-enabled posts, persistent likes, comments, one-level replies and server-resolved @mentions while maintaining a strict separation between real API behavior and the explicitly labelled local demo environment.",
+      "Built for the 3W Full-Stack Assessment, Mini Social combines React, Express, and MongoDB with JWT authentication and persistent social interactions. It supports posts, image uploads, likes, comments, replies, and ID-backed mentions while keeping real API behavior completely separate from the local demo environment.",
     stack: [
       "React",
       "Express.js",
@@ -90,22 +89,17 @@ export const projects: Project[] = [
       "JavaScript",
       "JWT",
       "bcrypt",
-      "REST APIs",
-      "Cloudinary",
-      "CSS",
-      "pnpm"
+      "REST APIs"
     ],
     metrics: [
-      { value: "2", label: "MongoDB Collections" },
-      { value: "6", label: "Verified Viewport Widths" }
+      { value: "02", label: "MongoDB Collections" },
+      { value: "06", label: "Verified Viewports" }
     ],
     highlights: [
-      "Built end-to-end signup and login flows with bcrypt password hashing, JWT authentication and HTTP-only cookie sessions.",
-      "Designed protected social interactions including posts, image uploads, likes, comments, replies and ID-backed @mention autocomplete.",
-      "Enforced a two-collection MongoDB architecture using User and Post models with embedded social interaction data.",
-      "Implemented resilient real/demo execution boundaries so API failures never become false successful authentication states.",
-      "Added local image persistence with optional Cloudinary-backed production storage.",
-      "Verified authentication, validation, persistence and responsive behavior through targeted regression tests and browser testing."
+      "Implemented signup and login with bcrypt password hashing, JWT authentication, and HttpOnly cookie sessions.",
+      "Built posts, image uploads, likes, comments, single-level replies, and ID-backed mention autocomplete.",
+      "Used two MongoDB collections for users and posts, with social interaction data stored inside post documents.",
+      "Separated real API behavior from the local demo environment to prevent false-positive authentication states."
     ],
     product: {
       alt: "Mini Social Full-Stack Platform Preview",
@@ -125,29 +119,29 @@ export const projects: Project[] = [
       {
         label: "SECURITY",
         title: "JWT · bcrypt",
-        details: ["HTTP-only Cookies", "Password Hashing"]
+        details: ["HttpOnly Cookies", "Password Hashing"]
       },
       {
         label: "DATA",
         title: "MongoDB",
-        details: ["Users", "Posts", "Media Storage (Local/Cloudinary)"]
+        details: ["Users", "Posts", "Media Storage"]
       }
     ],
     proof: [
       {
         value: "JWT",
         label: "Authentication",
-        description: "Built end-to-end signup and login flows with bcrypt and protected HTTP-only cookie sessions."
+        description: "Built signup and login flows with bcrypt password hashing, JWT authentication, and protected HttpOnly cookie sessions."
       },
       {
         value: "02",
         label: "MongoDB Collections",
-        description: "Enforced a strict two-collection architecture for Users and Posts, embedding social interaction data directly."
+        description: "Used User and Post collections, with social interaction data embedded within post documents."
       },
       {
         value: "06",
         label: "Verified Viewports",
-        description: "Validated presentation across six breakpoint thresholds (360, 390, 430, 768, 1024, 1440)."
+        description: "Checked responsive behavior at 360, 390, 430, 768, 1024, and 1440 px."
       }
     ],
     links: {
@@ -157,12 +151,12 @@ export const projects: Project[] = [
   {
     id: "redroot",
     index: "SYS-03",
-    name: "Redroot — Interactive Product Experience",
+    name: "Redroot: Interactive Product Experience",
     client: "Grinning Co Assessment",
     year: "2026",
-    classification: "FRONTEND ASSESSMENT · IMMERSIVE PRODUCT EXPERIENCE · MOTION SYSTEM · E2E TESTING",
+    classification: "FRONTEND ASSESSMENT · INTERACTIVE PRODUCT EXPERIENCE · E2E TESTING",
     summary:
-      "An immersive product-focused digital experience developed for the Grinning Co technical assessment using Next.js, React, and TypeScript.\n\nThe application combines responsive product storytelling, interactive product and ingredient experiences, canvas-driven visuals, scroll-based motion, pricing interactions, modal flows, lightweight session management, and automated end-to-end validation within a modular Next.js App Router architecture.",
+      "Built for the Grinning Co technical assessment, Redroot is a responsive product experience using Next.js, React, TypeScript, Motion, and Canvas. It combines modular product storytelling, interactive pricing and ingredient flows, lightweight state management, and Playwright end-to-end validation.",
     stack: [
       "Next.js",
       "React",
@@ -171,33 +165,25 @@ export const projects: Project[] = [
       "Motion",
       "Playwright",
       "React Context",
-      "Canvas",
-      "Notion",
-      "Lucide React",
-      "Radix UI",
-      "Flow"
+      "HTML5 Canvas API",
+      "Lucide React"
     ],
     expandedStack: {
       "Core Framework & Language": ["Next.js 14.2.15", "React 18", "TypeScript 5"],
       "Styling & Design System": ["Tailwind CSS 3.4.1", "PostCSS 8", "clsx", "tailwind-merge"],
-      "UI & Component Primitives": ["Lucide React", "Radix UI Slot"],
       "Animation & Interactive Graphics": ["Motion 13.1", "HTML5 Canvas API"],
       "State Management": ["React Context API"],
-      "Testing & Code Quality": ["Playwright", "ESLint", "eslint-config-next"],
-      "Workflow & Product Tools": ["Flow", "Notion"]
+      "Testing & Code Quality": ["Playwright", "ESLint", "eslint-config-next"]
     },
     metrics: [
       { value: "12", label: "Modular Experience Sections" },
-      { value: "3", label: "Playwright E2E Suites" }
+      { value: "03", label: "Playwright E2E Suites" }
     ],
     highlights: [
-      "Built a modular Next.js App Router experience using reusable React and TypeScript components across product-focused sections.",
-      "Developed interactive visual experiences using Motion, HTML5 Canvas, and supporting animation tooling for scroll-driven reveals, transitions, gestures, and micro-interactions.",
-      "Created interactive product showcase, ingredient, pricing, lead-generation, video, and modal experiences with responsive behavior across device sizes.",
-      "Implemented lightweight application state using React Context for demo authentication and session-related UI flows.",
-      "Structured the application around reusable components, data modules, hooks, utilities, and shared UI primitives.",
-      "Added Playwright end-to-end testing for navigation, interaction matrices, ingredient behavior, modal flows, contact interactions, and responsive user journeys.",
-      "Used supporting product-development and workflow tools including Flow, and Notion as part of the project workflow."
+      "Built modular product sections with reusable Next.js, React, and TypeScript components.",
+      "Created scroll-driven and Canvas-based interactions using Motion and the HTML5 Canvas API.",
+      "Implemented product, ingredient, pricing, modal, and lead-generation interactions across responsive layouts.",
+      "Added Playwright end-to-end coverage for navigation, interactions, modal flows, and responsive user journeys."
     ],
     product: {
       alt: "Redroot Interactive Product Preview",
@@ -207,7 +193,7 @@ export const projects: Project[] = [
       {
         label: "CONTENT",
         title: "Next.js / React",
-        details: ["App Router", "Storytelling"]
+        details: ["App Router", "Product Storytelling"]
       },
       {
         label: "INTERACTIVE EXPERIENCE",
@@ -215,31 +201,31 @@ export const projects: Project[] = [
         details: ["Scroll Triggers", "Visual Feedback"]
       },
       {
-        label: "STATE / BUSINESS LOGIC",
-        title: "Context",
+        label: "STATE / LOGIC",
+        title: "React Context",
         details: ["Demo Authentication", "Pricing Modes"]
       },
       {
         label: "VERIFICATION",
         title: "Playwright",
-        details: ["Interaction Matrices", "User Journeys"]
+        details: ["Interaction Flows", "User Journeys"]
       }
     ],
     proof: [
       {
         value: "App Router",
         label: "Modular Experience",
-        description: "Built 12 independent, product-focused sections combining reusable React primitives with robust styling boundaries."
+        description: "Organized 12 product-focused sections with reusable components and shared UI patterns."
       },
       {
         value: "Motion",
-        label: "Visual Fidelity",
-        description: "Implemented synchronized scroll-driven visual pathways alongside complex native HTML5 canvas layers."
+        label: "Interactive Visuals",
+        description: "Combined scroll-driven transitions with Canvas-based visual layers."
       },
       {
         value: "E2E",
-        label: "Regression Verified",
-        description: "Guaranteed product stability using end-to-end navigation flows, modal matrices, and responsive assertion testing."
+        label: "Regression Coverage",
+        description: "Validated navigation, interaction, modal, and responsive flows with Playwright."
       }
     ],
     links: {

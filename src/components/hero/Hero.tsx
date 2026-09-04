@@ -7,6 +7,7 @@ import { systemStats } from "@/data/hero/system-stats.data";
 import { stackStory } from "@/data/stack-story/stack-story.data";
 import { identity } from "@/data/profile/profile.data";
 import Typewriter from "@/components/shared/Typewriter";
+import { useGithubPortfolio } from "@/integrations/github/use-github-portfolio";
 
 const HeroStackGlobe = dynamic(
   () => import("@/components/stack-story/three/HeroStackGlobe"),
@@ -23,6 +24,11 @@ export default function Hero({ started }: { started: boolean }) {
   const root = useRef<HTMLDivElement>(null);
   const textCol = useRef<HTMLDivElement>(null);
   const [storyOpen, setStoryOpen] = useState(false);
+  const { data, isLoading } = useGithubPortfolio();
+  
+  const totalStars = (data?.pinnedRepositories || []).reduce((acc, r) => acc + (r.stargazerCount ?? 0), 0) + 
+                     (data?.recentRepositories || []).reduce((acc, r) => acc + (r.stargazerCount ?? 0), 0);
+  const publicRepos = data?.publicReposCount ?? 0;
 
   // activeRef is an animated power level for the globe. It starts OFF (dark) and
   // energizes layer-by-layer the moment the boot sequence hands off - the globe's
@@ -138,17 +144,25 @@ export default function Hero({ started }: { started: boolean }) {
 
           {/* stat strip */}
           <div className="hero-anim mt-10 grid max-w-2xl grid-cols-2 gap-px border border-line-faint bg-line-faint sm:grid-cols-4">
-            {systemStats.map((s) => (
-              <div
-                key={s.label}
-                className="bg-ink-900/80 px-4 py-3 backdrop-blur"
-              >
-                <div className="font-display text-2xl font-semibold text-cyan glow-cyan">
-                  {s.value}
+            {systemStats.map((s) => {
+              let displayValue = s.value;
+              if (s.isDynamic) {
+                if (isLoading) displayValue = "---";
+                else if (s.queryKey === "stars") displayValue = String(totalStars);
+                else if (s.queryKey === "repos") displayValue = String(publicRepos);
+              }
+              return (
+                <div
+                  key={s.label}
+                  className="bg-ink-900/80 px-4 py-3 backdrop-blur"
+                >
+                  <div className="font-display text-2xl font-semibold text-cyan glow-cyan">
+                    {displayValue}
+                  </div>
+                  <div className="tech-label mt-1">{s.label}</div>
                 </div>
-                <div className="tech-label mt-1">{s.label}</div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -174,7 +188,7 @@ export default function Hero({ started }: { started: boolean }) {
           >
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan shadow-[0_0_8px_var(--cyan)]" />
             <span className="tech-label text-[0.55rem] text-cyan">
-              DOUBLE-TAP GLOBE OR CLICK TO EXPLORE STACK
+              CLICK OR DOUBLE-TAP TO EXPLORE THE STACK
             </span>
           </button>
         </div>

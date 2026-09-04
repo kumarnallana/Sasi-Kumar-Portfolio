@@ -144,16 +144,14 @@ export default function Contact() {
           </h3>
 
           <p className="contact-reveal mt-6 max-w-md text-sm leading-relaxed text-paper-dim">
-            Recruiters, founders, and clients - if you need someone who can
-            architect, build, and ship a production system end-to-end, the
-            channel is open.
+            Open to full-stack, frontend, backend, and software development opportunities.
           </p>
 
           <a
             href={`mailto:${identity.email}`}
             className="contact-reveal group mt-8 inline-flex items-center gap-3 border border-cyan px-6 py-3 font-display text-sm font-semibold text-cyan transition-colors hover:bg-cyan hover:text-ink-900"
           >
-            INITIATE TRANSMISSION
+            START A CONVERSATION
             <span className="transition-transform group-hover:translate-x-1">
               →
             </span>
