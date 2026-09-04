@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { projects, type Project } from "@/data/projects/projects.data";
+import { projects } from "@/data/projects/projects.data";
+import type { Project } from "@/types/projects/project.types";
 import BlueprintDiagram from "@/components/projects/BlueprintDiagram";
 import Reconstruction from "@/components/projects/Reconstruction";
 import SectionHeader from "@/components/shared/SectionHeader";

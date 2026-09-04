@@ -4,7 +4,8 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { manifesto } from "@/data/operations/manifesto.data";
-import { operations, type Operation } from "@/data/operations/operations.data";
+import { operations } from "@/data/operations/operations.data";
+import type { Operation } from "@/types/operations/operations.types";
 
 gsap.registerPlugin(ScrollTrigger);
 
