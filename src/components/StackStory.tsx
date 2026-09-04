@@ -115,9 +115,8 @@ export default function StackStory({
     sound.play("online");
 
     const onKey = (e: KeyboardEvent) => {
-      // can't bail mid-descent - Escape only works once the stack is complete
       if (e.key === "Escape") {
-        if (activeRef.current >= lastIdx) onClose();
+        onClose();
       } else if (e.key === "ArrowDown" || e.key === "PageDown") {
         e.preventDefault();
         scrollToChapter(activeRef.current + 1);
@@ -181,27 +180,30 @@ export default function StackStory({
         </p>
       </div>
 
-      {/* exit - locked until the descent is complete (no half-closing) */}
-      {atEnd ? (
-        <button
-          onClick={() => {
-            sound.play("online");
-            onClose();
-          }}
-          onMouseEnter={() => sound.play("hover")}
-          className="absolute right-5 top-5 z-20 flex h-9 items-center gap-2 border border-cyan/60 bg-ink-900/80 px-3 font-mono text-xs text-cyan transition-colors hover:bg-cyan/10 md:right-10"
-          aria-label="Return to hero"
-        >
-          RETURN <span className="text-base leading-none">↩</span>
-        </button>
-      ) : (
-        <div
-          className="absolute right-5 top-5 z-20 flex h-9 items-center gap-2 border border-line-faint bg-ink-900/60 px-3 font-mono text-xs text-paper-dim/60 md:right-10"
-          aria-hidden
-        >
-          <span className="text-sm leading-none">⌁</span> DESCEND TO EXIT
-        </div>
-      )}
+      {/* exit button - always allows closing, highlights RETURN when at end */}
+      <button
+        onClick={() => {
+          sound.play("online");
+          onClose();
+        }}
+        onMouseEnter={() => sound.play("hover")}
+        className={`absolute right-5 top-5 z-20 flex h-9 items-center gap-2 border px-3 font-mono text-xs transition-colors md:right-10 ${
+          atEnd
+            ? "border-cyan/60 bg-ink-900/80 text-cyan hover:bg-cyan/10"
+            : "border-line-faint bg-ink-900/70 text-paper-dim hover:border-cyan hover:text-cyan"
+        }`}
+        aria-label="Close stack story"
+      >
+        {atEnd ? (
+          <>
+            RETURN <span className="text-base leading-none">↩</span>
+          </>
+        ) : (
+          <>
+            ESC <span className="text-base leading-none">×</span>
+          </>
+        )}
+      </button>
 
       {/* progress rail */}
       <div className="absolute right-4 top-1/2 z-20 hidden -translate-y-1/2 flex-col gap-3 md:flex">

@@ -164,13 +164,17 @@ export default function Hero({ started }: { started: boolean }) {
           <div className="pointer-events-none absolute right-3 top-3 tech-label text-paper-dim">
             {String(STACK_LEN).padStart(2, "0")} LAYERS · LIVE
           </div>
-          {/* double-tap affordance - bottom-center, clear of the corner labels */}
-          <div className="pointer-events-none absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap border border-cyan/30 bg-ink-900/70 px-3 py-1 backdrop-blur transition-opacity duration-300 group-hover:opacity-100 sm:opacity-70">
+          {/* double-tap or click affordance to open the stack story */}
+          <button
+            onClick={() => setStoryOpen(true)}
+            className="pointer-events-auto absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap border border-cyan/40 bg-ink-900/80 px-3 py-1.5 backdrop-blur transition-all duration-300 hover:border-cyan hover:bg-cyan/10 hover:shadow-[0_0_12px_rgba(67,201,255,0.3)]"
+            aria-label="Explore the stack story"
+          >
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan shadow-[0_0_8px_var(--cyan)]" />
             <span className="tech-label text-[0.55rem] text-cyan">
-              DOUBLE-TAP TO EXPLORE THE STACK
+              DOUBLE-TAP GLOBE OR CLICK TO EXPLORE STACK
             </span>
-          </div>
+          </button>
         </div>
       </div>
 

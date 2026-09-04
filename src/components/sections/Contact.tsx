@@ -101,6 +101,15 @@ export default function Contact() {
     return () => ctx.revert();
   }, []);
 
+  useEffect(() => {
+    if (!menu) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenu(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menu]);
+
   return (
     <section
       id="comms"
@@ -188,6 +197,7 @@ export default function Contact() {
 
           {/* Nyx - watches the cursor, purrs when pet, chases a toy; right-click for tricks */}
           <div
+            data-testid="nyx-box"
             className="contact-reveal relative min-h-[240px] flex-1 overflow-hidden rounded border border-line-faint bg-ink-900/40"
             onContextMenu={(e) => {
               e.preventDefault();
@@ -258,8 +268,8 @@ export default function Contact() {
             <div
               className="absolute w-44 border border-line-faint bg-ink-900/95 backdrop-blur"
               style={{
-                left: Math.min(menu.x, window.innerWidth - 188),
-                top: Math.min(menu.y, window.innerHeight - 168),
+                left: Math.min(Number.isFinite(menu.x) ? menu.x : 100, (typeof window !== "undefined" ? window.innerWidth : 1000) - 188),
+                top: Math.min(Number.isFinite(menu.y) ? menu.y : 100, (typeof window !== "undefined" ? window.innerHeight : 800) - 168),
               }}
               onClick={(e) => e.stopPropagation()}
             >

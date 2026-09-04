@@ -152,7 +152,7 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
             detail={project.detail}
             title={`FIG.${i + 1} · ${project.name}`}
             onOnline={handleOnline}
-            hideMaximize={!!project.reconstruction}
+            hideMaximize={false}
           />
         )}
 

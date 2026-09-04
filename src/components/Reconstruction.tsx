@@ -150,6 +150,21 @@ export default function Reconstruction({
   const [ready, setReady] = useState(false);
   const [isFs, setIsFs] = useState(false);
 
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [onClose]);
+
   // ---- zoom / pan (imperative, never re-renders the animated svg) ----
   const view = useRef({ scale: 1, tx: 0, ty: 0 });
   const panning = useRef(false);

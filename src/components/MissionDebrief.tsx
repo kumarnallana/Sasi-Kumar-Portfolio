@@ -28,7 +28,6 @@ export default function MissionDebrief() {
   const root = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLDivElement>(null);
   const pct = useRef<HTMLSpanElement>(null);
-  const rowEls = useRef<(HTMLButtonElement | null)[]>([]);
 
   const [reviewed, setReviewed] = useState(0);
   const [compiled, setCompiled] = useState(false);
@@ -70,10 +69,11 @@ export default function MissionDebrief() {
       });
 
       // compile the dossier: each chapter flips to REVIEWED in sequence
-      NAV_SECTIONS.forEach((_, i) => {
+      const rows = gsap.utils.toArray<HTMLElement>(".debrief-row", el);
+      rows.forEach((row, i) => {
         const at = 0.5 + i * 0.18;
         tl.from(
-          rowEls.current[i],
+          row,
           { x: -14, opacity: 0, duration: 0.3, ease: "power2.out" },
           at,
         ).call(
@@ -96,22 +96,33 @@ export default function MissionDebrief() {
       tl.call(() => {
         setCompiled(true);
         sound.play("online");
-      })
-        .from(".debrief-choice", {
-          y: 16,
-          opacity: 0,
-          duration: 0.5,
-          ease: "power2.out",
-        })
-        .from(
-          ".debrief-cta",
-          { y: 10, opacity: 0, duration: 0.4, stagger: 0.1, ease: "power2.out" },
-          "<",
-        );
+      });
     }, el);
 
     return () => ctx.revert();
   }, []);
+
+  // Entrance animation for choice actions once compiled
+  useEffect(() => {
+    if (!compiled) return;
+    const el = root.current;
+    if (!el) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ".debrief-choice",
+        { y: 16, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
+      );
+      gsap.fromTo(
+        ".debrief-cta",
+        { y: 10, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.4, stagger: 0.1, ease: "power2.out" },
+      );
+    }, el);
+
+    return () => ctx.revert();
+  }, [compiled]);
 
   const initiate = () => {
     sound.play("online");
@@ -166,15 +177,12 @@ export default function MissionDebrief() {
           return (
             <button
               key={s.id}
-              ref={(el) => {
-                rowEls.current[i] = el;
-              }}
               onClick={() => {
                 sound.play("blip");
                 scrollToSection(s.id);
               }}
               onMouseEnter={() => sound.play("hover")}
-              className="group flex items-center gap-3 bg-ink-900 px-4 py-4 text-left transition-colors hover:bg-ink-800"
+              className="debrief-row group flex items-center gap-3 bg-ink-900 px-4 py-4 text-left transition-colors hover:bg-ink-800"
             >
               <span className="tech-label w-6 shrink-0 text-paper-dim/50">
                 {String(i + 1).padStart(2, "0")}

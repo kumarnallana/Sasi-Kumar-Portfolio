@@ -42,3 +42,5 @@ next-env.d.ts
 
 CONTEXT.md
 node_modules
+test-results/
+playwright-report/
