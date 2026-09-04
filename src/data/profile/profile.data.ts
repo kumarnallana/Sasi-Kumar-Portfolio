@@ -1,14 +1,14 @@
 import type { ProfileIdentity } from "@/types/profile/profile.types";
 
 export const identity: ProfileIdentity = {
-  name: "Sasi Kumar",
+  name: "Nallana Sasi Kumar",
   callsign: "NSK-CORE",
   role: "Full-Stack Developer",
   location: "Kakinada, Andhra Pradesh, India",
   tagline:
     "I build responsive full-stack web applications with React, Next.js, Node.js, and REST APIs, while expanding into Python backend development.",
-  email: "sasikumar.nallana@gmail.com",
-  phone: "+91 91218 57321",
+  email: "sasikumarnallana956@gmail.com",
+  phone: "+91 9553886216",
   links: {
     github: "https://github.com/kumarnallana",
     linkedin: "https://linkedin.com/in/sasi-kumar-nallana",

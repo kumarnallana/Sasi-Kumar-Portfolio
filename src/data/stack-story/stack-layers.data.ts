@@ -33,7 +33,7 @@ export const stackLayers: StackLayer[] = [
     role: "DATA / PERSISTENCE",
     title: "Data / Persistence",
     narrative: "Working with SQL, MongoDB, ORM and ODM patterns, application state, and browser storage.",
-    items: ["SQL", "MongoDB", "Mongoose", "SQLAlchemy", "State Management", "Browser Storage"],
+    items: ["SQL", "MongoDB", "Mongoose", "State Management", "Browser Storage"],
     accent: "cyan",
     status: "LIVE",
   },
