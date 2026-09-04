@@ -5,32 +5,18 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { projects } from "@/data/projects/projects.data";
 import type { Project } from "@/types/projects/project.types";
-import BlueprintDiagram from "@/components/projects/BlueprintDiagram";
-import Reconstruction from "@/components/projects/Reconstruction";
+import ProjectEvidenceViewer from "@/components/projects/ProjectEvidenceViewer";
 import SectionHeader from "@/components/shared/SectionHeader";
 import { sound } from "@/lib/sound";
 
 gsap.registerPlugin(ScrollTrigger);
 
-type Status = "OFFLINE" | "BOOTING" | "ONLINE";
 
-const STATUS_COLOR: Record<Status, string> = {
-  OFFLINE: "var(--line-dim)",
-  BOOTING: "var(--amber)",
-  ONLINE: "var(--cyan)",
-};
 
 function ProjectBlock({ project, i }: { project: Project; i: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const reverse = i % 2 === 1;
-  const [status, setStatus] = useState<Status>("OFFLINE");
-  const [recon, setRecon] = useState(false);
   const [stackExpanded, setStackExpanded] = useState(false);
-
-  const handleOnline = useCallback(() => {
-    setStatus("ONLINE");
-    sound.play("online");
-  }, []);
 
   useEffect(() => {
     const el = ref.current;
@@ -43,14 +29,6 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
         duration: 0.8,
         stagger: 0.08,
         ease: "power3.out",
-      });
-      ScrollTrigger.create({
-        trigger: el,
-        start: "top 72%",
-        onEnter: () => {
-          setStatus((s) => (s === "ONLINE" ? s : "BOOTING"));
-          sound.play("sweep");
-        },
       });
     }, el);
     return () => ctx.revert();
@@ -66,26 +44,6 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
         <div className="proj-reveal flex items-center gap-3">
           <span className="tech-label text-amber">{project.index}</span>
           <span className="h-px flex-1 bg-line-faint" />
-          <span className="flex items-center gap-1.5">
-            <span
-              className={`h-1.5 w-1.5 rounded-full ${
-                status === "BOOTING" ? "animate-pulse" : ""
-              }`}
-              style={{
-                backgroundColor: STATUS_COLOR[status],
-                boxShadow:
-                  status === "ONLINE"
-                    ? `0 0 8px ${STATUS_COLOR[status]}`
-                    : "none",
-              }}
-            />
-            <span
-              className="tech-label"
-              style={{ color: STATUS_COLOR[status] }}
-            >
-              {status}
-            </span>
-          </span>
           <span className="tech-label">{project.year}</span>
         </div>
 
@@ -160,59 +118,18 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
         )}
       </div>
 
-      {/* diagram */}
+      {/* project evidence viewer */}
       <div className={`proj-reveal ${reverse ? "lg:order-1" : ""}`}>
         <div className="tech-label mb-3 flex items-center justify-between">
-          <span>FIG.{i + 1} - SYSTEM ARCHITECTURE</span>
-          <span style={{ color: STATUS_COLOR[status] }}>
-            {status === "ONLINE"
-              ? "● STREAMING"
-              : status === "BOOTING"
-                ? "◐ ASSEMBLING"
-                : "○ STANDBY"}
-          </span>
+          <span>FIG.{i + 1} - PROJECT EVIDENCE</span>
         </div>
-        {project.diagram && (
-          <BlueprintDiagram
-            nodes={project.diagram.nodes}
-            edges={project.diagram.edges}
-            detail={project.detail}
-            title={`FIG.${i + 1} · ${project.name}`}
-            onOnline={handleOnline}
-            hideMaximize={false}
-          />
-        )}
-
-        {project.reconstruction && (
-          <button
-            onClick={() => {
-              sound.play("online");
-              setRecon(true);
-            }}
-            onMouseEnter={() => sound.play("hover")}
-            className="group mt-3 flex w-full items-center justify-between border border-line-faint bg-ink-900/60 px-4 py-2.5 font-mono text-[0.65rem] uppercase tracking-wider text-paper-dim transition-colors hover:border-cyan hover:text-cyan"
-          >
-            <span className="flex items-center gap-2">
-              <span className="text-sm leading-none text-cyan">⟲</span>
-              Reconstruct build history
-            </span>
-            <span className="tech-label text-[0.5rem] text-paper-dim/50 transition-colors group-hover:text-cyan">
-              SCRUB THE TIMELINE →
-            </span>
-          </button>
-        )}
-      </div>
-
-      {recon && project.reconstruction && (
-        <Reconstruction
-          data={project.reconstruction}
-          title={`FIG.${i + 1} · ${project.name}`}
-          onClose={() => {
-            sound.play("blip");
-            setRecon(false);
-          }}
+        <ProjectEvidenceViewer
+          projectIndex={i}
+          product={project.product}
+          architecture={project.architecture}
+          proof={project.proof}
         />
-      )}
+      </div>
     </div>
   );
 }
@@ -226,7 +143,7 @@ export default function Projects() {
       <SectionHeader
         index="02"
         title="DEPLOYED SYSTEMS"
-        caption="Self-assembling architecture schematics - drawn as you read."
+        caption="Project evidence, architecture pipelines, and engineering outcomes."
       />
       <div>
         {projects.map((p, i) => (

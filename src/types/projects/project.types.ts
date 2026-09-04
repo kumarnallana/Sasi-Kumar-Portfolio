@@ -1,5 +1,5 @@
 export type ProjectProduct = {
-  image: string;
+  image?: string;
   alt: string;
   caption?: string;
 };

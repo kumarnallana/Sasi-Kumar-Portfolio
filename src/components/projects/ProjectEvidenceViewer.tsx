@@ -9,22 +9,71 @@ import { gsap } from "gsap";
 type Tab = "PRODUCT" | "ARCHITECTURE" | "PROOF";
 
 export default function ProjectEvidenceViewer({
+  projectIndex,
   product,
   architecture,
   proof,
 }: {
+  projectIndex: number;
   product?: ProjectProduct;
   architecture?: ArchitectureStep[];
   proof?: ProofItem[];
 }) {
   const [activeTab, setActiveTab] = useState<Tab>("PRODUCT");
   const contentRef = useRef<HTMLDivElement>(null);
+  const tabListRef = useRef<HTMLDivElement>(null);
+
+  // Generate unique IDs for accessibility
+  const baseId = `evidence-${projectIndex}`;
+  const tabIds = {
+    PRODUCT: `${baseId}-tab-product`,
+    ARCHITECTURE: `${baseId}-tab-arch`,
+    PROOF: `${baseId}-tab-proof`,
+  };
+  const panelIds = {
+    PRODUCT: `${baseId}-panel-product`,
+    ARCHITECTURE: `${baseId}-panel-arch`,
+    PROOF: `${baseId}-panel-proof`,
+  };
   
   // Handle tab switching with sound and basic state update
   const handleTabChange = (tab: Tab) => {
     if (tab === activeTab) return;
     sound.play("blip");
     setActiveTab(tab);
+  };
+
+  // Handle keyboard navigation for tabs
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>, currentTab: Tab) => {
+    const tabs: Tab[] = [];
+    if (product) tabs.push("PRODUCT");
+    if (architecture && architecture.length > 0) tabs.push("ARCHITECTURE");
+    if (proof && proof.length > 0) tabs.push("PROOF");
+
+    const currentIndex = tabs.indexOf(currentTab);
+    let nextIndex = currentIndex;
+
+    if (e.key === "ArrowRight") {
+      nextIndex = (currentIndex + 1) % tabs.length;
+    } else if (e.key === "ArrowLeft") {
+      nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+    } else if (e.key === "Home") {
+      nextIndex = 0;
+    } else if (e.key === "End") {
+      nextIndex = tabs.length - 1;
+    } else {
+      return;
+    }
+
+    e.preventDefault();
+    const nextTab = tabs[nextIndex];
+    handleTabChange(nextTab);
+
+    // Focus the next tab
+    if (tabListRef.current) {
+      const nextButton = tabListRef.current.querySelector<HTMLButtonElement>(`#${tabIds[nextTab]}`);
+      nextButton?.focus();
+    }
   };
 
   // Animate content on tab change
@@ -87,7 +136,12 @@ export default function ProjectEvidenceViewer({
     <div className="flex w-full flex-col border border-line-faint bg-ink-900/40">
       
       {/* Evidence Tabs */}
-      <div className="flex w-full overflow-x-auto border-b border-line-faint scrollbar-hide">
+      <div 
+        ref={tabListRef}
+        role="tablist" 
+        aria-label="Project Evidence Modes"
+        className="flex w-full overflow-x-auto border-b border-line-faint scrollbar-hide"
+      >
         {(["PRODUCT", "ARCHITECTURE", "PROOF"] as Tab[]).map((tab) => {
           // Only show tabs if the data exists
           if (tab === "PRODUCT" && !product) return null;
@@ -99,16 +153,19 @@ export default function ProjectEvidenceViewer({
           return (
             <button
               key={tab}
+              id={tabIds[tab]}
+              role="tab"
+              aria-selected={isActive}
+              aria-controls={panelIds[tab]}
+              tabIndex={isActive ? 0 : -1}
               onClick={() => handleTabChange(tab)}
+              onKeyDown={(e) => handleKeyDown(e, tab)}
               onMouseEnter={() => sound.play("hover")}
               className={`flex-1 min-w-[120px] px-4 py-3 font-mono text-[0.65rem] uppercase tracking-wider transition-colors outline-none focus-visible:ring-1 focus-visible:ring-cyan ${
                 isActive
                   ? "bg-line-faint/30 text-cyan border-b-2 border-cyan"
                   : "text-paper-dim hover:bg-ink-800 hover:text-paper"
               }`}
-              role="tab"
-              aria-selected={isActive}
-              tabIndex={0}
             >
               {tab}
             </button>
@@ -117,21 +174,37 @@ export default function ProjectEvidenceViewer({
       </div>
 
       {/* Main Visual Area with stable min-height */}
-      <div className="relative min-h-[300px] md:min-h-[400px] p-4 md:p-6" ref={contentRef} role="tabpanel">
+      <div 
+        ref={contentRef} 
+        id={panelIds[activeTab]}
+        role="tabpanel"
+        aria-labelledby={tabIds[activeTab]}
+        tabIndex={0}
+        className="relative min-h-[350px] md:min-h-[450px] w-full p-4 md:p-6 outline-none focus-visible:ring-1 focus-visible:ring-cyan"
+      >
         
         {/* PRODUCT VIEW */}
         {activeTab === "PRODUCT" && product && (
           <div className="flex h-full w-full flex-col items-center justify-center space-y-4">
-            <div className="relative w-full aspect-video overflow-hidden rounded border border-line-faint bg-ink-950">
-              <Image
-                src={product.image}
-                alt={product.alt}
-                fill
-                className="object-cover object-top opacity-90 transition-transform duration-1000 hover:scale-105"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
+            <div className="relative w-full aspect-[16/10] md:aspect-video overflow-hidden rounded border border-line-faint bg-ink-950 flex flex-col items-center justify-center">
+              {product.image ? (
+                <Image
+                  src={product.image}
+                  alt={product.alt}
+                  fill
+                  className="object-cover object-top opacity-90 transition-transform duration-1000 hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center text-center p-6 text-paper-dim/60">
+                  <span className="font-display text-xl font-semibold text-paper mb-2">{product.alt}</span>
+                  <span className="tech-label text-[0.65rem] tracking-widest text-cyan/70">
+                    {product.caption || "PRODUCT PREVIEW"}
+                  </span>
+                </div>
+              )}
             </div>
-            {product.caption && (
+            {product.caption && product.image && (
               <div className="tech-label text-center text-[0.65rem] text-cyan">
                 {product.caption}
               </div>
@@ -179,7 +252,6 @@ export default function ProjectEvidenceViewer({
                   <span className="font-display text-2xl font-semibold text-cyan">{item.value}</span>
                   <span className="tech-label text-[0.6rem] text-paper-dim/70 uppercase">{item.label}</span>
                 </div>
-                <div className="font-display text-sm text-paper mb-1">{item.title}</div>
                 <p className="text-xs text-paper-dim leading-relaxed">{item.description}</p>
               </div>
             ))}

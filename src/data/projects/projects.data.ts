@@ -31,7 +31,6 @@ export const projects: Project[] = [
       "End-to-end integration and production debugging via DevTools",
     ],
     product: {
-      image: "/images/projects/zylxy.png",
       alt: "Zylxy Technologies Corporate Website Preview",
       caption: "Corporate Platform · Form Workflows"
     },
@@ -109,7 +108,6 @@ export const projects: Project[] = [
       "Verified authentication, validation, persistence and responsive behavior through targeted regression tests and browser testing."
     ],
     product: {
-      image: "/images/projects/mini-social.png",
       alt: "Mini Social Full-Stack Platform Preview",
       caption: "Authentication · Data Architecture"
     },
@@ -202,7 +200,6 @@ export const projects: Project[] = [
       "Used supporting product-development and workflow tools including Flow, and Notion as part of the project workflow."
     ],
     product: {
-      image: "/images/projects/redroot.png",
       alt: "Redroot Interactive Product Preview",
       caption: "Frontend Architecture · Playwright E2E"
     },
