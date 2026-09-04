@@ -1,4 +1,5 @@
 import type { StackLayer } from "@/types/stack-story/stack-story.types";
+export type { StackLayer };
 export const stackLayers: StackLayer[] = [
   {
     code: "L1",
