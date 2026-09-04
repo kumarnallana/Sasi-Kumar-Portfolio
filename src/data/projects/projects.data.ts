@@ -21,7 +21,7 @@ export const projects: Project[] = [
     ],
     metrics: [
       { value: "3 MO", label: "Web Development Internship" },
-      { value: "14+", label: "Service and Consultation Flows" }
+      { value: "14+", label: "Service Flows" }
     ],
     highlights: [
       "Built reusable responsive UI components with centralized Tailwind CSS styling.",
@@ -64,7 +64,7 @@ export const projects: Project[] = [
       {
         value: "Next.js",
         label: "Server Actions",
-        description: "Kept form submission and integration logic on the server to isolate sensitive configuration."
+        description: "Handled form submission and integration workflows through Next.js Server Actions."
       }
     ],
     links: {
@@ -75,7 +75,7 @@ export const projects: Project[] = [
     id: "mini-social",
     index: "SYS-02",
     name: "Mini Social: Full-Stack Social Platform",
-    client: "3W Assessment",
+    context: "3W Full-Stack Assessment",
     year: "2026",
     classification: "FULL-STACK ASSESSMENT · AUTHENTICATION · SOCIAL FEATURES · MONGODB",
     summary:
@@ -152,7 +152,7 @@ export const projects: Project[] = [
     id: "redroot",
     index: "SYS-03",
     name: "Redroot: Interactive Product Experience",
-    client: "Grinning Co Assessment",
+    context: "Grinning Co Technical Assessment",
     year: "2026",
     classification: "FRONTEND ASSESSMENT · INTERACTIVE PRODUCT EXPERIENCE · E2E TESTING",
     summary:

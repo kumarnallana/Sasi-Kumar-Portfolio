@@ -21,6 +21,7 @@ export type Project = {
   index: string;
   name: string;
   client?: string;
+  context?: string;
   year: string;
   classification: string;
   summary: string;
