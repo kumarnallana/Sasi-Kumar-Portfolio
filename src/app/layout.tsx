@@ -11,6 +11,8 @@ import {
   websiteJsonLd,
 } from "@/lib/seo";
 import QueryProvider from "@/providers/query-provider";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space",
@@ -98,6 +100,8 @@ export default function RootLayout({
         <QueryProvider>
           {children}
         </QueryProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
