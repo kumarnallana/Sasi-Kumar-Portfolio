@@ -1,15 +1,18 @@
+export type ProjectProduct = {
+  image: string;
+  alt: string;
+  caption?: string;
+};
+
 export type ArchitectureStep = {
-  id: string;
+  label: string;
   title: string;
-  subtitle: string;
-  details?: string[];
+  details: string[];
 };
 
 export type ProofItem = {
-  id: string;
-  metric: string;
+  value: string;
   label: string;
-  title: string;
   description: string;
 };
 
@@ -24,7 +27,7 @@ export type Project = {
   stack: string[];
   metrics: { value: string; label: string }[];
   highlights: string[];
-  image?: string;
+  product?: ProjectProduct;
   architecture?: ArchitectureStep[];
   proof?: ProofItem[];
   expandedStack?: Record<string, string[]>;
