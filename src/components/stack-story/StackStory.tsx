@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { stackStory } from "@/data/stack-story/stack-story.data";
 import { sound } from "@/lib/sound";
 import type { GlobeControls, HoverNode } from "@/components/stack-story/three/StackGlobe";
+import type { StackLayer } from "@/types/stack-story/stack-story.types";
 
 const StackGlobe = dynamic(() => import("@/components/stack-story/three/StackGlobe"), {
   ssr: false,
