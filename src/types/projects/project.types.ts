@@ -15,6 +15,7 @@ export type Project = {
   diagram?: { nodes: DiagramNode[]; edges: DiagramEdge[] };
   detail?: { nodes: DiagramNode[]; edges: DiagramEdge[] };
   reconstruction?: Reconstruction;
+  expandedStack?: Record<string, string[]>;
   links?: {
     live?: string;
     github?: string;

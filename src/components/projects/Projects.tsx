@@ -25,6 +25,7 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
   const reverse = i % 2 === 1;
   const [status, setStatus] = useState<Status>("OFFLINE");
   const [recon, setRecon] = useState(false);
+  const [stackExpanded, setStackExpanded] = useState(false);
 
   const handleOnline = useCallback(() => {
     setStatus("ONLINE");
@@ -132,6 +133,31 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
             </span>
           ))}
         </div>
+
+        {/* expanded stack */}
+        {project.expandedStack && (
+          <div className="proj-reveal mt-4">
+            <button
+              onClick={() => {
+                sound.play("blip");
+                setStackExpanded(!stackExpanded);
+              }}
+              className="tech-label text-[0.6rem] text-cyan hover:text-cyan-bright transition-colors"
+            >
+              {stackExpanded ? "[-] HIDE COMPLETE STACK" : "[+] VIEW COMPLETE STACK"}
+            </button>
+            {stackExpanded && (
+              <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2 text-xs border border-line-faint bg-ink-900/40 p-4">
+                {Object.entries(project.expandedStack).map(([category, items]) => (
+                  <div key={category}>
+                    <div className="tech-label text-[0.55rem] text-paper-dim/70 mb-1">{category}</div>
+                    <div className="text-paper">{items.join(", ")}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* diagram */}

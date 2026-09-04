@@ -1,6 +1,6 @@
 import type { Project } from "@/types/projects/project.types";
-import type { DiagramNode, DiagramEdge } from "@/types/projects/diagram.types";
-import type { ReconPhase, Reconstruction } from "@/types/projects/reconstruction.types";
+import { zylxyDiagram, miniSocialDiagram, redrootDiagram } from "./project-diagrams.data";
+import { zylxyReconstruction, miniSocialReconstruction, redrootReconstruction } from "./project-reconstructions.data";
 
 export const projects: Project[] = [
   {
@@ -35,105 +35,99 @@ export const projects: Project[] = [
     links: {
       live: "https://zylxytech.com/"
     },
-    diagram: {
-      nodes: [
-        { id: "client", label: "Client", sub: "Next.js / React", x: 8, y: 50, kind: "client" },
-        { id: "ui", label: "UI Components", sub: "Forms & Views", x: 30, y: 50, kind: "service" },
-        { id: "server", label: "Server Layer", sub: "Server Actions", x: 60, y: 30, kind: "service" },
-        { id: "api", label: "External Integrations", sub: "REST / CRM", x: 60, y: 70, kind: "external" },
-        { id: "business", label: "Business Outcome", sub: "Lead Capture", x: 92, y: 50, kind: "data" }
-      ],
-      edges: [
-        { from: "client", to: "ui", label: "interaction" },
-        { from: "ui", to: "server", label: "submission" },
-        { from: "ui", to: "api", label: "integration" },
-        { from: "server", to: "business", label: "workflow" },
-        { from: "api", to: "business", label: "lead sync" }
-      ]
-    },
-    reconstruction: {
-      graph: {
-        nodes: [
-          { id: "ui", label: "Lead Form", sub: "Next.js UI", x: 20, y: 50, kind: "client" },
-          { id: "network", label: "Network Layer", sub: "Browser DevTools", x: 50, y: 50, kind: "edge" },
-          { id: "crm", label: "HubSpot CRM", sub: "External", x: 80, y: 50, kind: "external" }
-        ],
-        edges: [
-          { from: "ui", to: "network", label: "submit" },
-          { from: "network", to: "crm", label: "payload" }
-        ]
-      },
-      phases: [
-        {
-          at: "REPORT",
-          title: "Submission Failure",
-          note: "The website appeared to submit lead-generation forms successfully, but submitted information was not reaching the CRM.",
-          add: ["ui", "network"],
-          commit: "fix: initiate investigation into silent form failures",
-          stress: "ui",
-          stressMsg: "Silent Failure - UI success but no data"
-        },
-        {
-          at: "INVESTIGATION",
-          title: "Network Inspection",
-          note: "Used browser DevTools to inspect Network requests and traced the failed integration behavior.",
-          add: ["crm"],
-          commit: "test: trace payload lifecycle via DevTools",
-          stress: "network",
-          stressMsg: "Request Dropped"
-        },
-        {
-          at: "IDENTIFICATION",
-          title: "Validation Issue",
-          note: "Identified a HubSpot reCAPTCHA validation issue silently blocking the request at the integration layer.",
-          add: [],
-          commit: "debug: isolated reCAPTCHA token mismatch",
-          stress: "crm",
-          stressMsg: "reCAPTCHA Validation Error"
-        },
-        {
-          at: "RESOLUTION",
-          title: "Integration Corrected",
-          note: "Applied required integration changes, retested across multiple services, and validated that submissions reached the CRM.",
-          add: [],
-          commit: "fix: correct token payload and revalidate flow",
-          resolve: "crm",
-          fix: "Integration Verified"
-        }
-      ]
-    }
+    diagram: zylxyDiagram,
+    reconstruction: zylxyReconstruction
   },
   {
-    id: "learnersguru",
+    id: "mini-social",
     index: "SYS-02",
-    name: "LearnersGuru — Online Learning Platform",
-    year: "2023",
-    classification: "ONLINE LEARNING PLATFORM",
+    name: "Mini Social — Full-Stack Social Platform",
+    client: "3W Full-Stack Assessment",
+    year: "2026",
+    classification: "FULL-STACK ASSESSMENT · AUTHENTICATION · SOCIAL INTERACTIONS · API ARCHITECTURE",
     summary:
-      "A frontend learning platform interface enabling course navigation and user authentication.",
-    stack: ["HTML5", "CSS3", "JavaScript"],
-    metrics: [],
+      "A full-stack social application developed for the 3W Full-Stack Internship Assessment using React, Express and MongoDB.\n\nThe system implements credential-based authentication, protected social feeds, image-enabled posts, persistent likes, comments, one-level replies and server-resolved @mentions while maintaining a strict separation between real API behavior and the explicitly labelled local demo environment.",
+    stack: [
+      "React",
+      "Express.js",
+      "Node.js",
+      "MongoDB",
+      "Mongoose",
+      "JavaScript",
+      "JWT",
+      "bcrypt",
+      "REST APIs",
+      "Cloudinary",
+      "CSS",
+      "pnpm"
+    ],
+    metrics: [
+      { value: "2", label: "MongoDB Collections" },
+      { value: "6", label: "Verified Viewport Widths" }
+    ],
     highlights: [
-      "Designed core layouts and dynamic UI components",
-      "Enabled course navigation",
-      "Implemented login authentication and form validation"
-    ]
+      "Built end-to-end signup and login flows with bcrypt password hashing, JWT authentication and HTTP-only cookie sessions.",
+      "Designed protected social interactions including posts, image uploads, likes, comments, replies and ID-backed @mention autocomplete.",
+      "Enforced a two-collection MongoDB architecture using User and Post models with embedded social interaction data.",
+      "Implemented resilient real/demo execution boundaries so API failures never become false successful authentication states.",
+      "Added local image persistence with optional Cloudinary-backed production storage.",
+      "Verified authentication, validation, persistence and responsive behavior through targeted regression tests and browser testing."
+    ],
+    links: {
+      github: "https://github.com/kumarnallana/Mini-Social"
+    },
+    diagram: miniSocialDiagram,
+    reconstruction: miniSocialReconstruction
   },
   {
-    id: "student-faculty",
+    id: "redroot",
     index: "SYS-03",
-    name: "Student-Faculty Login Portal",
-    year: "2024",
-    classification: "AUTHENTICATION PORTAL",
+    name: "Redroot — Interactive Product Experience",
+    client: "Grinning Co Assessment",
+    year: "2026",
+    classification: "FRONTEND ASSESSMENT · IMMERSIVE PRODUCT EXPERIENCE · MOTION SYSTEM · E2E TESTING",
     summary:
-      "A role-based portal managing student and faculty authentication flows.",
-    stack: ["HTML5", "CSS3", "JavaScript"],
-    metrics: [],
+      "An immersive product-focused digital experience developed for the Grinning Co technical assessment using Next.js, React, and TypeScript.\n\nThe application combines responsive product storytelling, interactive product and ingredient experiences, canvas-driven visuals, scroll-based motion, pricing interactions, modal flows, lightweight session management, and automated end-to-end validation within a modular Next.js App Router architecture.",
+    stack: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Tailwind CSS",
+      "Motion",
+      "Playwright",
+      "React Context",
+      "Canvas",
+      "Notion",
+      "Lucide React",
+      "Radix UI",
+      "Flow"
+    ],
+    expandedStack: {
+      "Core Framework & Language": ["Next.js 14.2.15", "React 18", "TypeScript 5"],
+      "Styling & Design System": ["Tailwind CSS 3.4.1", "PostCSS 8", "clsx", "tailwind-merge"],
+      "UI & Component Primitives": ["Lucide React", "Radix UI Slot"],
+      "Animation & Interactive Graphics": ["Motion 13.1", "HTML5 Canvas API"],
+      "State Management": ["React Context API"],
+      "Testing & Code Quality": ["Playwright", "ESLint", "eslint-config-next"],
+      "Workflow & Product Tools": ["Flow", "Notion"]
+    },
+    metrics: [
+      { value: "12", label: "Modular Experience Sections" },
+      { value: "3", label: "Playwright E2E Suites" }
+    ],
     highlights: [
-      "Role-based authentication portal",
-      "Real-time form validation",
-      "Faculty record management",
-      "Browser localStorage used for session persistence"
-    ]
+      "Built a modular Next.js App Router experience using reusable React and TypeScript components across product-focused sections.",
+      "Developed interactive visual experiences using Motion, HTML5 Canvas, and supporting animation tooling for scroll-driven reveals, transitions, gestures, and micro-interactions.",
+      "Created interactive product showcase, ingredient, pricing, lead-generation, video, and modal experiences with responsive behavior across device sizes.",
+      "Implemented lightweight application state using React Context for demo authentication and session-related UI flows.",
+      "Structured the application around reusable components, data modules, hooks, utilities, and shared UI primitives.",
+      "Added Playwright end-to-end testing for navigation, interaction matrices, ingredient behavior, modal flows, contact interactions, and responsive user journeys.",
+      "Used supporting product-development and workflow tools including Flow, and Notion as part of the project workflow."
+    ],
+    links: {
+      github: "https://github.com/kumarnallana/Grinning-Co-Internshala-Assessment"
+    },
+    diagram: redrootDiagram,
+    reconstruction: redrootReconstruction
   }
 ];
