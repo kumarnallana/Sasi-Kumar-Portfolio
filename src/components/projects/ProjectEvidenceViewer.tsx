@@ -22,6 +22,7 @@ export default function ProjectEvidenceViewer({
   const [activeTab, setActiveTab] = useState<Tab>("PRODUCT");
   const contentRef = useRef<HTMLDivElement>(null);
   const tabListRef = useRef<HTMLDivElement>(null);
+  const archAnimated = useRef(false);
 
   // Generate unique IDs for accessibility
   const baseId = `evidence-${projectIndex}`;
@@ -102,15 +103,25 @@ export default function ProjectEvidenceViewer({
       { opacity: 1, y: 0, duration: 0.35, ease: "power2.out", stagger: 0.05 }
     );
 
-    // Architecture specific animation (connector draws ~300-500ms)
+    // Architecture specific animation
     if (activeTab === "ARCHITECTURE") {
       const nodes = el.querySelectorAll(".arch-node");
       const connectors = el.querySelectorAll(".arch-connector");
       
+      if (archAnimated.current) {
+        gsap.set(nodes, { opacity: 1 });
+        gsap.set(connectors, { opacity: 1, scaleX: 1, scaleY: 1 });
+        return;
+      }
+
       gsap.set(nodes, { opacity: 0 });
       gsap.set(connectors, { opacity: 0 });
 
-      const tl = gsap.timeline();
+      const tl = gsap.timeline({
+        onComplete: () => {
+          archAnimated.current = true;
+        }
+      });
       
       nodes.forEach((node, i) => {
         // Node appears
@@ -173,14 +184,14 @@ export default function ProjectEvidenceViewer({
         })}
       </div>
 
-      {/* Main Visual Area with stable min-height */}
+      {/* Main Visual Area with content-aware sizing */}
       <div 
         ref={contentRef} 
         id={panelIds[activeTab]}
         role="tabpanel"
         aria-labelledby={tabIds[activeTab]}
         tabIndex={0}
-        className="relative min-h-[350px] md:min-h-[450px] w-full p-4 md:p-6 outline-none focus-visible:ring-1 focus-visible:ring-cyan"
+        className="relative min-h-[250px] w-full p-4 md:p-6 outline-none focus-visible:ring-1 focus-visible:ring-cyan"
       >
         
         {/* PRODUCT VIEW */}
@@ -192,7 +203,7 @@ export default function ProjectEvidenceViewer({
                   src={product.image}
                   alt={product.alt}
                   fill
-                  className="object-cover object-top opacity-90 transition-transform duration-1000 hover:scale-105"
+                  className="object-cover object-top opacity-90 transition-transform duration-300 hover:scale-[1.015]"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
               ) : (
