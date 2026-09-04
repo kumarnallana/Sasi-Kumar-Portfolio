@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { identity } from "@/data/portfolio";
-import SoundToggle from "@/components/SoundToggle";
+import { identity } from "@/data/profile/profile.data";
+import SoundToggle from "@/core/audio/SoundToggle";
 
 function Corner({ className }: { className: string }) {
   return (

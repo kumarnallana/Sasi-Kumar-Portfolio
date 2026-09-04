@@ -2,11 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { stackStory } from "@/data/portfolio";
+import { stackStory } from "@/data/stack-story/stack-story.data";
 import { sound } from "@/lib/sound";
-import type { GlobeControls, HoverNode } from "@/components/three/StackGlobe";
+import type { GlobeControls, HoverNode } from "@/modules/stack-story/three/StackGlobe";
 
-const StackGlobe = dynamic(() => import("@/components/three/StackGlobe"), {
+const StackGlobe = dynamic(() => import("@/modules/stack-story/three/StackGlobe"), {
   ssr: false,
 });
 

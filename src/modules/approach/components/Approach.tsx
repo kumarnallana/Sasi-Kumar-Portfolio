@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import SectionHeader from "@/components/SectionHeader";
+import SectionHeader from "@/shared/components/SectionHeader";
 
 gsap.registerPlugin(ScrollTrigger);
 

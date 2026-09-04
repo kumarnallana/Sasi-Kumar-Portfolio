@@ -3,10 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { projects, type Project } from "@/data/portfolio";
-import BlueprintDiagram from "@/components/BlueprintDiagram";
-import Reconstruction from "@/components/Reconstruction";
-import SectionHeader from "@/components/SectionHeader";
+import { projects, type Project } from "@/data/projects/projects.data";
+import BlueprintDiagram from "@/modules/projects/components/BlueprintDiagram";
+import Reconstruction from "@/modules/projects/components/Reconstruction";
+import SectionHeader from "@/shared/components/SectionHeader";
 import { sound } from "@/lib/sound";
 
 gsap.registerPlugin(ScrollTrigger);

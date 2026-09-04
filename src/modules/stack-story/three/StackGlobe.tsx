@@ -4,7 +4,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { useMemo, useRef, Suspense } from "react";
 import * as THREE from "three";
-import type { StackLayer } from "@/data/portfolio";
+import type { StackLayer } from "@/data/stack-story/stack-layers.data";
 
 const R = 3;
 const LAT_MAX = (60 * Math.PI) / 180;

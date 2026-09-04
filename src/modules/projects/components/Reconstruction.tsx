@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { gsap } from "gsap";
-import type { DiagramNode, Reconstruction as Recon } from "@/data/portfolio";
+import type { DiagramNode, Reconstruction as Recon } from "@/data/projects/projects.data";
 import { sound } from "@/lib/sound";
 
 // hex (not CSS vars) so GSAP can tween border/glow on the stress beats

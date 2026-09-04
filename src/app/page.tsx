@@ -1,18 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import SmoothScroll from "@/components/SmoothScroll";
-import BootSequence from "@/components/BootSequence";
-import HudFrame from "@/components/HudFrame";
-import DepthNav from "@/components/DepthNav";
-import ScrollSnap from "@/components/ScrollSnap";
-import Hero from "@/components/sections/Hero";
-import Operations from "@/components/sections/Operations";
-import Approach from "@/components/sections/Approach";
-import Projects from "@/components/sections/Projects";
-import OpenSource from "@/components/sections/OpenSource";
-import About from "@/components/sections/About";
-import Contact from "@/components/sections/Contact";
+import SmoothScroll from "@/core/scroll/SmoothScroll";
+import BootSequence from "@/core/shell/BootSequence";
+import HudFrame from "@/core/shell/HudFrame";
+import DepthNav from "@/core/navigation/DepthNav";
+import ScrollSnap from "@/core/navigation/ScrollSnap";
+import Hero from "@/modules/hero/components/Hero";
+import Operations from "@/modules/operations/components/Operations";
+import Approach from "@/modules/approach/components/Approach";
+import Projects from "@/modules/projects/components/Projects";
+import OpenSource from "@/modules/open-source/components/OpenSource";
+import About from "@/modules/about/components/About";
+import Contact from "@/modules/contact/components/Contact";
 
 export default function Home() {
   const [booted, setBooted] = useState(false);

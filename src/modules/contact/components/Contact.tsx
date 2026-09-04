@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { identity } from "@/data/portfolio";
-import SectionHeader from "@/components/SectionHeader";
-import CatField, { type CatMood } from "@/components/CatField";
-import MissionDebrief from "@/components/MissionDebrief";
+import { identity } from "@/data/profile/profile.data";
+import SectionHeader from "@/shared/components/SectionHeader";
+import CatField, { type CatMood } from "@/modules/contact/components/CatField";
+import MissionDebrief from "@/modules/contact/components/MissionDebrief";
 import { sendCat, type CatAct } from "@/lib/catSignals";
 import { sound } from "@/lib/sound";
 

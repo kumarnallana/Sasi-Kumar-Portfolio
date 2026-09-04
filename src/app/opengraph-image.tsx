@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { identity } from "@/data/portfolio";
+import { identity } from "@/data/profile/profile.data";
 
 export const alt = `${identity.name} - ${identity.role}`;
 export const size = { width: 1200, height: 630 };

@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { identity } from "@/data/portfolio";
+import { identity } from "@/data/profile/profile.data";
 import {
   SITE_URL,
   SITE_NAME,

@@ -3,14 +3,16 @@
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { gsap } from "gsap";
-import { identity, systemStats, stackStory } from "@/data/portfolio";
-import Typewriter from "@/components/Typewriter";
+import { systemStats } from "@/data/hero/system-stats.data";
+import { stackStory } from "@/data/stack-story/stack-story.data";
+import { identity } from "@/data/profile/profile.data";
+import Typewriter from "@/shared/components/Typewriter";
 
 const HeroStackGlobe = dynamic(
-  () => import("@/components/three/HeroStackGlobe"),
+  () => import("@/modules/stack-story/three/HeroStackGlobe"),
   { ssr: false },
 );
-const StackStory = dynamic(() => import("@/components/StackStory"), {
+const StackStory = dynamic(() => import("@/modules/stack-story/components/StackStory"), {
   ssr: false,
 });
 

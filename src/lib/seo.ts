@@ -1,4 +1,4 @@
-import { identity } from "@/data/portfolio";
+import { identity } from "@/data/profile/profile.data";
 
 // Canonical origin. Set NEXT_PUBLIC_SITE_URL in the deploy env (Vercel etc.).
 export const SITE_URL = (

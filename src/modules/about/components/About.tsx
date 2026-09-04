@@ -1,12 +1,10 @@
 "use client";
 
-import SectionHeader from "@/components/SectionHeader";
-import {
-  achievements,
-  experience,
-  identity,
-  skillGroups,
-} from "@/data/portfolio";
+import SectionHeader from "@/shared/components/SectionHeader";
+import { achievements } from "@/data/profile/achievements.data";
+import { experience } from "@/data/profile/experience.data";
+import { skillGroups } from "@/data/profile/skills.data";
+import { identity } from "@/data/profile/profile.data";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef } from "react";

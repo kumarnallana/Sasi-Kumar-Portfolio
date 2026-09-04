@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { github } from "@/data/portfolio";
-import SectionHeader from "@/components/SectionHeader";
+import { github } from "@/data/github/github-display.data";
+import SectionHeader from "@/shared/components/SectionHeader";
 import { sound } from "@/lib/sound";
 import { useQuery } from "@tanstack/react-query";
 

@@ -7,7 +7,7 @@ import { NAV_SECTIONS } from "@/lib/sections";
 import { scrollToSection, getLenis } from "@/lib/lenis";
 import { sendCat } from "@/lib/catSignals";
 import { sound } from "@/lib/sound";
-import { identity } from "@/data/portfolio";
+import { identity } from "@/data/profile/profile.data";
 
 gsap.registerPlugin(ScrollTrigger);
 
