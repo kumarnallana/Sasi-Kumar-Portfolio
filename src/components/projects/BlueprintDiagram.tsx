@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import type { DiagramNode, DiagramEdge } from "@/data/projects/projects.data";
+import type { DiagramNode, DiagramEdge } from "@/types/projects/diagram.types";
 import { sound } from "@/lib/sound";
 
 gsap.registerPlugin(ScrollTrigger);
