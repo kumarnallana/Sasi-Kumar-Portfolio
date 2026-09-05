@@ -5,6 +5,7 @@ import Image from "next/image";
 import { sound } from "@/lib/sound";
 import { ProjectProduct, ArchitectureStep, ProofItem } from "@/types/projects/project.types";
 import { gsap } from "gsap";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 type Tab = "PRODUCT" | "ARCHITECTURE" | "PROOF";
 
@@ -23,6 +24,7 @@ export default function ProjectEvidenceViewer({
   const contentRef = useRef<HTMLDivElement>(null);
   const tabListRef = useRef<HTMLDivElement>(null);
   const archAnimated = useRef(false);
+  const isMobile = useIsMobile(false);
 
   // Generate unique IDs for accessibility
   const baseId = `evidence-${projectIndex}`;
@@ -77,8 +79,9 @@ export default function ProjectEvidenceViewer({
     }
   };
 
-  // Animate content on tab change
+  // Animate content on tab change (only matters on desktop)
   useEffect(() => {
+    if (isMobile) return;
     const el = contentRef.current;
     if (!el) return;
 
@@ -130,19 +133,87 @@ export default function ProjectEvidenceViewer({
         // Connector draws (if not the last node)
         if (i < connectors.length) {
           const connector = connectors[i] as HTMLElement;
-          // Determine if it's horizontal (desktop) or vertical (mobile)
-          const isDesktop = window.innerWidth >= 768;
-          
+          // Only horizontal (desktop) since mobile won't render architecture
           tl.fromTo(
             connector,
-            { opacity: 1, scaleX: isDesktop ? 0 : 1, scaleY: isDesktop ? 1 : 0, transformOrigin: isDesktop ? "left center" : "top center" },
+            { opacity: 1, scaleX: 0, scaleY: 1, transformOrigin: "left center" },
             { scaleX: 1, scaleY: 1, duration: 0.35, ease: "power2.inOut" }
           );
         }
       });
     }
-  }, [activeTab]);
+  }, [activeTab, isMobile]);
 
+  // Product View Extracted for reuse
+  const renderProduct = () => {
+    if (!product) return null;
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center space-y-4">
+        <div className="relative w-full aspect-[16/10] md:aspect-video overflow-hidden rounded border border-line-faint bg-ink-950 flex flex-col items-center justify-center">
+          {product.image ? (
+            <Image
+              src={product.image}
+              alt={product.alt}
+              fill
+              className="object-cover object-top opacity-90 transition-transform duration-300 hover:scale-[1.015]"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center text-center p-6 text-paper-dim/60">
+              <span className="font-display text-xl font-semibold text-paper mb-2">{product.alt}</span>
+              <span className="tech-label text-[0.65rem] tracking-widest text-cyan/70">
+                {product.caption || "PRODUCT PREVIEW"}
+              </span>
+            </div>
+          )}
+        </div>
+        {product.caption && product.image && (
+          <div className="tech-label text-center text-[0.65rem] text-cyan">
+            {product.caption}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Proof View Extracted for reuse
+  const renderProof = () => {
+    if (!proof) return null;
+    return (
+      <div className="grid h-full w-full grid-cols-1 sm:grid-cols-2 gap-4 auto-rows-max items-start">
+        {proof.map((item, i) => (
+          <div key={i} className="flex flex-col border border-line-faint bg-ink-900/50 p-4 transition-colors hover:border-cyan/50">
+            <div className="flex items-baseline gap-2 mb-2">
+              <span className="font-display text-2xl font-semibold text-cyan">{item.value}</span>
+              <span className="tech-label text-[0.6rem] text-paper-dim/70 uppercase">{item.label}</span>
+            </div>
+            <p className="text-xs text-paper-dim leading-relaxed">{item.description}</p>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  if (isMobile) {
+    return (
+      <div className="flex w-full flex-col gap-6">
+        {/* Mobile Linear View: Product then Proof */}
+        {product && (
+          <div className="border border-line-faint bg-ink-900/40 p-4">
+            {renderProduct()}
+          </div>
+        )}
+        {proof && (
+          <div className="border border-line-faint bg-ink-900/40 p-4">
+            <div className="tech-label mb-4 text-cyan text-[0.65rem]">VERIFIED EVIDENCE</div>
+            {renderProof()}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Desktop Tabbed View
   return (
     <div className="flex w-full flex-col border border-line-faint bg-ink-900/40">
       
@@ -195,33 +266,7 @@ export default function ProjectEvidenceViewer({
       >
         
         {/* PRODUCT VIEW */}
-        {activeTab === "PRODUCT" && product && (
-          <div className="flex h-full w-full flex-col items-center justify-center space-y-4">
-            <div className="relative w-full aspect-[16/10] md:aspect-video overflow-hidden rounded border border-line-faint bg-ink-950 flex flex-col items-center justify-center">
-              {product.image ? (
-                <Image
-                  src={product.image}
-                  alt={product.alt}
-                  fill
-                  className="object-cover object-top opacity-90 transition-transform duration-300 hover:scale-[1.015]"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-              ) : (
-                <div className="flex flex-col items-center justify-center text-center p-6 text-paper-dim/60">
-                  <span className="font-display text-xl font-semibold text-paper mb-2">{product.alt}</span>
-                  <span className="tech-label text-[0.65rem] tracking-widest text-cyan/70">
-                    {product.caption || "PRODUCT PREVIEW"}
-                  </span>
-                </div>
-              )}
-            </div>
-            {product.caption && product.image && (
-              <div className="tech-label text-center text-[0.65rem] text-cyan">
-                {product.caption}
-              </div>
-            )}
-          </div>
-        )}
+        {activeTab === "PRODUCT" && renderProduct()}
 
         {/* ARCHITECTURE VIEW */}
         {activeTab === "ARCHITECTURE" && architecture && (
@@ -255,19 +300,7 @@ export default function ProjectEvidenceViewer({
         )}
 
         {/* PROOF VIEW */}
-        {activeTab === "PROOF" && proof && (
-          <div className="grid h-full w-full grid-cols-1 sm:grid-cols-2 gap-4 auto-rows-max items-start">
-            {proof.map((item, i) => (
-              <div key={i} className="flex flex-col border border-line-faint bg-ink-900/50 p-4 transition-colors hover:border-cyan/50">
-                <div className="flex items-baseline gap-2 mb-2">
-                  <span className="font-display text-2xl font-semibold text-cyan">{item.value}</span>
-                  <span className="tech-label text-[0.6rem] text-paper-dim/70 uppercase">{item.label}</span>
-                </div>
-                <p className="text-xs text-paper-dim leading-relaxed">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        )}
+        {activeTab === "PROOF" && renderProof()}
         
       </div>
     </div>

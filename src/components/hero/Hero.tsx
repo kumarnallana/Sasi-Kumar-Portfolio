@@ -226,4 +226,3 @@ export default function Hero({ started }: { started: boolean }) {
     </section>
   );
 }
-}

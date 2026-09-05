@@ -3,21 +3,24 @@
 import SectionHeader from "@/components/shared/SectionHeader";
 import { achievements } from "@/data/profile/achievements.data";
 import { experience } from "@/data/profile/experience.data";
-import { skillGroups } from "@/data/profile/skills.data";
+import CapabilityMatrix from "@/components/shared/CapabilityMatrix";
 import { identity } from "@/data/profile/profile.data";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function About() {
   const ref = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile(false);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || isMobile) return; // Skip GSAP animations entirely on mobile to prevent overlapping DOM
+    
     const ctx = gsap.context(() => {
       gsap.utils.toArray<HTMLElement>(".about-reveal").forEach((node) => {
         gsap.from(node, {
@@ -41,13 +44,13 @@ export default function About() {
       });
     }, el);
     return () => ctx.revert();
-  }, []);
+  }, [isMobile]);
 
   return (
     <section
       id="profile"
       ref={ref}
-      className="relative mx-auto max-w-6xl px-6 py-24 md:px-10"
+      className="relative mx-auto max-w-6xl px-6 py-12 md:py-24 md:px-10"
     >
       {/* Anchor alias to ensure backward compatibility with lingering #architect URL hashes */}
       <span id="architect" className="sr-only pointer-events-none absolute -top-24" aria-hidden="true" />
@@ -62,8 +65,12 @@ export default function About() {
         {/* Portrait & Core Identity */}
         <div className="portrait-container about-reveal relative h-fit border border-line-faint bg-ink-800/40 p-1">
           {/* Decorative Blueprint frame */}
-          <div className="portrait-line absolute left-0 top-0 h-px w-full bg-cyan/50" />
-          <div className="portrait-line absolute bottom-0 left-0 h-px w-full bg-cyan/50" />
+          {!isMobile && (
+            <>
+              <div className="portrait-line absolute left-0 top-0 h-px w-full bg-cyan/50" />
+              <div className="portrait-line absolute bottom-0 left-0 h-px w-full bg-cyan/50" />
+            </>
+          )}
           
           <div className="relative aspect-[3/4] w-full overflow-hidden bg-ink-900">
             <Image
@@ -102,9 +109,9 @@ export default function About() {
         </div>
 
         {/* Narrative & Experience */}
-        <div className="flex flex-col gap-12">
+        <div className="flex flex-col gap-12 relative">
           
-          <div className="about-reveal">
+          <div className="about-reveal relative static-mobile">
             <div className="tech-label mb-5 text-cyan">PROFESSIONAL NARRATIVE</div>
             <p className="text-base leading-relaxed text-paper-dim md:text-lg">
               I build responsive and maintainable web applications using modern frontend and backend technologies, with practical experience working on production-oriented Next.js and React systems.
@@ -117,7 +124,7 @@ export default function About() {
             </p>
           </div>
 
-          <div className="about-reveal">
+          <div className="about-reveal relative static-mobile">
             <div className="tech-label mb-5">SERVICE HISTORY · LOG</div>
             <ol className="relative space-y-8 border-l border-line-faint pl-6">
               {experience.map((e) => (
@@ -148,32 +155,12 @@ export default function About() {
         </div>
       </div>
 
-      {/* skills as subsystems */}
-      <div className="about-reveal mt-16">
-        <div className="tech-label mb-5">SUBSYSTEMS · CAPABILITY MATRIX</div>
-        <div className="grid gap-px border border-line-faint bg-line-faint sm:grid-cols-2 lg:grid-cols-4">
-          {skillGroups.map((g) => (
-            <div key={g.group} className="bg-ink-900 p-4">
-              <div className="mb-3 flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_6px_var(--cyan)]" />
-                <span className="font-display text-sm font-semibold text-paper">
-                  {g.group}
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {g.items.map((it) => (
-                  <span
-                    key={it}
-                    className="border border-line-faint px-2 py-0.5 text-xs text-paper-dim"
-                  >
-                    {it}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
+      {/* skills as subsystems - Rendered only on Desktop */}
+      {!isMobile && (
+        <div className="about-reveal mt-16">
+          <CapabilityMatrix />
         </div>
-      </div>
+      )}
       
       {/* Education / Foundation */}
       <div className="about-reveal mt-16 border border-line-faint bg-ink-900/50 p-6">
