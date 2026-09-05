@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import Image from "next/image";
 import { sound } from "@/lib/sound";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface ArchitectureStage {
   label: string;
@@ -17,6 +18,7 @@ interface ProjectVisualProps {
 
 export default function ProjectVisual({ name, image, architectureFlow }: ProjectVisualProps) {
   const [activeTab, setActiveTab] = useState<"PREVIEW" | "ARCHITECTURE">("PREVIEW");
+  const isMobile = useIsMobile();
   
   // Ref for tablist to manage keyboard navigation
   const tablistRef = useRef<HTMLDivElement>(null);
@@ -72,13 +74,14 @@ export default function ProjectVisual({ name, image, architectureFlow }: Project
         </div>
 
         {/* Desktop-only Tablist */}
-        <div 
-          ref={tablistRef}
-          role="tablist" 
-          aria-label="Project Views"
-          className="hidden w-full h-full md:flex"
-        >
-          <button
+        {!isMobile && (
+          <div 
+            ref={tablistRef}
+            role="tablist" 
+            aria-label="Project Views"
+            className="hidden w-full h-full md:flex"
+          >
+            <button
             role="tab"
             aria-selected={activeTab === "PREVIEW"}
             aria-controls="panel-preview"
@@ -119,9 +122,10 @@ export default function ProjectVisual({ name, image, architectureFlow }: Project
                 : "text-paper-dim/50 border-b-2 border-transparent hover:text-paper-dim hover:bg-ink-900/20"
             }`}
           >
-            ARCHITECTURE
-          </button>
-        </div>
+              ARCHITECTURE
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Common Viewport Shell */}
@@ -158,14 +162,15 @@ export default function ProjectVisual({ name, image, architectureFlow }: Project
         </div>
 
         {/* ARCHITECTURE PANEL */}
-        <div
-          id="panel-architecture"
-          role="tabpanel"
-          aria-labelledby="tab-architecture"
-          // Always hidden on mobile via CSS, toggled by state on desktop
-          className={`absolute inset-0 w-full h-full hidden md:${activeTab === "ARCHITECTURE" ? "flex" : "hidden"} flex-col justify-center px-8 py-6`}
-        >
-          <div className="pointer-events-none absolute inset-0 blueprint-grid opacity-10" />
+        {!isMobile && (
+          <div
+            id="panel-architecture"
+            role="tabpanel"
+            aria-labelledby="tab-architecture"
+            // Always hidden on mobile via CSS, toggled by state on desktop
+            className={`absolute inset-0 w-full h-full hidden md:${activeTab === "ARCHITECTURE" ? "flex" : "hidden"} flex-col justify-center px-8 py-6`}
+          >
+            <div className="pointer-events-none absolute inset-0 blueprint-grid opacity-10" />
           
           <div className="relative flex flex-col justify-between h-full w-full max-w-sm mx-auto">
             {architectureFlow?.map((stage, index) => (
@@ -195,9 +200,10 @@ export default function ProjectVisual({ name, image, architectureFlow }: Project
               <div className="m-auto text-center font-mono text-xs text-line-dim">
                 Architecture flow not defined
               </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
       </div>
     </div>
