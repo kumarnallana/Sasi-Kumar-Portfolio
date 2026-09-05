@@ -143,7 +143,7 @@ export default function Projects() {
   return (
     <section
       id="systems"
-      className="relative mx-auto max-w-[1400px] px-6 py-24 md:px-10"
+      className="relative mx-auto max-w-6xl px-6 py-24 md:px-10"
     >
       <SectionHeader
         index="02"
