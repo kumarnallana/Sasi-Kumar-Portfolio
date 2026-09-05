@@ -106,15 +106,26 @@ export default function ProjectArchitecture({
   }
 
   const renderLinear = () => (
-    <div className="relative w-full h-full grid grid-cols-1 grid-rows-3 gap-y-12 place-items-center max-w-4xl mx-auto py-4">
+    <div className="relative w-full h-full grid grid-cols-1 md:grid-cols-3 grid-rows-3 md:grid-rows-1 gap-y-12 place-items-center max-w-4xl mx-auto py-4">
+      {/* Mobile vertical SVG */}
       <svg
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
-        className="absolute inset-0 w-full h-full pointer-events-none z-0"
+        className="absolute inset-0 w-full h-full pointer-events-none z-0 md:hidden"
       >
         <ArchPath d="M 50 16.6 L 50 50" assembled={assembled} delay={200} />
         <ArchPath d="M 50 50 L 50 83.3" assembled={assembled} delay={600} />
       </svg>
+      {/* Desktop horizontal SVG */}
+      <svg
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        className="absolute inset-0 w-full h-full pointer-events-none z-0 hidden md:block"
+      >
+        <ArchPath d="M 16.6 50 L 50 50" assembled={assembled} delay={200} />
+        <ArchPath d="M 50 50 L 83.3 50" assembled={assembled} delay={600} />
+      </svg>
+      
       <div className="flex justify-center items-center w-full"><ArchNode stage={architectureFlow[0]} assembled={assembled} delay={0} /></div>
       <div className="flex justify-center items-center w-full"><ArchNode stage={architectureFlow[1]} assembled={assembled} delay={400} /></div>
       <div className="flex justify-center items-center w-full"><ArchNode stage={architectureFlow[2]} assembled={assembled} delay={800} /></div>
@@ -173,25 +184,30 @@ export default function ProjectArchitecture({
       <div className="flex justify-center">
         <button
           onClick={toggleExpand}
+          aria-expanded={isExpanded}
+          aria-controls="architecture-drawer"
           onMouseEnter={() => sound.play("hover")}
-          className="font-mono text-[0.6rem] uppercase tracking-[0.15em] text-paper-dim/60 transition-colors hover:text-cyan focus:outline-none focus-visible:text-cyan"
+          className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.15em] text-cyan transition-colors hover:text-cyan-bright focus:outline-none focus-visible:text-cyan-bright border border-cyan/30 px-6 py-2 rounded-sm bg-ink-900/50"
         >
           {isExpanded ? "[ HIDE SYSTEM ARCHITECTURE ↑ ]" : "[ VIEW SYSTEM ARCHITECTURE ↓ ]"}
         </button>
       </div>
 
       <div
-        className={`w-full overflow-hidden transition-[max-height,opacity,margin] duration-500 ease-in-out ${
-          isExpanded ? "max-h-[800px] opacity-100 mt-8" : "max-h-0 opacity-0 mt-0"
+        id="architecture-drawer"
+        className={`w-full grid transition-[grid-template-rows,opacity,margin] duration-500 ease-in-out ${
+          isExpanded ? "grid-rows-[1fr] opacity-100 mt-8" : "grid-rows-[0fr] opacity-0 mt-0"
         }`}
       >
-        <div className="relative w-full border border-line-faint bg-ink-900/60 p-8 min-h-[320px] lg:min-h-[400px] flex items-center justify-center">
-          <div className="absolute inset-0 pointer-events-none blueprint-grid opacity-10" />
-          
-          <div className="relative w-full h-full">
-            {architectureVariant === "linear" && renderLinear()}
-            {architectureVariant === "branch" && renderBranch()}
-            {architectureVariant === "split-converge" && renderSplitConverge()}
+        <div className="overflow-hidden">
+          <div className="relative w-full border border-line-faint bg-ink-900/60 p-8 min-h-[320px] lg:min-h-[400px] flex items-center justify-center">
+            <div className="absolute inset-0 pointer-events-none blueprint-grid opacity-10" />
+            
+            <div className="relative w-full h-full">
+              {architectureVariant === "linear" && renderLinear()}
+              {architectureVariant === "branch" && renderBranch()}
+              {architectureVariant === "split-converge" && renderSplitConverge()}
+            </div>
           </div>
         </div>
       </div>
