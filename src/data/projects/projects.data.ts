@@ -1,7 +1,4 @@
 import type { Project } from "@/types/projects/project.types";
-import { zylxyDiagram, miniSocialDiagram, redrootDiagram } from "./project-diagrams.data";
-import { zylxyReconstruction, miniSocialReconstruction, redrootReconstruction } from "./project-reconstructions.data";
-
 export const projects: Project[] = [
   {
     id: "zylxy",
@@ -35,8 +32,8 @@ export const projects: Project[] = [
     links: {
       live: "https://zylxytech.com/"
     },
-    diagram: zylxyDiagram,
-    reconstruction: zylxyReconstruction
+    diagram: undefined,
+    reconstruction: undefined
   },
   {
     id: "mini-social",
@@ -76,8 +73,8 @@ export const projects: Project[] = [
     links: {
       github: "https://github.com/kumarnallana/Mini-Social"
     },
-    diagram: miniSocialDiagram,
-    reconstruction: miniSocialReconstruction
+    diagram: undefined,
+    reconstruction: undefined
   },
   {
     id: "redroot",
@@ -127,7 +124,7 @@ export const projects: Project[] = [
     links: {
       github: "https://github.com/kumarnallana/Grinning-Co-Internshala-Assessment"
     },
-    diagram: redrootDiagram,
-    reconstruction: redrootReconstruction
+    diagram: undefined,
+    reconstruction: undefined
   }
 ];

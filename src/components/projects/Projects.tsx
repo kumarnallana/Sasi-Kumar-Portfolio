@@ -11,11 +11,7 @@ import { sound } from "@/lib/sound";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const STATUS_COLOR: Record<Status, string> = {
-  OFFLINE: "var(--line-dim)",
-  BOOTING: "var(--amber)",
-  ONLINE: "var(--cyan)",
-};
+
 
 function ProjectBlock({ project, i }: { project: Project; i: number }) {
   const ref = useRef<HTMLDivElement>(null);
