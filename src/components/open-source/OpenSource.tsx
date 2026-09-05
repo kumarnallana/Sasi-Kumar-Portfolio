@@ -16,33 +16,26 @@ export default function OpenSource() {
   // Single typed query via integration hook
   const { data, isLoading, isError, error } = useGithubPortfolio();
 
-  // Animated stat counters
-  const totalStars = (data?.pinnedRepositories || []).reduce((acc, r) => acc + (r.stargazerCount ?? 0), 0) + 
-                     (data?.recentRepositories || []).reduce((acc, r) => acc + (r.stargazerCount ?? 0), 0); // Approximation if we don't have global star count
-  
-  // Using publicReposCount from data
+  const totalStars = data?.totalStars ?? 0;
   const publicRepos = data?.publicReposCount ?? 0;
-  const followers = data?.followersCount ?? 0;
 
   const starElRef = useRef<HTMLSpanElement>(null);
   const prevStarsRef = useRef(0);
 
   useEffect(() => {
-    // We don't have an exact total star count in the new API response without a complex query, 
-    // so we'll animate the followers count instead as a meaningful metric of reach.
-    if (followers > 0 && starElRef.current) {
+    if (totalStars > 0 && starElRef.current) {
       const obj = { v: prevStarsRef.current };
       gsap.to(obj, {
-        v: followers,
+        v: totalStars,
         duration: 1.4,
         ease: "power2.out",
         onUpdate: () => {
           if (starElRef.current) starElRef.current.textContent = String(Math.round(obj.v));
         },
       });
-      prevStarsRef.current = followers;
+      prevStarsRef.current = totalStars;
     }
-  }, [followers]);
+  }, [totalStars]);
 
   useEffect(() => {
     const el = ref.current;
@@ -76,9 +69,13 @@ export default function OpenSource() {
       <div className="mb-10 grid grid-cols-3 gap-px border border-line-faint bg-line-faint">
         <div className="os-card bg-ink-900 px-5 py-5">
           <div className="font-display text-3xl font-semibold text-amber glow-amber">
-            <span ref={starElRef} className="star-count">0</span>
+            {isLoading ? (
+              <span className="animate-pulse">---</span>
+            ) : (
+              <span ref={starElRef} className="star-count">0</span>
+            )}
           </div>
-          <div className="tech-label mt-1">FOLLOWERS</div>
+          <div className="tech-label mt-1">TOTAL STARS</div>
         </div>
         <div className="os-card bg-ink-900 px-5 py-5">
           <div className="font-display text-3xl font-semibold text-cyan glow-cyan">

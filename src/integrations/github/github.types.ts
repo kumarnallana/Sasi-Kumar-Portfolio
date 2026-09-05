@@ -14,7 +14,7 @@ export type GitHubRepository = {
 
 export type GitHubPortfolioData = {
   publicReposCount: number;
-  followersCount: number;
+  totalStars: number;
   totalCommitContributions: number;
   totalPullRequestContributions: number;
   pinnedRepositories: GitHubRepository[];

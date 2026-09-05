@@ -13,7 +13,7 @@ export async function getGitHubPortfolioData(): Promise<GitHubPortfolioData> {
     console.warn("GITHUB_TOKEN is not defined in environment variables. Returning empty fallback data.");
     return {
       publicReposCount: 0,
-      followersCount: 0,
+      totalStars: 0,
       totalCommitContributions: 0,
       totalPullRequestContributions: 0,
       pinnedRepositories: [],

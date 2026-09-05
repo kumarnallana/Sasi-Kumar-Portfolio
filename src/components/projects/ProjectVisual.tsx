@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import { sound } from "@/lib/sound";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -17,22 +17,23 @@ interface ProjectVisualProps {
   architectureFlow?: ArchitectureStage[];
 }
 
-// Each stage produces: node + (connector before it if index > 0)
-// Item indices for stagger:
-//   node 0        → itemIndex 0  → delay 0ms
-//   connector 0→1 → itemIndex 1  → delay 120ms
-//   node 1        → itemIndex 2  → delay 220ms
-//   connector 1→2 → itemIndex 3  → delay 340ms
-//   node 2        → itemIndex 4  → delay 440ms
-//   connector 2→3 → itemIndex 5  → delay 560ms
-//   node 3        → itemIndex 6  → delay 660ms
-// Animation duration 150ms ⇒ total ≈ 810ms ✓
-const STAGGER_MS = 120;
+// Stagger timing for 3 stages:
+//   node 0:        0ms
+//   connector 0→1: 110ms
+//   node 1:        200ms
+//   connector 1→2: 310ms
+//   node 2:        400ms
+// Animation duration ~150ms → total ≈ 550ms ✓
+const NODE_STAGGER = 200;      // ms between nodes
+const CONNECTOR_OFFSET = 110;  // ms after previous node
 
-function getItemDelay(stageIndex: number, isConnector: boolean) {
-  // itemIndex: node at stage i = 2*i, connector before stage i = 2*i - 1
-  const itemIndex = isConnector ? 2 * stageIndex - 1 : 2 * stageIndex;
-  return itemIndex * STAGGER_MS;
+function nodeDelay(index: number) {
+  return index * NODE_STAGGER;
+}
+
+function connectorDelay(index: number) {
+  // connector before node[index] (index > 0)
+  return (index - 1) * NODE_STAGGER + CONNECTOR_OFFSET;
 }
 
 export default function ProjectVisual({
@@ -41,56 +42,56 @@ export default function ProjectVisual({
   liveUrl,
   architectureFlow,
 }: ProjectVisualProps) {
-  // ARCHITECTURE is the default desktop tab
-  const [activeTab, setActiveTab] = useState<"ARCHITECTURE" | "PREVIEW">(
-    "ARCHITECTURE"
-  );
+  // PREVIEW is the default — real screenshot is primary evidence
+  const [activeTab, setActiveTab] = useState<"PREVIEW" | "ARCHITECTURE">("PREVIEW");
+
+  // assembled stays true permanently after first Architecture open — no replay
   const [assembled, setAssembled] = useState(false);
+
   const isMobile = useIsMobile();
-  // Compute the effective panel to display — mobile always shows PREVIEW
-  // regardless of tab state, preventing a blank flash during hydration.
+
+  // effectiveView: mobile always shows PREVIEW regardless of tab state
   const effectiveView = isMobile ? "PREVIEW" : activeTab;
-  const containerRef = useRef<HTMLDivElement>(null);
+
   const tablistRef = useRef<HTMLDivElement>(null);
 
-  // One-time scroll-triggered assembly
-  useEffect(() => {
-    if (isMobile) return;
+  // Check prefers-reduced-motion once (stable across renders)
+  const prefersReducedMotion = useRef<boolean>(
+    typeof window !== "undefined"
+      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      : false
+  );
 
-    // Respect prefers-reduced-motion: show immediately, no animation
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-    if (prefersReduced) {
-      setAssembled(true);
-      return;
+  // Trigger one-time assembly when ARCHITECTURE is first opened
+  const openArchitecture = useCallback(() => {
+    if (activeTab === "ARCHITECTURE") return;
+    sound.play("blip");
+    setActiveTab("ARCHITECTURE");
+    if (!assembled) {
+      // Reduced-motion: show immediately; otherwise let CSS stagger run
+      if (prefersReducedMotion.current) {
+        setAssembled(true);
+      } else {
+        // Small rAF so the panel is painted before transitions start
+        requestAnimationFrame(() => setAssembled(true));
+      }
     }
+  }, [activeTab, assembled]);
 
-    const el = containerRef.current;
-    if (!el) return;
+  const openPreview = useCallback(() => {
+    if (activeTab === "PREVIEW") return;
+    sound.play("blip");
+    setActiveTab("PREVIEW");
+  }, [activeTab]);
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setAssembled(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.25 }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [isMobile]);
-
-  // Keyboard navigation for tablist
+  // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (!tablistRef.current) return;
     const tabs = Array.from(
       tablistRef.current.querySelectorAll('[role="tab"]')
     ) as HTMLButtonElement[];
     const currentIndex = tabs.findIndex(
-      (tab) => tab.getAttribute("aria-selected") === "true"
+      (t) => t.getAttribute("aria-selected") === "true"
     );
     let nextIndex = currentIndex;
 
@@ -119,13 +120,12 @@ export default function ProjectVisual({
   };
 
   return (
-    <div
-      ref={containerRef}
-      className="group relative flex w-full flex-col overflow-hidden border border-line-faint bg-ink-900/60"
-    >
-      {/* ── Tab bar ─────────────────────────────────────────────────────── */}
-      <div className="flex h-10 items-center border-b border-line-faint bg-ink-900/80">
-        {/* Mobile: simple label only */}
+    <div className="relative flex w-full flex-col overflow-hidden border border-line-faint bg-ink-900/60">
+
+      {/* ── Tab bar ────────────────────────────────────────────────── */}
+      <div className="flex h-10 shrink-0 items-center border-b border-line-faint bg-ink-900/80">
+
+        {/* Mobile: label only, no tabs */}
         <div className="flex w-full items-center px-3 md:hidden">
           <div className="flex gap-1.5">
             <div className="h-2 w-2 rounded-full bg-line-faint" />
@@ -137,7 +137,7 @@ export default function ProjectVisual({
           </div>
         </div>
 
-        {/* Desktop: ARCHITECTURE | PREVIEW — architecture first */}
+        {/* Desktop: PREVIEW | ARCHITECTURE — preview first */}
         {!isMobile && (
           <div
             ref={tablistRef}
@@ -145,41 +145,14 @@ export default function ProjectVisual({
             aria-label="Project Views"
             className="hidden w-full h-full md:flex"
           >
-            {/* ARCHITECTURE tab */}
-            <button
-              role="tab"
-              aria-selected={activeTab === "ARCHITECTURE"}
-              aria-controls="panel-architecture"
-              id="tab-architecture"
-              tabIndex={activeTab === "ARCHITECTURE" ? 0 : -1}
-              onClick={() => {
-                if (activeTab !== "ARCHITECTURE") sound.play("blip");
-                setActiveTab("ARCHITECTURE");
-              }}
-              onMouseEnter={() => sound.play("hover")}
-              onKeyDown={handleKeyDown}
-              className={`flex-1 flex items-center justify-center font-mono text-[0.6rem] uppercase tracking-[0.15em] transition-colors focus:outline-none focus-visible:bg-ink-800 ${
-                activeTab === "ARCHITECTURE"
-                  ? "text-cyan border-b-2 border-cyan bg-ink-900/50"
-                  : "text-paper-dim/50 border-b-2 border-transparent hover:text-paper-dim hover:bg-ink-900/20"
-              }`}
-            >
-              ARCHITECTURE
-            </button>
-
-            <div className="w-px h-full bg-line-faint" />
-
             {/* PREVIEW tab */}
             <button
               role="tab"
+              id="tab-preview"
               aria-selected={activeTab === "PREVIEW"}
               aria-controls="panel-preview"
-              id="tab-preview"
               tabIndex={activeTab === "PREVIEW" ? 0 : -1}
-              onClick={() => {
-                if (activeTab !== "PREVIEW") sound.play("blip");
-                setActiveTab("PREVIEW");
-              }}
+              onClick={openPreview}
               onMouseEnter={() => sound.play("hover")}
               onKeyDown={handleKeyDown}
               className={`flex-1 flex items-center justify-center font-mono text-[0.6rem] uppercase tracking-[0.15em] transition-colors focus:outline-none focus-visible:bg-ink-800 ${
@@ -190,92 +163,41 @@ export default function ProjectVisual({
             >
               PREVIEW
             </button>
+
+            <div className="w-px h-full bg-line-faint" />
+
+            {/* ARCHITECTURE tab */}
+            <button
+              role="tab"
+              id="tab-architecture"
+              aria-selected={activeTab === "ARCHITECTURE"}
+              aria-controls="panel-architecture"
+              tabIndex={activeTab === "ARCHITECTURE" ? 0 : -1}
+              onClick={openArchitecture}
+              onMouseEnter={() => sound.play("hover")}
+              onKeyDown={handleKeyDown}
+              className={`flex-1 flex items-center justify-center font-mono text-[0.6rem] uppercase tracking-[0.15em] transition-colors focus:outline-none focus-visible:bg-ink-800 ${
+                activeTab === "ARCHITECTURE"
+                  ? "text-cyan border-b-2 border-cyan bg-ink-900/50"
+                  : "text-paper-dim/50 border-b-2 border-transparent hover:text-paper-dim hover:bg-ink-900/20"
+              }`}
+            >
+              ARCHITECTURE
+            </button>
           </div>
         )}
       </div>
 
-      {/* ── Viewport shell ──────────────────────────────────────────────── */}
-      <div className="relative flex aspect-video w-full bg-ink-900 overflow-hidden">
+      {/* ── Viewport shell ─────────────────────────────────────────── */}
+      <div className="relative flex aspect-video w-full min-w-0 overflow-hidden bg-ink-900">
 
-        {/* ARCHITECTURE PANEL — not mounted on mobile */}
-        {!isMobile && (
-          <div
-            id="panel-architecture"
-            role="tabpanel"
-            aria-labelledby="tab-architecture"
-            className={`absolute inset-0 w-full h-full flex-col items-center justify-center px-10 py-6 ${
-              activeTab === "ARCHITECTURE" ? "flex" : "hidden"
-            }`}
-          >
-            {/* Subtle grid background */}
-            <div className="pointer-events-none absolute inset-0 blueprint-grid opacity-10" />
-
-            {/* Architecture flow */}
-            <div className="relative flex flex-col items-center w-full max-w-xs">
-              {architectureFlow?.map((stage, index) => (
-                <div
-                  key={stage.label}
-                  className="flex flex-col items-center w-full"
-                >
-                  {/* Connector line + arrowhead before node (except first) */}
-                  {index > 0 && (
-                    <div
-                      className="flex flex-col items-center my-1.5"
-                      style={{
-                        opacity: assembled ? 1 : 0,
-                        transform: assembled ? "none" : "scaleY(0)",
-                        transformOrigin: "top",
-                        transition: assembled
-                          ? `opacity 120ms ease ${getItemDelay(index, true)}ms, transform 120ms ease ${getItemDelay(index, true)}ms`
-                          : "none",
-                      }}
-                    >
-                      <div className="w-px h-5 bg-line-dim/60" />
-                      <div className="w-1.5 h-1.5 border-r border-b border-line-dim/60 rotate-45 -mt-1" />
-                    </div>
-                  )}
-
-                  {/* Stage node */}
-                  <div
-                    className="w-full flex flex-col items-center border border-line-faint bg-ink-900/90 px-5 py-3 hover:border-cyan/40 transition-colors duration-200"
-                    style={{
-                      opacity: assembled ? 1 : 0,
-                      transform: assembled
-                        ? "translateY(0)"
-                        : "translateY(6px)",
-                      transition: assembled
-                        ? `opacity 150ms ease ${getItemDelay(index, false)}ms, transform 150ms ease ${getItemDelay(index, false)}ms`
-                        : "none",
-                    }}
-                  >
-                    <span className="font-mono text-[0.55rem] uppercase tracking-[0.18em] text-cyan">
-                      {stage.label}
-                    </span>
-                    <span className="mt-1 font-mono text-[0.7rem] text-paper-dim">
-                      {stage.stack}
-                    </span>
-                  </div>
-                </div>
-              ))}
-
-              {(!architectureFlow || architectureFlow.length === 0) && (
-                <div className="text-center font-mono text-xs text-line-dim">
-                  Architecture flow not defined
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* PREVIEW PANEL — always available */}
+        {/* ── PREVIEW PANEL ──────────────────────────────────────── */}
         <div
           id="panel-preview"
           role="tabpanel"
           aria-labelledby="tab-preview"
-          className={`absolute inset-0 w-full h-full ${
-            // effectiveView guarantees mobile always gets PREVIEW,
-            // independent of which desktop tab was last active.
-            effectiveView === "PREVIEW" ? "flex" : "hidden"
+          className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${
+            effectiveView === "PREVIEW" ? "flex opacity-100" : "hidden opacity-0"
           }`}
         >
           {image ? (
@@ -287,7 +209,7 @@ export default function ProjectVisual({
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover object-top opacity-90 transition-all duration-300 ease-out group-hover/preview:scale-[1.01] group-hover/preview:opacity-100"
               />
-              {/* Live site CTA — only for projects with a verified URL */}
+              {/* Live site CTA — shown only for verified deployments */}
               {liveUrl && (
                 <a
                   href={liveUrl}
@@ -304,12 +226,10 @@ export default function ProjectVisual({
               )}
             </div>
           ) : (
-            <div className="relative flex h-full w-full items-center justify-center bg-ink-900 overflow-hidden">
+            <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
               <div className="pointer-events-none absolute inset-0 blueprint-grid opacity-20" />
               <div className="relative flex flex-col items-center justify-center text-center px-4">
-                <span className="font-display text-xl font-semibold text-paper-dim/80">
-                  {name}
-                </span>
+                <span className="font-display text-xl font-semibold text-paper-dim/80">{name}</span>
                 <span className="mt-2 text-xs font-mono text-paper-dim/50">
                   Preview image not yet available
                 </span>
@@ -318,12 +238,71 @@ export default function ProjectVisual({
           )}
         </div>
 
-        {/* Tab-switch fade overlay — purely cosmetic, runs once per switch */}
-        <div
-          className="pointer-events-none absolute inset-0 bg-ink-900"
-          style={{ opacity: 0, transition: "opacity 250ms ease" }}
-          aria-hidden="true"
-        />
+        {/* ── ARCHITECTURE PANEL — not mounted on mobile ─────────── */}
+        {!isMobile && (
+          <div
+            id="panel-architecture"
+            role="tabpanel"
+            aria-labelledby="tab-architecture"
+            className={`absolute inset-0 w-full h-full flex-col items-center justify-center px-6 py-5 transition-opacity duration-300 ${
+              effectiveView === "ARCHITECTURE" ? "flex opacity-100" : "hidden opacity-0"
+            }`}
+          >
+            {/* Subtle grid backdrop */}
+            <div className="pointer-events-none absolute inset-0 blueprint-grid opacity-10" />
+
+            {/* Three-stage vertical flow — uses full available width, never clips */}
+            <div className="relative flex w-full min-w-0 flex-col items-stretch gap-0">
+              {architectureFlow?.map((stage, index) => (
+                <div key={stage.label} className="flex min-w-0 flex-col items-center">
+
+                  {/* Connector + arrowhead before every node except the first */}
+                  {index > 0 && (
+                    <div
+                      className="flex flex-col items-center py-1"
+                      style={{
+                        opacity: assembled ? 1 : 0,
+                        transform: assembled ? "scaleY(1)" : "scaleY(0)",
+                        transformOrigin: "top",
+                        transition: assembled
+                          ? `opacity 120ms ease ${connectorDelay(index)}ms, transform 120ms ease ${connectorDelay(index)}ms`
+                          : "none",
+                      }}
+                    >
+                      <div className="w-px h-4 bg-line-dim/60" />
+                      <div className="h-1.5 w-1.5 rotate-45 border-b border-r border-line-dim/60 -mt-0.5" />
+                    </div>
+                  )}
+
+                  {/* Stage node — full width, never fixed */}
+                  <div
+                    className="w-full min-w-0 flex flex-col items-center border border-line-faint bg-ink-900/90 px-4 py-3 hover:border-cyan/30 transition-colors duration-200"
+                    style={{
+                      opacity: assembled ? 1 : 0,
+                      transform: assembled ? "translateY(0)" : "translateY(8px)",
+                      transition: assembled
+                        ? `opacity 150ms ease ${nodeDelay(index)}ms, transform 150ms ease ${nodeDelay(index)}ms`
+                        : "none",
+                    }}
+                  >
+                    <span className="font-mono text-[0.55rem] uppercase tracking-[0.16em] text-cyan">
+                      {stage.label}
+                    </span>
+                    <span className="mt-1 font-mono text-[0.65rem] text-paper-dim text-center leading-snug break-words">
+                      {stage.stack}
+                    </span>
+                  </div>
+                </div>
+              ))}
+
+              {(!architectureFlow || architectureFlow.length === 0) && (
+                <p className="text-center font-mono text-xs text-line-dim">
+                  Architecture flow not defined
+                </p>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

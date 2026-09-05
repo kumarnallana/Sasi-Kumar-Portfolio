@@ -4,9 +4,6 @@ export const PORTFOLIO_GRAPHQL_QUERY = `
       repositories(first: 1) {
         totalCount
       }
-      followers {
-        totalCount
-      }
       pinnedItems(first: 6, types: REPOSITORY) {
         nodes {
           ... on Repository {
@@ -33,6 +30,11 @@ export const PORTFOLIO_GRAPHQL_QUERY = `
             color
           }
           updatedAt
+        }
+      }
+      allRepos: repositories(first: 100, isFork: false) {
+        nodes {
+          stargazerCount
         }
       }
       contributionsCollection {
