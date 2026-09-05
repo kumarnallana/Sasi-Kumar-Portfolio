@@ -12,6 +12,7 @@ export type Project = {
   metrics: { value: string; label: string }[];
   highlights: string[];
   image?: string;
+  architectureVariant?: "linear" | "branch" | "split-converge";
   architectureFlow?: { label: string; stack: string }[];
 
   expandedStack?: Record<string, string[]>;
