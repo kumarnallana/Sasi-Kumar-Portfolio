@@ -7,6 +7,7 @@ import { projects } from "@/data/projects/projects.data";
 import type { Project } from "@/types/projects/project.types";
 import BlueprintDiagram from "@/components/projects/BlueprintDiagram";
 import Reconstruction from "@/components/projects/Reconstruction";
+import ProjectPreview from "@/components/projects/ProjectPreview";
 import SectionHeader from "@/components/shared/SectionHeader";
 import { sound } from "@/lib/sound";
 
@@ -160,59 +161,78 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
         )}
       </div>
 
-      {/* diagram */}
+      {/* preview/diagram container */}
       <div className={`proj-reveal ${reverse ? "lg:order-1" : ""}`}>
-        <div className="tech-label mb-3 flex items-center justify-between">
-          <span>FIG.{i + 1} - SYSTEM ARCHITECTURE</span>
-          <span style={{ color: STATUS_COLOR[status] }}>
-            {status === "ONLINE"
-              ? "● STREAMING"
-              : status === "BOOTING"
-                ? "◐ ASSEMBLING"
-                : "○ STANDBY"}
-          </span>
-        </div>
-        {project.diagram && (
-          <BlueprintDiagram
-            nodes={project.diagram.nodes}
-            edges={project.diagram.edges}
-            detail={project.detail}
-            title={`FIG.${i + 1} · ${project.name}`}
-            onOnline={handleOnline}
-            hideMaximize={false}
-          />
-        )}
+        {i === 0 ? (
+          <>
+            <div className="tech-label mb-3 flex items-center justify-between text-cyan">
+              <span>SYS.PREVIEW</span>
+              <span className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_8px_var(--cyan)]" />
+                ONLINE
+              </span>
+            </div>
+            <ProjectPreview
+              name={project.name}
+              image={project.links?.live ? undefined : undefined} // TODO: Add image field to project data later if available
+              stackPreview={project.stack.slice(0, 4).join(" · ")}
+            />
+          </>
+        ) : (
+          <>
+            <div className="tech-label mb-3 flex items-center justify-between">
+              <span>FIG.{i + 1} - SYSTEM ARCHITECTURE</span>
+              <span style={{ color: STATUS_COLOR[status] }}>
+                {status === "ONLINE"
+                  ? "● STREAMING"
+                  : status === "BOOTING"
+                    ? "◐ ASSEMBLING"
+                    : "○ STANDBY"}
+              </span>
+            </div>
+            {project.diagram && (
+              <BlueprintDiagram
+                nodes={project.diagram.nodes}
+                edges={project.diagram.edges}
+                detail={project.detail}
+                title={`FIG.${i + 1} · ${project.name}`}
+                onOnline={handleOnline}
+                hideMaximize={false}
+              />
+            )}
 
-        {project.reconstruction && (
-          <button
-            onClick={() => {
-              sound.play("online");
-              setRecon(true);
-            }}
-            onMouseEnter={() => sound.play("hover")}
-            className="group mt-3 flex w-full items-center justify-between border border-line-faint bg-ink-900/60 px-4 py-2.5 font-mono text-[0.65rem] uppercase tracking-wider text-paper-dim transition-colors hover:border-cyan hover:text-cyan"
-          >
-            <span className="flex items-center gap-2">
-              <span className="text-sm leading-none text-cyan">⟲</span>
-              Reconstruct build history
-            </span>
-            <span className="tech-label text-[0.5rem] text-paper-dim/50 transition-colors group-hover:text-cyan">
-              SCRUB THE TIMELINE →
-            </span>
-          </button>
+            {project.reconstruction && (
+              <button
+                onClick={() => {
+                  sound.play("online");
+                  setRecon(true);
+                }}
+                onMouseEnter={() => sound.play("hover")}
+                className="group mt-3 flex w-full items-center justify-between border border-line-faint bg-ink-900/60 px-4 py-2.5 font-mono text-[0.65rem] uppercase tracking-wider text-paper-dim transition-colors hover:border-cyan hover:text-cyan"
+              >
+                <span className="flex items-center gap-2">
+                  <span className="text-sm leading-none text-cyan">⟲</span>
+                  Reconstruct build history
+                </span>
+                <span className="tech-label text-[0.5rem] text-paper-dim/50 transition-colors group-hover:text-cyan">
+                  SCRUB THE TIMELINE →
+                </span>
+              </button>
+            )}
+
+            {recon && project.reconstruction && (
+              <Reconstruction
+                data={project.reconstruction}
+                title={`FIG.${i + 1} · ${project.name}`}
+                onClose={() => {
+                  sound.play("blip");
+                  setRecon(false);
+                }}
+              />
+            )}
+          </>
         )}
       </div>
-
-      {recon && project.reconstruction && (
-        <Reconstruction
-          data={project.reconstruction}
-          title={`FIG.${i + 1} · ${project.name}`}
-          onClose={() => {
-            sound.play("blip");
-            setRecon(false);
-          }}
-        />
-      )}
     </div>
   );
 }
