@@ -87,7 +87,7 @@ export default function RootLayout({
       lang="en"
       className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full`}
     >
-      <body className="min-h-full">
+      <body className="min-h-full" suppressHydrationWarning>
         {/* structured data - Person + WebSite for rich results */}
         <script
           type="application/ld+json"

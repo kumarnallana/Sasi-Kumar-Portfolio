@@ -38,9 +38,7 @@ export const projects: Project[] = [
       { label: "APPLICATION", stack: "Server Actions" },
       { label: "INTEGRATIONS", stack: "REST / CRM" },
       { label: "OUTCOME", stack: "Lead Capture" }
-    ],
-    diagram: undefined,
-    reconstruction: undefined
+    ]
   },
   {
     id: "mini-social",
@@ -86,9 +84,7 @@ export const projects: Project[] = [
       { label: "API", stack: "Express / Node" },
       { label: "AUTH / SERVICES", stack: "JWT · bcrypt" },
       { label: "DATA", stack: "MongoDB" }
-    ],
-    diagram: undefined,
-    reconstruction: undefined
+    ]
   },
   {
     id: "redroot",
@@ -144,8 +140,6 @@ export const projects: Project[] = [
       { label: "INTERACTION", stack: "Motion / Canvas" },
       { label: "STATE", stack: "React Context" },
       { label: "VERIFICATION", stack: "Playwright" }
-    ],
-    diagram: undefined,
-    reconstruction: undefined
+    ]
   }
 ];

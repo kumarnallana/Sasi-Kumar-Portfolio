@@ -13,9 +13,7 @@ export type Project = {
   highlights: string[];
   image?: string;
   architectureFlow?: { label: string; stack: string }[];
-  diagram?: any; // Deprecated: { nodes: any[]; edges: any[] }
-  detail?: any; // Deprecated: { nodes: any[]; edges: any[] }
-  reconstruction?: any; // Deprecated: Reconstruction
+
   expandedStack?: Record<string, string[]>;
   links?: {
     live?: string;
