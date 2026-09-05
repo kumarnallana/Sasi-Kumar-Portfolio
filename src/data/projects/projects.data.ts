@@ -30,10 +30,11 @@ export const projects: Project[] = [
       live: "https://zylxytech.com/",
     },
     image: "/projects/zylxy-preview.png",
+    architectureVariant: "linear",
     architectureFlow: [
       { label: "WEB APPLICATION", stack: "Next.js · React" },
       { label: "WORKFLOW LAYER", stack: "Server Actions · REST APIs" },
-      { label: "BUSINESS FLOWS", stack: "Forms · CRM · Lead Capture" },
+      { label: "BUSINESS SYSTEMS", stack: "Forms · CRM · Lead Capture" },
     ],
   },
   {
@@ -75,10 +76,12 @@ export const projects: Project[] = [
       github: "https://github.com/kumarnallana/Mini-Social-Platform",
     },
     image: "/projects/mini-social-preview.png",
+    architectureVariant: "branch",
     architectureFlow: [
       { label: "CLIENT", stack: "React" },
-      { label: "API + AUTH", stack: "Express · JWT · bcrypt" },
-      { label: "DATA", stack: "MongoDB · Mongoose" },
+      { label: "API", stack: "Express / Node" },
+      { label: "AUTH", stack: "JWT · bcrypt" },
+      { label: "DATA", stack: "MongoDB" },
     ],
   },
   {
@@ -122,9 +125,11 @@ export const projects: Project[] = [
       github: "https://github.com/kumarnallana/redroot-digital-experience",
     },
     image: "/projects/redroot-preview.png",
+    architectureVariant: "split-converge",
     architectureFlow: [
       { label: "PRODUCT EXPERIENCE", stack: "Next.js · React" },
-      { label: "INTERACTION + STATE", stack: "Motion · Canvas · Context" },
+      { label: "INTERACTION", stack: "Motion · Canvas" },
+      { label: "STATE", stack: "React Context" },
       { label: "VERIFICATION", stack: "Playwright E2E" },
     ],
   },
