@@ -122,8 +122,8 @@ export default function OpenSource() {
         </div>
       ) : (
         <>
-          {/* Pinned Repositories */}
-          {data?.pinnedRepositories && data.pinnedRepositories.length > 0 && (
+          {/* Repositories Display Logic */}
+          {data?.pinnedRepositories && data.pinnedRepositories.length > 0 ? (
             <div className="mb-12">
               <h3 className="mb-4 font-display text-xl font-semibold text-paper">Featured Repositories</h3>
               <div className="grid gap-px border border-line-faint bg-line-faint md:grid-cols-2 lg:grid-cols-3">
@@ -162,14 +162,11 @@ export default function OpenSource() {
                 ))}
               </div>
             </div>
-          )}
-
-          {/* Recent Repositories */}
-          {data?.recentRepositories && data.recentRepositories.length > 0 && (
+          ) : data?.recentRepositories && data.recentRepositories.length > 0 ? (
             <div>
               <h3 className="mb-4 font-display text-lg font-medium text-paper-dim">Recent Activity</h3>
               <div className="grid gap-px border border-line-faint bg-line-faint md:grid-cols-2 lg:grid-cols-3 opacity-90">
-                {data.recentRepositories.filter(r => !data.pinnedRepositories?.some(p => p.name === r.name)).slice(0, 6).map((r) => (
+                {data.recentRepositories.slice(0, 6).map((r) => (
                   <a
                     key={r.name}
                     href={r.url}
@@ -198,6 +195,10 @@ export default function OpenSource() {
                   </a>
                 ))}
               </div>
+            </div>
+          ) : (
+            <div className="os-card flex min-h-32 flex-col items-center justify-center border border-line-faint bg-ink-900 p-5 text-center">
+               <span className="tech-label text-paper-dim">GITHUB REPOSITORIES UNAVAILABLE</span>
             </div>
           )}
         </>
