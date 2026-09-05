@@ -47,6 +47,9 @@ export default function ProjectVisual({
   );
   const [assembled, setAssembled] = useState(false);
   const isMobile = useIsMobile();
+  // Compute the effective panel to display — mobile always shows PREVIEW
+  // regardless of tab state, preventing a blank flash during hydration.
+  const effectiveView = isMobile ? "PREVIEW" : activeTab;
   const containerRef = useRef<HTMLDivElement>(null);
   const tablistRef = useRef<HTMLDivElement>(null);
 
@@ -270,8 +273,9 @@ export default function ProjectVisual({
           role="tabpanel"
           aria-labelledby="tab-preview"
           className={`absolute inset-0 w-full h-full ${
-            // On mobile always show; on desktop show only when PREVIEW tab active
-            isMobile || activeTab === "PREVIEW" ? "flex" : "hidden"
+            // effectiveView guarantees mobile always gets PREVIEW,
+            // independent of which desktop tab was last active.
+            effectiveView === "PREVIEW" ? "flex" : "hidden"
           }`}
         >
           {image ? (
