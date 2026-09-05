@@ -7,6 +7,7 @@ import { github } from "@/data/github/github-display.data";
 import SectionHeader from "@/components/shared/SectionHeader";
 import { sound } from "@/lib/sound";
 import { useGithubPortfolio } from "@/integrations/github/use-github-portfolio";
+import AnimatedMetric from "@/components/shared/AnimatedMetric";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,24 +19,6 @@ export default function OpenSource() {
 
   const totalStars = data?.totalStars ?? 0;
   const publicRepos = data?.publicReposCount ?? 0;
-
-  const starElRef = useRef<HTMLSpanElement>(null);
-  const prevStarsRef = useRef(0);
-
-  useEffect(() => {
-    if (totalStars > 0 && starElRef.current) {
-      const obj = { v: prevStarsRef.current };
-      gsap.to(obj, {
-        v: totalStars,
-        duration: 1.4,
-        ease: "power2.out",
-        onUpdate: () => {
-          if (starElRef.current) starElRef.current.textContent = String(Math.round(obj.v));
-        },
-      });
-      prevStarsRef.current = totalStars;
-    }
-  }, [totalStars]);
 
   useEffect(() => {
     const el = ref.current;
@@ -72,7 +55,7 @@ export default function OpenSource() {
             {isLoading ? (
               <span className="animate-pulse">---</span>
             ) : (
-              <span ref={starElRef} className="star-count">0</span>
+              <AnimatedMetric value={`${totalStars}★`} className="star-count" />
             )}
           </div>
           <div className="tech-label mt-1">TOTAL STARS</div>
@@ -82,7 +65,7 @@ export default function OpenSource() {
              {isLoading ? (
                <span className="animate-pulse">---</span>
              ) : (
-               publicRepos
+               <AnimatedMetric value={publicRepos} />
              )}
           </div>
           <div className="tech-label mt-1">PUBLIC REPOS</div>

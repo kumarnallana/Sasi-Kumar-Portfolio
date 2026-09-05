@@ -7,6 +7,7 @@ import { systemStats } from "@/data/hero/system-stats.data";
 import { stackStory } from "@/data/stack-story/stack-story.data";
 import { identity } from "@/data/profile/profile.data";
 import Typewriter from "@/components/shared/Typewriter";
+import AnimatedMetric from "@/components/shared/AnimatedMetric";
 
 const HeroStackGlobe = dynamic(
   () => import("@/components/stack-story/three/HeroStackGlobe"),
@@ -144,7 +145,7 @@ export default function Hero({ started }: { started: boolean }) {
                 className="bg-ink-900/80 px-4 py-3 backdrop-blur"
               >
                 <div className="font-display text-2xl font-semibold text-cyan glow-cyan">
-                  {s.value}
+                  <AnimatedMetric value={s.value} />
                 </div>
                 <div className="tech-label mt-1">{s.label}</div>
               </div>

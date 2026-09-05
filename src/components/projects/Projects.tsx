@@ -8,6 +8,7 @@ import type { Project } from "@/types/projects/project.types";
 import ProjectVisual from "@/components/projects/ProjectVisual";
 import SectionHeader from "@/components/shared/SectionHeader";
 import { sound } from "@/lib/sound";
+import AnimatedMetric from "@/components/shared/AnimatedMetric";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -63,7 +64,7 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
           {project.metrics.map((m) => (
             <div key={m.label} className="flex-1 bg-ink-900 px-4 py-3">
               <div className="font-display text-xl font-semibold text-cyan glow-cyan">
-                {m.value}
+                <AnimatedMetric value={m.value} />
               </div>
               <div className="tech-label mt-0.5 text-[0.55rem]">{m.label}</div>
             </div>
