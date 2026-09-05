@@ -9,7 +9,7 @@ export function transformPortfolioData(rawData: any): GitHubPortfolioData {
   }
 
   return {
-    publicReposCount: user.public_repos?.totalCount || 0,
+    publicReposCount: user.repositories?.totalCount || 0,
     followersCount: user.followers?.totalCount || 0,
     totalCommitContributions: user.contributionsCollection?.totalCommitContributions || 0,
     totalPullRequestContributions: user.contributionsCollection?.totalPullRequestContributions || 0,
@@ -23,7 +23,7 @@ export function transformPortfolioData(rawData: any): GitHubPortfolioData {
       updatedAt: repo.updatedAt,
     })),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    recentRepositories: (user.repositories?.nodes || []).map((repo: any) => ({
+    recentRepositories: (user.recentRepos?.nodes || []).map((repo: any) => ({
       name: repo.name,
       description: repo.description,
       url: repo.url,

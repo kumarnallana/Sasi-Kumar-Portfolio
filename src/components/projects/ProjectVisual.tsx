@@ -13,10 +13,11 @@ interface ArchitectureStage {
 interface ProjectVisualProps {
   name: string;
   image?: string;
+  liveUrl?: string;
   architectureFlow?: ArchitectureStage[];
 }
 
-export default function ProjectVisual({ name, image, architectureFlow }: ProjectVisualProps) {
+export default function ProjectVisual({ name, image, liveUrl, architectureFlow }: ProjectVisualProps) {
   const [activeTab, setActiveTab] = useState<"PREVIEW" | "ARCHITECTURE">("PREVIEW");
   const isMobile = useIsMobile();
   
@@ -139,13 +140,30 @@ export default function ProjectVisual({ name, image, architectureFlow }: Project
           className={`absolute inset-0 w-full h-full md:flex ${activeTab === "PREVIEW" ? "flex" : "hidden md:hidden"}`}
         >
           {image ? (
-            <Image
-              src={image}
-              alt={`${name} preview`}
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover object-top opacity-90 transition-all duration-500 ease-out hover:scale-[1.02] hover:opacity-100"
-            />
+            <div className="group/preview relative w-full h-full">
+              <Image
+                src={image}
+                alt={`${name} preview`}
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover object-top opacity-90 transition-all duration-300 ease-out group-hover/preview:scale-[1.01] group-hover/preview:opacity-100"
+              />
+              {/* Live site CTA overlay — only shown when liveUrl exists */}
+              {liveUrl && (
+                <a
+                  href={liveUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => sound.play("blip")}
+                  className="absolute inset-0 flex items-center justify-center bg-ink-900/0 opacity-0 transition-all duration-250 ease-out group-hover/preview:bg-ink-900/50 group-hover/preview:opacity-100 focus-visible:opacity-100 focus-visible:bg-ink-900/50"
+                  aria-label={`View ${name} live site`}
+                >
+                  <span className="font-mono text-xs uppercase tracking-[0.2em] text-paper border border-paper/30 px-4 py-2 bg-ink-900/60 transition-colors hover:text-cyan hover:border-cyan">
+                    VIEW LIVE SITE ↗
+                  </span>
+                </a>
+              )}
+            </div>
           ) : (
             <div className="relative flex h-full w-full items-center justify-center bg-ink-900 overflow-hidden">
               <div className="pointer-events-none absolute inset-0 blueprint-grid opacity-20" />

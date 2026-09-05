@@ -1,7 +1,7 @@
 export const PORTFOLIO_GRAPHQL_QUERY = `
   query PortfolioData($username: String!) {
     user(login: $username) {
-      public_repos: repositories(privacy: PUBLIC) {
+      repositories(first: 1) {
         totalCount
       }
       followers {
@@ -22,7 +22,7 @@ export const PORTFOLIO_GRAPHQL_QUERY = `
           }
         }
       }
-      repositories(first: 20, orderBy: { field: UPDATED_AT, direction: DESC }, privacy: PUBLIC, isFork: false) {
+      recentRepos: repositories(first: 20, orderBy: { field: UPDATED_AT, direction: DESC }, isFork: false) {
         nodes {
           name
           description

@@ -37,7 +37,7 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
   return (
     <div
       ref={ref}
-      className="grid items-center gap-10 border-t border-line-faint py-20 lg:grid-cols-2 lg:gap-16"
+      className="grid items-start gap-10 border-t border-line-faint py-20 lg:grid-cols-2 lg:gap-16"
     >
       {/* details */}
       <div className={reverse ? "lg:order-2" : ""}>
@@ -130,6 +130,7 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
         <ProjectVisual
           name={project.name}
           image={project.image}
+          liveUrl={project.links?.live}
           architectureFlow={project.architectureFlow}
         />
       </div>
