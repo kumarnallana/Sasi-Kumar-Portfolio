@@ -1,20 +1,5 @@
-export type ProjectProduct = {
-  image?: string;
-  alt: string;
-  caption?: string;
-};
-
-export type ArchitectureStep = {
-  label: string;
-  title: string;
-  details: string[];
-};
-
-export type ProofItem = {
-  value: string;
-  label: string;
-  description: string;
-};
+import { DiagramNode, DiagramEdge } from "./diagram.types";
+import { Reconstruction } from "./reconstruction.types";
 
 export type Project = {
   id: string;
@@ -27,9 +12,9 @@ export type Project = {
   stack: string[];
   metrics: { value: string; label: string }[];
   highlights: string[];
-  product?: ProjectProduct;
-  architecture?: ArchitectureStep[];
-  proof?: ProofItem[];
+  diagram?: { nodes: DiagramNode[]; edges: DiagramEdge[] };
+  detail?: { nodes: DiagramNode[]; edges: DiagramEdge[] };
+  reconstruction?: Reconstruction;
   expandedStack?: Record<string, string[]>;
   links?: {
     live?: string;

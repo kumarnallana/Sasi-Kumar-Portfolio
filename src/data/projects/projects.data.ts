@@ -1,4 +1,6 @@
 import type { Project } from "@/types/projects/project.types";
+import { zylxyDiagram, miniSocialDiagram, redrootDiagram } from "./project-diagrams.data";
+import { zylxyReconstruction, miniSocialReconstruction, redrootReconstruction } from "./project-reconstructions.data";
 
 export const projects: Project[] = [
   {
@@ -30,47 +32,11 @@ export const projects: Project[] = [
       "Modular, domain-oriented form architecture",
       "End-to-end integration and production debugging via DevTools",
     ],
-    product: {
-      alt: "Zylxy Technologies Corporate Website Preview",
-      caption: "Corporate Platform · Form Workflows"
-    },
-    architecture: [
-      {
-        label: "CLIENT",
-        title: "Next.js / React",
-        details: ["UI Components", "State Management"]
-      },
-      {
-        label: "APPLICATION",
-        title: "Forms + Server Actions",
-        details: ["Validation", "Routing"]
-      },
-      {
-        label: "INTEGRATIONS",
-        title: "REST / CRM",
-        details: ["HubSpot API", "Authentication"]
-      },
-      {
-        label: "OUTCOME",
-        title: "Lead Capture",
-        details: ["Conversion", "Analytics"]
-      }
-    ],
-    proof: [
-      {
-        value: "14+",
-        label: "Service Flows",
-        description: "Developed end-to-end form structures natively mapping directly to the client's CRM ecosystem."
-      },
-      {
-        value: "Next.js",
-        label: "Server Actions",
-        description: "Implemented headless integration boundaries keeping private keys exclusively on the server."
-      }
-    ],
     links: {
       live: "https://zylxytech.com/"
-    }
+    },
+    diagram: zylxyDiagram,
+    reconstruction: zylxyReconstruction
   },
   {
     id: "mini-social",
@@ -107,52 +73,11 @@ export const projects: Project[] = [
       "Added local image persistence with optional Cloudinary-backed production storage.",
       "Verified authentication, validation, persistence and responsive behavior through targeted regression tests and browser testing."
     ],
-    product: {
-      alt: "Mini Social Full-Stack Platform Preview",
-      caption: "Authentication · Data Architecture"
-    },
-    architecture: [
-      {
-        label: "CLIENT",
-        title: "React",
-        details: ["Feed", "Authentication"]
-      },
-      {
-        label: "API",
-        title: "Express / Node",
-        details: ["Posts", "Search", "Interactions"]
-      },
-      {
-        label: "SECURITY",
-        title: "JWT · bcrypt",
-        details: ["HTTP-only Cookies", "Password Hashing"]
-      },
-      {
-        label: "DATA",
-        title: "MongoDB",
-        details: ["Users", "Posts", "Media Storage (Local/Cloudinary)"]
-      }
-    ],
-    proof: [
-      {
-        value: "JWT",
-        label: "Authentication",
-        description: "Built end-to-end signup and login flows with bcrypt and protected HTTP-only cookie sessions."
-      },
-      {
-        value: "02",
-        label: "MongoDB Collections",
-        description: "Enforced a strict two-collection architecture for Users and Posts, embedding social interaction data directly."
-      },
-      {
-        value: "06",
-        label: "Verified Viewports",
-        description: "Validated presentation across six breakpoint thresholds (360, 390, 430, 768, 1024, 1440)."
-      }
-    ],
     links: {
       github: "https://github.com/kumarnallana/Mini-Social"
-    }
+    },
+    diagram: miniSocialDiagram,
+    reconstruction: miniSocialReconstruction
   },
   {
     id: "redroot",
@@ -199,51 +124,10 @@ export const projects: Project[] = [
       "Added Playwright end-to-end testing for navigation, interaction matrices, ingredient behavior, modal flows, contact interactions, and responsive user journeys.",
       "Used supporting product-development and workflow tools including Flow, and Notion as part of the project workflow."
     ],
-    product: {
-      alt: "Redroot Interactive Product Preview",
-      caption: "Frontend Architecture · Playwright E2E"
-    },
-    architecture: [
-      {
-        label: "CONTENT",
-        title: "Next.js / React",
-        details: ["App Router", "Storytelling"]
-      },
-      {
-        label: "INTERACTIVE EXPERIENCE",
-        title: "Motion / Canvas",
-        details: ["Scroll Triggers", "Visual Feedback"]
-      },
-      {
-        label: "STATE / BUSINESS LOGIC",
-        title: "Context",
-        details: ["Demo Authentication", "Pricing Modes"]
-      },
-      {
-        label: "VERIFICATION",
-        title: "Playwright",
-        details: ["Interaction Matrices", "User Journeys"]
-      }
-    ],
-    proof: [
-      {
-        value: "App Router",
-        label: "Modular Experience",
-        description: "Built 12 independent, product-focused sections combining reusable React primitives with robust styling boundaries."
-      },
-      {
-        value: "Motion",
-        label: "Visual Fidelity",
-        description: "Implemented synchronized scroll-driven visual pathways alongside complex native HTML5 canvas layers."
-      },
-      {
-        value: "E2E",
-        label: "Regression Verified",
-        description: "Guaranteed product stability using end-to-end navigation flows, modal matrices, and responsive assertion testing."
-      }
-    ],
     links: {
       github: "https://github.com/kumarnallana/Grinning-Co-Internshala-Assessment"
-    }
+    },
+    diagram: redrootDiagram,
+    reconstruction: redrootReconstruction
   }
 ];
