@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 // diagnostic log streamed while memory is restored
 const DIAG_LINES = [
@@ -68,19 +69,10 @@ export default function BootSequence({ onDone }: { onDone: () => void }) {
   const [glitch, setGlitch] = useState(false);
   const [mem] = useState(memoryLine);
   
-  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+  const isMobile = useIsMobile(false);
 
   const done = useRef(false);
   const tl = useRef<gsap.core.Timeline | null>(null);
-
-  useEffect(() => {
-    // Detect mobile viewport (under 768px)
-    const mql = window.matchMedia("(max-width: 767px)");
-    setIsMobile(mql.matches);
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    mql.addEventListener("change", handler);
-    return () => mql.removeEventListener("change", handler);
-  }, []);
 
   useEffect(() => {
     if (isMobile === null) return; // wait for check

@@ -8,6 +8,8 @@ import { stackStory } from "@/data/stack-story/stack-story.data";
 import { identity } from "@/data/profile/profile.data";
 import Typewriter from "@/components/shared/Typewriter";
 import { useGithubPortfolio } from "@/integrations/github/use-github-portfolio";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import CapabilityMatrix from "@/components/shared/CapabilityMatrix";
 
 const HeroStackGlobe = dynamic(
   () => import("@/components/stack-story/three/HeroStackGlobe"),
@@ -25,6 +27,7 @@ export default function Hero({ started }: { started: boolean }) {
   const textCol = useRef<HTMLDivElement>(null);
   const [storyOpen, setStoryOpen] = useState(false);
   const { data, isLoading } = useGithubPortfolio();
+  const isMobile = useIsMobile(false);
   
   const totalStars = (data?.pinnedRepositories || []).reduce((acc, r) => acc + (r.stargazerCount ?? 0), 0) + 
                      (data?.recentRepositories || []).reduce((acc, r) => acc + (r.stargazerCount ?? 0), 0);
@@ -49,22 +52,26 @@ export default function Hero({ started }: { started: boolean }) {
         opacity: 0,
         duration: 0.9,
         stagger: 0.12,
-      }).from(
-        ".hero-globe",
-        { opacity: 0, scale: 0.9, duration: 1.2, ease: "power2.out" },
-        0.2,
-      );
-      // globe wakes up: energize from dark to full, one layer at a time
-      gsap.to(power.current, {
-        v: STACK_MAX,
-        duration: 1.6,
-        ease: "power2.out",
-        delay: 0.35,
-        onUpdate: writePower,
       });
+
+      if (!isMobile) {
+        tl.from(
+          ".hero-globe",
+          { opacity: 0, scale: 0.9, duration: 1.2, ease: "power2.out" },
+          0.2,
+        );
+        // globe wakes up: energize from dark to full, one layer at a time
+        gsap.to(power.current, {
+          v: STACK_MAX,
+          duration: 1.6,
+          ease: "power2.out",
+          delay: 0.35,
+          onUpdate: writePower,
+        });
+      }
     }, root);
     return () => ctx.revert();
-  }, [started]);
+  }, [started, isMobile]);
 
   // double-tap transition: fade the hero text out and power the globe DOWN so
   // every node and layer visibly switches off before the story takes over;
@@ -75,6 +82,8 @@ export default function Hero({ started }: { started: boolean }) {
       firstRun.current = false;
       return;
     }
+    if (isMobile) return;
+
     const tc = textCol.current;
     if (storyOpen) {
       gsap.to(tc, {
@@ -109,14 +118,14 @@ export default function Hero({ started }: { started: boolean }) {
         onUpdate: writePower,
       });
     }
-  }, [storyOpen]);
+  }, [storyOpen, isMobile]);
 
   return (
     <section
       ref={root}
-      className="relative flex min-h-screen items-center overflow-hidden"
+      className={`relative flex min-h-screen items-center ${isMobile ? "h-auto min-h-0 pt-24 pb-12 overflow-visible" : "overflow-hidden"}`}
     >
-      <div className="mx-auto grid w-full max-w-7xl items-center gap-8 px-6 py-24 md:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-6">
+      <div className={`mx-auto grid w-full max-w-7xl items-center gap-8 px-6 py-24 md:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-6 ${isMobile ? "py-0" : ""}`}>
         {/* ---- LEFT: text column ---- */}
         <div ref={textCol} className="relative z-10">
           <div className="hero-anim tech-label mb-6 flex items-center gap-3 text-cyan">
@@ -166,42 +175,55 @@ export default function Hero({ started }: { started: boolean }) {
           </div>
         </div>
 
-        {/* ---- RIGHT: globe column ---- */}
-        <div className="hero-globe group relative h-[42vh] min-h-[320px] w-full lg:h-[78vh]">
-          <HeroStackGlobe
-            activeRef={activeRef}
-            onOpen={() => setStoryOpen(true)}
-          />
-          <div className="pointer-events-none absolute inset-0 grid-vignette" />
-          {/* globe annotations - opposite corners so nothing overlaps */}
-          <div className="pointer-events-none absolute left-3 top-3 tech-label text-cyan/70">
-            STACK GRAPH · ONLINE
+        {/* ---- RIGHT: globe column (desktop) / capability matrix (mobile) ---- */}
+        {isMobile ? (
+          <div className="hero-anim mt-8">
+            <CapabilityMatrix />
           </div>
-          <div className="pointer-events-none absolute right-3 top-3 tech-label text-paper-dim">
-            {String(STACK_LEN).padStart(2, "0")} LAYERS · LIVE
+        ) : (
+          <div className="hero-globe group relative h-[42vh] min-h-[320px] w-full lg:h-[78vh]">
+            {isMobile !== null && (
+              <HeroStackGlobe
+                activeRef={activeRef}
+                onOpen={() => setStoryOpen(true)}
+              />
+            )}
+            <div className="pointer-events-none absolute inset-0 grid-vignette" />
+            {/* globe annotations - opposite corners so nothing overlaps */}
+            <div className="pointer-events-none absolute left-3 top-3 tech-label text-cyan/70">
+              STACK GRAPH · ONLINE
+            </div>
+            <div className="pointer-events-none absolute right-3 top-3 tech-label text-paper-dim">
+              {String(STACK_LEN).padStart(2, "0")} LAYERS · LIVE
+            </div>
+            {/* double-tap or click affordance to open the stack story */}
+            <button
+              onClick={() => setStoryOpen(true)}
+              className="pointer-events-auto absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap border border-cyan/40 bg-ink-900/80 px-3 py-1.5 backdrop-blur transition-all duration-300 hover:border-cyan hover:bg-cyan/10 hover:shadow-[0_0_12px_rgba(67,201,255,0.3)]"
+              aria-label="Explore the stack story"
+            >
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan shadow-[0_0_8px_var(--cyan)]" />
+              <span className="tech-label text-[0.55rem] text-cyan">
+                CLICK OR DOUBLE-TAP TO EXPLORE THE STACK
+              </span>
+            </button>
           </div>
-          {/* double-tap or click affordance to open the stack story */}
-          <button
-            onClick={() => setStoryOpen(true)}
-            className="pointer-events-auto absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap border border-cyan/40 bg-ink-900/80 px-3 py-1.5 backdrop-blur transition-all duration-300 hover:border-cyan hover:bg-cyan/10 hover:shadow-[0_0_12px_rgba(67,201,255,0.3)]"
-            aria-label="Explore the stack story"
-          >
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan shadow-[0_0_8px_var(--cyan)]" />
-            <span className="tech-label text-[0.55rem] text-cyan">
-              CLICK OR DOUBLE-TAP TO EXPLORE THE STACK
-            </span>
-          </button>
-        </div>
+        )}
       </div>
 
       {/* fullscreen scroll-story launched from the globe */}
-      <StackStory open={storyOpen} onClose={() => setStoryOpen(false)} />
+      {!isMobile && isMobile !== null && (
+        <StackStory open={storyOpen} onClose={() => setStoryOpen(false)} />
+      )}
 
       {/* scroll cue */}
-      <div className="hero-anim absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2">
-        <span className="tech-label">DESCEND THROUGH THE SYSTEM</span>
-        <span className="h-8 w-px animate-pulse bg-gradient-to-b from-cyan to-transparent" />
-      </div>
+      {!isMobile && (
+        <div className="hero-anim absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2">
+          <span className="tech-label">DESCEND THROUGH THE SYSTEM</span>
+          <span className="h-8 w-px animate-pulse bg-gradient-to-b from-cyan to-transparent" />
+        </div>
+      )}
     </section>
   );
+}
 }
