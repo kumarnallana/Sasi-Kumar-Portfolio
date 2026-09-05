@@ -138,40 +138,7 @@ body {
   text-shadow: 0 0 12px rgba(255, 179, 71, 0.5);
 }
 
-/* draw-on stroke helper (set via inline style) */
-.draw-path {
-  stroke-dasharray: var(--len);
-  stroke-dashoffset: var(--len);
-}
 
-/* data packets flow along diagram edges, only once system is online */
-@keyframes flow {
-  to {
-    stroke-dashoffset: -1;
-  }
-}
-.diagram path.flow {
-  stroke-dashoffset: 0;
-}
-.diagram.online path.flow {
-  animation: flow 2.2s linear infinite;
-}
-
-/* node status dot pulse, only when online */
-@keyframes nodepulse {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.5);
-    opacity: 0.7;
-  }
-}
-.diagram.online .node-dot {
-  animation: nodepulse 2s ease-in-out infinite;
-}
 
 /* ============================================================
    COLD-BOOT / WAKE SEQUENCE (Detroit-style "coming online")
