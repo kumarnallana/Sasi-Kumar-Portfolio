@@ -11,6 +11,7 @@ export type Project = {
   stack: string[];
   metrics: { value: string; label: string }[];
   highlights: string[];
+  image?: string;
   diagram?: any; // Deprecated: { nodes: any[]; edges: any[] }
   detail?: any; // Deprecated: { nodes: any[]; edges: any[] }
   reconstruction?: any; // Deprecated: Reconstruction

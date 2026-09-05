@@ -33,6 +33,7 @@ export default function ProjectPreview({ name, image }: ProjectPreviewProps) {
             src={image}
             alt={`${name} preview`}
             fill
+            sizes="(max-width: 1024px) 100vw, 50vw"
             className="object-cover object-top opacity-90 transition-all duration-500 ease-out group-hover:scale-[1.02] group-hover:opacity-100"
           />
         ) : (

@@ -129,7 +129,7 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
         </div>
         <ProjectPreview
           name={project.name}
-          image={project.links?.live ? undefined : undefined} // TODO: Add image field to project data later if available
+          image={project.image}
         />
       </div>
     </div>

@@ -32,6 +32,7 @@ export const projects: Project[] = [
     links: {
       live: "https://zylxytech.com/"
     },
+    image: "/projects/zylxy-preview.png",
     diagram: undefined,
     reconstruction: undefined
   },
@@ -73,6 +74,7 @@ export const projects: Project[] = [
     links: {
       github: "https://github.com/kumarnallana/Mini-Social"
     },
+    image: "/projects/mini-social-preview.png",
     diagram: undefined,
     reconstruction: undefined
   },
@@ -124,6 +126,7 @@ export const projects: Project[] = [
     links: {
       github: "https://github.com/kumarnallana/Grinning-Co-Internshala-Assessment"
     },
+    image: "/projects/redroot-preview.png",
     diagram: undefined,
     reconstruction: undefined
   }
