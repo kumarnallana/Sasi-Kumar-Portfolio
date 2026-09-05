@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { projects } from "@/data/projects/projects.data";
 import type { Project } from "@/types/projects/project.types";
 import ProjectVisual from "@/components/projects/ProjectVisual";
+import ProjectArchitecture from "@/components/projects/ProjectArchitecture";
 import SectionHeader from "@/components/shared/SectionHeader";
 import { sound } from "@/lib/sound";
 import AnimatedMetric from "@/components/shared/AnimatedMetric";
@@ -132,6 +133,13 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
           name={project.name}
           image={project.image}
           liveUrl={project.links?.live}
+        />
+      </div>
+      
+      {/* ── Architecture rendered full-width below the columns ── */}
+      <div className="col-span-1 lg:col-span-2">
+        <ProjectArchitecture 
+          architectureVariant={project.architectureVariant}
           architectureFlow={project.architectureFlow}
         />
       </div>
