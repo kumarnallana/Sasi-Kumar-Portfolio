@@ -14,6 +14,5 @@ export type ProfileIdentity = {
   phone: string;
   tagline: string;
   summary: string;
-  narrative: string[];
   links: ProfileLinks;
 };

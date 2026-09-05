@@ -148,7 +148,7 @@ export default function MissionDebrief() {
             MISSION DEBRIEF
           </div>
           <h3 className="mt-3 font-display text-3xl font-bold md:text-4xl">
-            System reviewed. Thanks for exploring my work.
+            System reviewed.
           </h3>
         </div>
 

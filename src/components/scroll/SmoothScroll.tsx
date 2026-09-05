@@ -5,7 +5,6 @@ import Lenis from "lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { setLenis } from "@/lib/lenis";
-import { useIsMobile } from "@/hooks/useIsMobile";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -24,19 +23,9 @@ if (typeof window !== "undefined") {
 }
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
-  const isMobile = useIsMobile(false);
-
   useEffect(() => {
-    // If mobile detection isn't finished yet, assume nothing
-    if (isMobile === null) return;
-
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    
-    // Completely destroy and disable on mobile or if reduced motion is preferred
-    if (reduce || isMobile) {
-      setLenis(null);
-      return;
-    }
+    if (reduce) return;
 
     // Clean up legacy #architect anchor if present in URL bar
     if (typeof window !== "undefined" && window.location.hash === "#architect") {
@@ -63,7 +52,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       lenis.destroy();
       setLenis(null);
     };
-  }, [isMobile]);
+  }, []);
 
   return <>{children}</>;
 }

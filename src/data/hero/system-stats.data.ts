@@ -1,6 +1,7 @@
 export const systemStats = [
-  { label: "WEB DEVELOPMENT INTERNSHIP", value: "3 MO" },
-  { label: "DEVELOPERS MENTORED", value: "60+" },
-  { label: "GITHUB STARS", value: "---", isDynamic: true, queryKey: "stars" },
-  { label: "PUBLIC REPOSITORIES", value: "---", isDynamic: true, queryKey: "repos" },
+  { label: "INTERNSHIP", value: "3 MO" },
+  { label: "MENTORED", value: "60+" },
+  // GitHub stats will be dynamically populated in components via TanStack Query
+  { label: "GITHUB STARS", value: "LIVE", isDynamic: true, queryKey: "stars" },
+  { label: "PUBLIC REPOS", value: "LIVE", isDynamic: true, queryKey: "repos" },
 ];

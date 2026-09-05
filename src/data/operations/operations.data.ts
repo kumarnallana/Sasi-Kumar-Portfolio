@@ -1,18 +1,18 @@
 import type { Operation } from "@/types/operations/operations.types";
 export const operations: Operation[] = [
   {
-    name: "Zylxy Corporate Platform",
-    detail: "Contributed to a Next.js and React corporate platform with reusable UI, CRM-connected forms, and REST integrations.",
-    status: "COMPLETED",
+    name: "Corporate Web Platform",
+    detail: "Zylxy Technologies corporate site and CRM consulting workflow.",
+    status: "ACTIVE",
   },
   {
     name: "CSR Mentorship",
-    detail: "Mentored 60+ aspiring developers through technical guidance, code reviews, placement preparation, and practical development sessions.",
-    status: "COMPLETED",
+    detail: "Mentoring 60+ aspiring developers through CoroVidya.",
+    status: "ACTIVE",
   },
   {
-    name: "Python Backend Development",
-    detail: "Expanding backend skills through FastAPI, Pydantic, SQLAlchemy, and API-focused practice.",
-    status: "EXPLORING",
+    name: "Python API Expansion",
+    detail: "Researching FastAPI, Pydantic, and SQLAlchemy ecosystems.",
+    status: "RESEARCH",
   },
 ];

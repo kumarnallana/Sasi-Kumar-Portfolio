@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import { useIsMobile } from "@/hooks/useIsMobile";
 
 // diagnostic log streamed while memory is restored
 const DIAG_LINES = [
@@ -68,15 +67,11 @@ export default function BootSequence({ onDone }: { onDone: () => void }) {
   const [deviant, setDeviant] = useState("");
   const [glitch, setGlitch] = useState(false);
   const [mem] = useState(memoryLine);
-  
-  const isMobile = useIsMobile(false);
 
   const done = useRef(false);
   const tl = useRef<gsap.core.Timeline | null>(null);
 
   useEffect(() => {
-    if (isMobile === null) return; // wait for check
-
     const finish = () => {
       if (done.current) return;
       done.current = true;
@@ -95,32 +90,11 @@ export default function BootSequence({ onDone }: { onDone: () => void }) {
     const reduce = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    
     if (reduce) {
       done.current = true;
       root.current?.style.setProperty("display", "none");
       onDone();
       return;
-    }
-
-    // On mobile, bypass the heavy boot sequence
-    if (isMobile) {
-      const counter = { p: 0 };
-      const t = gsap.timeline({ onComplete: finish });
-      tl.current = t;
-      
-      t.set(root.current, { opacity: 1 })
-       .to(counter, {
-         p: 100,
-         duration: 0.6, // Fast 600ms load
-         ease: "power2.inOut",
-         onUpdate: () => {
-           const p = Math.round(counter.p);
-           if (pct.current) pct.current.textContent = String(p).padStart(3, "0");
-           if (bar.current) bar.current.style.width = `${p}%`;
-         }
-       });
-      return () => t.kill();
     }
 
     // skip on any input
@@ -194,41 +168,8 @@ export default function BootSequence({ onDone }: { onDone: () => void }) {
       window.removeEventListener("keydown", skip);
       t.kill();
     };
-  }, [onDone, isMobile, mem]);
+  }, [onDone]);
 
-  // Don't render until we know the device type to avoid flashes
-  if (isMobile === null) return null;
-
-  if (isMobile) {
-    return (
-      <div
-        ref={root}
-        className="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-ink-900 px-6 font-mono opacity-0 h-[100dvh]"
-      >
-        <div className="w-full max-w-[280px]">
-          <div className="mb-4 text-center">
-            <div className="tech-label text-cyan mb-1 text-sm">NSK-CORE</div>
-            <div className="tech-label text-paper-dim">LOADING PORTFOLIO...</div>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <div className="relative h-1.5 flex-1 overflow-hidden bg-ink-800">
-              <div
-                ref={bar}
-                className="absolute inset-y-0 left-0 bg-cyan"
-                style={{ width: 0 }}
-              />
-            </div>
-            <span className="font-mono text-xs text-cyan">
-              <span ref={pct}>000</span>%
-            </span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Desktop render
   return (
     <div
       ref={root}
@@ -309,4 +250,3 @@ export default function BootSequence({ onDone }: { onDone: () => void }) {
     </div>
   );
 }
-

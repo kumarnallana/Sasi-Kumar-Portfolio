@@ -10,7 +10,6 @@ import CatField, { type CatMood } from "@/components/contact/CatField";
 import MissionDebrief from "@/components/contact/MissionDebrief";
 import { sendCat, type CatAct } from "@/lib/catSignals";
 import { sound } from "@/lib/sound";
-import { useIsMobile } from "@/hooks/useIsMobile";
 
 const CAT_ACTIONS: { icon: string; label: string; act: CatAct }[] = [
   { icon: "◍", label: "give a ball", act: "ball" },
@@ -58,8 +57,6 @@ export default function Contact() {
   const [thought, setThought] = useState<string | null>(null);
   const [menu, setMenu] = useState<{ x: number; y: number } | null>(null);
   const thoughtTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isMobile = useIsMobile(false);
-
   const showThought = (t: string) => {
     setThought(t);
     if (thoughtTimer.current) clearTimeout(thoughtTimer.current);
@@ -117,7 +114,7 @@ export default function Contact() {
     <section
       id="comms"
       ref={ref}
-      className="relative mx-auto max-w-6xl px-6 py-12 md:py-24 md:px-10"
+      className="relative mx-auto max-w-6xl px-6 py-24 md:px-10"
     >
       <SectionHeader
         index="05"
@@ -147,14 +144,16 @@ export default function Contact() {
           </h3>
 
           <p className="contact-reveal mt-6 max-w-md text-sm leading-relaxed text-paper-dim">
-            Open to full-stack, frontend, backend, and software development opportunities.
+            Recruiters, founders, and clients - if you need someone who can
+            architect, build, and ship a production system end-to-end, the
+            channel is open.
           </p>
 
           <a
             href={`mailto:${identity.email}`}
             className="contact-reveal group mt-8 inline-flex items-center gap-3 border border-cyan px-6 py-3 font-display text-sm font-semibold text-cyan transition-colors hover:bg-cyan hover:text-ink-900"
           >
-            START A CONVERSATION
+            INITIATE TRANSMISSION
             <span className="transition-transform group-hover:translate-x-1">
               →
             </span>
@@ -197,51 +196,49 @@ export default function Contact() {
           </div>
 
           {/* Nyx - watches the cursor, purrs when pet, chases a toy; right-click for tricks */}
-          {!isMobile && (
-            <div
-              data-testid="nyx-box"
-              className="contact-reveal relative min-h-[240px] flex-1 overflow-hidden rounded border border-line-faint bg-ink-900/40"
-              onContextMenu={(e) => {
-                e.preventDefault();
-                setMenu({ x: e.clientX, y: e.clientY });
-              }}
-              onPointerDown={(e) => {
-                if (e.pointerType === "mouse") return;
-                lpStart.current = { x: e.clientX, y: e.clientY };
+          <div
+            data-testid="nyx-box"
+            className="contact-reveal relative min-h-[240px] flex-1 overflow-hidden rounded border border-line-faint bg-ink-900/40"
+            onContextMenu={(e) => {
+              e.preventDefault();
+              setMenu({ x: e.clientX, y: e.clientY });
+            }}
+            onPointerDown={(e) => {
+              if (e.pointerType === "mouse") return;
+              lpStart.current = { x: e.clientX, y: e.clientY };
+              clearLP();
+              lpTimer.current = setTimeout(
+                () => setMenu({ x: e.clientX, y: e.clientY }),
+                480,
+              );
+            }}
+            onPointerMove={(e) => {
+              if (
+                lpStart.current &&
+                Math.hypot(
+                  e.clientX - lpStart.current.x,
+                  e.clientY - lpStart.current.y,
+                ) > 12
+              )
                 clearLP();
-                lpTimer.current = setTimeout(
-                  () => setMenu({ x: e.clientX, y: e.clientY }),
-                  480,
-                );
-              }}
-              onPointerMove={(e) => {
-                if (
-                  lpStart.current &&
-                  Math.hypot(
-                    e.clientX - lpStart.current.x,
-                    e.clientY - lpStart.current.y,
-                  ) > 12
-                )
-                  clearLP();
-              }}
-              onPointerUp={clearLP}
-              onPointerCancel={clearLP}
-            >
-              <CatField onMood={setMood} onThought={showThought} />
-              <div className="pointer-events-none absolute left-3 top-3 leading-tight">
-                <div className="tech-label text-paper-dim/60">NYX · purr.sys</div>
-                <div className="tech-label text-cyan">{STATUS[mood]}</div>
-              </div>
-              {thought && (
-                <div className="pointer-events-none absolute left-3 top-12 font-mono text-[0.6rem] text-cyan/70">
-                  &gt; {thought}
-                </div>
-              )}
-              <div className="pointer-events-none absolute bottom-3 right-3 tech-label text-[0.5rem] text-paper-dim/40">
-                TAP TO PET · DRAG TO PLAY · HOLD / RIGHT-CLICK
-              </div>
+            }}
+            onPointerUp={clearLP}
+            onPointerCancel={clearLP}
+          >
+            <CatField onMood={setMood} onThought={showThought} />
+            <div className="pointer-events-none absolute left-3 top-3 leading-tight">
+              <div className="tech-label text-paper-dim/60">NYX · purr.sys</div>
+              <div className="tech-label text-cyan">{STATUS[mood]}</div>
             </div>
-          )}
+            {thought && (
+              <div className="pointer-events-none absolute left-3 top-12 font-mono text-[0.6rem] text-cyan/70">
+                &gt; {thought}
+              </div>
+            )}
+            <div className="pointer-events-none absolute bottom-3 right-3 tech-label text-[0.5rem] text-paper-dim/40">
+              TAP TO PET · DRAG TO PLAY · HOLD / RIGHT-CLICK
+            </div>
+          </div>
         </div>
       </div>
 
@@ -258,7 +255,7 @@ export default function Contact() {
       </div>
 
       {/* Nyx command menu (right-click) - portaled so it escapes the box clip */}
-      {menu && !isMobile &&
+      {menu &&
         createPortal(
           <div
             className="fixed inset-0 z-[70]"

@@ -5,7 +5,7 @@ export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
 ).replace(/\/+$/, "");
 
-export const SITE_NAME = `${identity.name} | ${identity.role}`;
+export const SITE_NAME = `${identity.name} — ${identity.role}`;
 
 // kept tight (~150 chars) for SERP snippet; the full bio lives in JSON-LD
 export const SEO_DESCRIPTION =

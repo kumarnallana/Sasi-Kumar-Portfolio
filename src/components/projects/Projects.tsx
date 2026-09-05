@@ -51,7 +51,7 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
           {project.name}
         </h3>
         <div className="proj-reveal mt-1 tech-label text-cyan">
-          {project.classification} · {project.context || project.client}
+          {project.classification} · {project.client}
         </div>
 
         <p className="proj-reveal mt-5 max-w-lg text-sm leading-relaxed text-paper-dim">
