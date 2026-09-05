@@ -5,7 +5,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { projects } from "@/data/projects/projects.data";
 import type { Project } from "@/types/projects/project.types";
-import ProjectPreview from "@/components/projects/ProjectPreview";
+import ProjectVisual from "@/components/projects/ProjectVisual";
 import SectionHeader from "@/components/shared/SectionHeader";
 import { sound } from "@/lib/sound";
 
@@ -127,9 +127,10 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
             ONLINE
           </span>
         </div>
-        <ProjectPreview
+        <ProjectVisual
           name={project.name}
           image={project.image}
+          architectureFlow={project.architectureFlow}
         />
       </div>
     </div>

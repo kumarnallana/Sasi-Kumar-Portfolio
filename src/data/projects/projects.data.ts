@@ -33,6 +33,12 @@ export const projects: Project[] = [
       live: "https://zylxytech.com/"
     },
     image: "/projects/zylxy-preview.png",
+    architectureFlow: [
+      { label: "CLIENT", stack: "Next.js / React" },
+      { label: "APPLICATION", stack: "Server Actions" },
+      { label: "INTEGRATIONS", stack: "REST / CRM" },
+      { label: "OUTCOME", stack: "Lead Capture" }
+    ],
     diagram: undefined,
     reconstruction: undefined
   },
@@ -75,6 +81,12 @@ export const projects: Project[] = [
       github: "https://github.com/kumarnallana/Mini-Social"
     },
     image: "/projects/mini-social-preview.png",
+    architectureFlow: [
+      { label: "CLIENT", stack: "React" },
+      { label: "API", stack: "Express / Node" },
+      { label: "AUTH / SERVICES", stack: "JWT · bcrypt" },
+      { label: "DATA", stack: "MongoDB" }
+    ],
     diagram: undefined,
     reconstruction: undefined
   },
@@ -127,6 +139,12 @@ export const projects: Project[] = [
       github: "https://github.com/kumarnallana/Grinning-Co-Internshala-Assessment"
     },
     image: "/projects/redroot-preview.png",
+    architectureFlow: [
+      { label: "CONTENT", stack: "Next.js / React" },
+      { label: "INTERACTION", stack: "Motion / Canvas" },
+      { label: "STATE", stack: "React Context" },
+      { label: "VERIFICATION", stack: "Playwright" }
+    ],
     diagram: undefined,
     reconstruction: undefined
   }
