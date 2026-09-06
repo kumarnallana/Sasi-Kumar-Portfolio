@@ -85,9 +85,10 @@ function ArchPath({
         style={{
           vectorEffect: "non-scaling-stroke",
           opacity: assembled && isVisible ? 0.7 : 0,
-          animation: assembled && isVisible ? `flow-telemetry ${flowDuration}ms linear infinite` : "none",
+          animation: assembled && isVisible 
+            ? `flow-telemetry ${flowDuration}ms linear ${assembled ? delay + duration : 0}ms infinite` 
+            : "none",
           transition: "opacity 400ms ease",
-          animationDelay: assembled ? `${delay + duration}ms` : "0ms", // Flow starts exactly as the base stroke finishes
         }}
       />
     </g>
