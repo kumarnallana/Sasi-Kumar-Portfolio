@@ -13,26 +13,69 @@ interface ProjectArchitectureProps {
   architectureFlow?: ArchitectureStage[];
 }
 
+function useTransactionScheduler(isVisible: boolean, assembled: boolean, prefersReducedMotion: boolean) {
+  const [phase, setPhase] = useState<number>(-1);
+
+  useEffect(() => {
+    if (!isVisible || !assembled || prefersReducedMotion) {
+      setPhase(-1);
+      return;
+    }
+
+    let isSubscribed = true;
+    let timer: NodeJS.Timeout;
+
+    const runCycle = async () => {
+      // Small initial delay before starting loops
+      await new Promise((r) => { timer = setTimeout(r, 400); });
+      
+      while (isSubscribed) {
+        setPhase(0); // Phase 1 Tracers
+        await new Promise((r) => { timer = setTimeout(r, 800); });
+        if (!isSubscribed) break;
+        
+        setPhase(1); // Phase 2 Tracers + Phase 1 Node Arrival
+        await new Promise((r) => { timer = setTimeout(r, 800); });
+        if (!isSubscribed) break;
+        
+        setPhase(2); // Idle + Phase 2 Node Arrival
+        await new Promise((r) => { timer = setTimeout(r, 1000); });
+      }
+    };
+
+    runCycle();
+
+    return () => {
+      isSubscribed = false;
+      clearTimeout(timer);
+    };
+  }, [isVisible, assembled, prefersReducedMotion]);
+
+  return phase;
+}
+
 function ArchNode({
   stage,
   assembled,
   delay,
+  isArriving,
 }: {
   stage: ArchitectureStage;
   assembled: boolean;
   delay: number;
+  isArriving?: boolean;
 }) {
   if (!stage) return null;
   return (
     <div
-      className="z-10 flex w-full max-w-[180px] flex-col items-center justify-center border border-line-faint bg-ink-900 px-3 py-2 shadow-lg transition-all"
+      className="z-10 flex w-full max-w-[180px] flex-col items-center justify-center border border-line-faint bg-ink-900 px-3 py-2 shadow-lg transition-all duration-300"
       style={{
         opacity: assembled ? 1 : 0,
         transform: assembled ? "translateY(0)" : "translateY(8px)",
         transition: assembled
           ? `opacity 250ms ease ${delay}ms, transform 250ms ease ${delay}ms`
           : "none",
-        animation: assembled ? `node-activate 400ms ease ${delay}ms` : "none",
+        animation: isArriving ? "node-arrival 250ms ease-out" : "none",
       }}
     >
       <span className="font-mono text-[0.55rem] font-bold uppercase tracking-[0.16em] text-cyan text-center">
@@ -45,24 +88,22 @@ function ArchNode({
   );
 }
 
-function ArchPath({
+function ArchEdge({
   d,
   assembled,
-  isVisible,
+  isActive,
   delay,
   duration = 200,
-  flowDuration = 2000,
 }: {
   d: string;
   assembled: boolean;
-  isVisible: boolean;
+  isActive: boolean;
   delay: number;
   duration?: number;
-  flowDuration?: number;
 }) {
   return (
     <g>
-      {/* Base structural layer */}
+      {/* Layer A: Base Blueprint Path */}
       <path
         d={d}
         pathLength="100"
@@ -76,19 +117,17 @@ function ArchPath({
             : "none",
         }}
       />
-      {/* Moving signal layer */}
+      {/* Layer C: Transaction Tracer */}
       <path
         d={d}
         pathLength="100"
-        strokeDasharray="2 6"
-        className="stroke-cyan stroke-[1.5px] fill-none"
+        strokeDasharray="8 100"
+        className="stroke-cyan stroke-[2px] fill-none"
         style={{
           vectorEffect: "non-scaling-stroke",
-          opacity: assembled && isVisible ? 0.7 : 0,
-          animation: assembled && isVisible 
-            ? `flow-telemetry ${flowDuration}ms linear ${assembled ? delay + duration : 0}ms infinite` 
-            : "none",
-          transition: "opacity 400ms ease",
+          opacity: isActive ? 1 : 0,
+          strokeDashoffset: isActive ? -100 : 8,
+          transition: isActive ? "stroke-dashoffset 800ms linear, opacity 100ms ease" : "none",
         }}
       />
     </g>
@@ -116,11 +155,7 @@ export default function ProjectArchitecture({
       ([entry]) => {
         setIsVisible(entry.isIntersecting);
         if (entry.isIntersecting && !assembled) {
-          if (prefersReducedMotion.current) {
-            setAssembled(true);
-          } else {
-            setAssembled(true);
-          }
+          setAssembled(true);
         }
       },
       { threshold: 0.3 }
@@ -133,6 +168,8 @@ export default function ProjectArchitecture({
     return () => observer.disconnect();
   }, [isMobile, assembled]);
 
+  const phase = useTransactionScheduler(isVisible, assembled, prefersReducedMotion.current);
+
   if (isMobile || !architectureVariant || !architectureFlow || architectureFlow.length === 0) {
     return null;
   }
@@ -144,8 +181,8 @@ export default function ProjectArchitecture({
         preserveAspectRatio="none"
         className="absolute inset-0 w-full h-full pointer-events-none z-0 md:hidden"
       >
-        <ArchPath d="M 50 16.6 L 50 50" assembled={assembled} isVisible={isVisible} delay={200} />
-        <ArchPath d="M 50 50 L 50 83.3" assembled={assembled} isVisible={isVisible} delay={600} />
+        <ArchEdge d="M 50 16.6 L 50 50" assembled={assembled} isActive={phase === 0} delay={200} />
+        <ArchEdge d="M 50 50 L 50 83.3" assembled={assembled} isActive={phase === 1} delay={600} />
       </svg>
       {/* Desktop horizontal SVG */}
       <svg
@@ -153,13 +190,13 @@ export default function ProjectArchitecture({
         preserveAspectRatio="none"
         className="absolute inset-0 w-full h-full pointer-events-none z-0 hidden md:block"
       >
-        <ArchPath d="M 16.6 50 L 50 50" assembled={assembled} isVisible={isVisible} delay={200} flowDuration={2400} />
-        <ArchPath d="M 50 50 L 83.3 50" assembled={assembled} isVisible={isVisible} delay={600} flowDuration={2400} />
+        <ArchEdge d="M 16.6 50 L 50 50" assembled={assembled} isActive={phase === 0} delay={200} />
+        <ArchEdge d="M 50 50 L 83.3 50" assembled={assembled} isActive={phase === 1} delay={600} />
       </svg>
       
       <div className="flex justify-center items-center w-full px-2"><ArchNode stage={architectureFlow[0]} assembled={assembled} delay={0} /></div>
-      <div className="flex justify-center items-center w-full px-2"><ArchNode stage={architectureFlow[1]} assembled={assembled} delay={400} /></div>
-      <div className="flex justify-center items-center w-full px-2"><ArchNode stage={architectureFlow[2]} assembled={assembled} delay={800} /></div>
+      <div className="flex justify-center items-center w-full px-2"><ArchNode stage={architectureFlow[1]} assembled={assembled} delay={400} isArriving={phase === 1} /></div>
+      <div className="flex justify-center items-center w-full px-2"><ArchNode stage={architectureFlow[2]} assembled={assembled} delay={800} isArriving={phase === 2} /></div>
     </div>
   );
 
@@ -170,17 +207,15 @@ export default function ProjectArchitecture({
         preserveAspectRatio="none"
         className="absolute inset-0 w-full h-full pointer-events-none z-0"
       >
-        <ArchPath d="M 50 16.6 L 50 50" assembled={assembled} isVisible={isVisible} delay={200} duration={200} />
+        <ArchEdge d="M 50 16.6 L 50 50" assembled={assembled} isActive={phase === 0} delay={200} duration={200} />
         {/* Branching Outwards */}
-        <ArchPath d="M 50 50 L 50 66.6 L 25 66.6" assembled={assembled} isVisible={isVisible} delay={600} duration={150} flowDuration={1800} />
-        <ArchPath d="M 50 50 L 50 66.6 L 75 66.6" assembled={assembled} isVisible={isVisible} delay={600} duration={150} flowDuration={1800} />
-        <ArchPath d="M 25 66.6 L 25 83.3" assembled={assembled} isVisible={isVisible} delay={750} duration={100} flowDuration={1400} />
-        <ArchPath d="M 75 66.6 L 75 83.3" assembled={assembled} isVisible={isVisible} delay={750} duration={100} flowDuration={1400} />
+        <ArchEdge d="M 50 50 L 50 66.6 L 25 66.6 L 25 83.3" assembled={assembled} isActive={phase === 1} delay={600} duration={250} />
+        <ArchEdge d="M 50 50 L 50 66.6 L 75 66.6 L 75 83.3" assembled={assembled} isActive={phase === 1} delay={600} duration={250} />
       </svg>
       <div className="col-span-2 flex justify-center items-center w-full px-2"><ArchNode stage={architectureFlow[0]} assembled={assembled} delay={0} /></div>
-      <div className="col-span-2 flex justify-center items-center w-full px-2"><ArchNode stage={architectureFlow[1]} assembled={assembled} delay={400} /></div>
-      <div className="col-span-1 flex justify-center items-center w-full px-2"><ArchNode stage={architectureFlow[2]} assembled={assembled} delay={850} /></div>
-      <div className="col-span-1 flex justify-center items-center w-full px-2"><ArchNode stage={architectureFlow[3]} assembled={assembled} delay={850} /></div>
+      <div className="col-span-2 flex justify-center items-center w-full px-2"><ArchNode stage={architectureFlow[1]} assembled={assembled} delay={400} isArriving={phase === 1} /></div>
+      <div className="col-span-1 flex justify-center items-center w-full px-2"><ArchNode stage={architectureFlow[2]} assembled={assembled} delay={850} isArriving={phase === 2} /></div>
+      <div className="col-span-1 flex justify-center items-center w-full px-2"><ArchNode stage={architectureFlow[3]} assembled={assembled} delay={850} isArriving={phase === 2} /></div>
     </div>
   );
 
@@ -192,32 +227,25 @@ export default function ProjectArchitecture({
         className="absolute inset-0 w-full h-full pointer-events-none z-0"
       >
         {/* Splitting Outwards */}
-        <ArchPath d="M 50 16.6 L 50 33.3 L 25 33.3" assembled={assembled} isVisible={isVisible} delay={150} duration={150} />
-        <ArchPath d="M 50 16.6 L 50 33.3 L 75 33.3" assembled={assembled} isVisible={isVisible} delay={150} duration={150} />
-        <ArchPath d="M 25 33.3 L 25 50" assembled={assembled} isVisible={isVisible} delay={300} duration={100} flowDuration={1400} />
-        <ArchPath d="M 75 33.3 L 75 50" assembled={assembled} isVisible={isVisible} delay={300} duration={100} flowDuration={1400} />
+        <ArchEdge d="M 50 16.6 L 50 33.3 L 25 33.3 L 25 50" assembled={assembled} isActive={phase === 0} delay={150} duration={250} />
+        <ArchEdge d="M 50 16.6 L 50 33.3 L 75 33.3 L 75 50" assembled={assembled} isActive={phase === 0} delay={150} duration={250} />
         
         {/* Converging Inwards */}
-        <ArchPath d="M 25 50 L 25 66.6 L 50 66.6" assembled={assembled} isVisible={isVisible} delay={600} duration={150} flowDuration={1800} />
-        <ArchPath d="M 75 50 L 75 66.6 L 50 66.6" assembled={assembled} isVisible={isVisible} delay={600} duration={150} flowDuration={1800} />
-        <ArchPath d="M 50 66.6 L 50 83.3" assembled={assembled} isVisible={isVisible} delay={750} duration={100} flowDuration={1400} />
+        <ArchEdge d="M 25 50 L 25 66.6 L 50 66.6 L 50 83.3" assembled={assembled} isActive={phase === 1} delay={600} duration={250} />
+        <ArchEdge d="M 75 50 L 75 66.6 L 50 66.6 L 50 83.3" assembled={assembled} isActive={phase === 1} delay={600} duration={250} />
       </svg>
       <div className="col-span-2 flex justify-center items-center w-full px-2"><ArchNode stage={architectureFlow[0]} assembled={assembled} delay={0} /></div>
-      <div className="col-span-1 flex justify-center items-center w-full px-2"><ArchNode stage={architectureFlow[1]} assembled={assembled} delay={400} /></div>
-      <div className="col-span-1 flex justify-center items-center w-full px-2"><ArchNode stage={architectureFlow[2]} assembled={assembled} delay={400} /></div>
-      <div className="col-span-2 flex justify-center items-center w-full px-2"><ArchNode stage={architectureFlow[3]} assembled={assembled} delay={850} /></div>
+      <div className="col-span-1 flex justify-center items-center w-full px-2"><ArchNode stage={architectureFlow[1]} assembled={assembled} delay={400} isArriving={phase === 1} /></div>
+      <div className="col-span-1 flex justify-center items-center w-full px-2"><ArchNode stage={architectureFlow[2]} assembled={assembled} delay={400} isArriving={phase === 1} /></div>
+      <div className="col-span-2 flex justify-center items-center w-full px-2"><ArchNode stage={architectureFlow[3]} assembled={assembled} delay={850} isArriving={phase === 2} /></div>
     </div>
   );
 
   return (
     <div className="w-full relative" ref={containerRef}>
       <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes flow-telemetry {
-          to { stroke-dashoffset: -8; }
-        }
-        @keyframes node-activate {
-          0% { border-color: var(--color-line-faint); box-shadow: none; }
-          30% { border-color: var(--color-cyan); box-shadow: 0 0 12px rgba(67, 201, 255, 0.25); }
+        @keyframes node-arrival {
+          0% { border-color: var(--color-cyan); box-shadow: 0 0 12px rgba(67, 201, 255, 0.4); }
           100% { border-color: var(--color-line-faint); box-shadow: none; }
         }
       `}} />
