@@ -120,24 +120,26 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
         )}
       </div>
 
-      {/* preview/diagram container */}
-      <div className={`proj-reveal ${reverse ? "lg:order-1" : ""}`}>
-        <div className="tech-label mb-3 flex items-center justify-between text-cyan">
-          <span>SYS.PREVIEW</span>
-          <span className="flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_8px_var(--cyan)]" />
-            ONLINE
-          </span>
+      {/* ── VISUAL RAIL (PREVIEW + ARCHITECTURE) ── */}
+      <div className={`proj-reveal flex flex-col gap-12 ${reverse ? "lg:order-1" : ""}`}>
+        
+        {/* SYS.PREVIEW */}
+        <div>
+          <div className="tech-label mb-3 flex items-center justify-between text-cyan">
+            <span>SYS.PREVIEW</span>
+            <span className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_8px_var(--cyan)]" />
+              ONLINE
+            </span>
+          </div>
+          <ProjectVisual
+            name={project.name}
+            image={project.image}
+            liveUrl={project.links?.live}
+          />
         </div>
-        <ProjectVisual
-          name={project.name}
-          image={project.image}
-          liveUrl={project.links?.live}
-        />
-      </div>
-      
-      {/* ── Architecture rendered full-width below the columns ── */}
-      <div className="col-span-1 lg:col-span-2">
+
+        {/* SYS.ARCHITECTURE (Inline) */}
         <ProjectArchitecture 
           architectureVariant={project.architectureVariant}
           architectureFlow={project.architectureFlow}
