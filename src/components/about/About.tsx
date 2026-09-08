@@ -9,6 +9,8 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import Certifications from "./Certifications";
+import { internshipCredential } from "@/data/profile/certifications.data";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -140,6 +142,11 @@ export default function About() {
                       </li>
                     ))}
                   </ul>
+                  {e.company === internshipCredential.company && e.role === internshipCredential.role && (
+                    <a href={internshipCredential.image} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center gap-2 text-xs text-cyan underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan" aria-label="View Zylxy internship certificate (new tab)">
+                      INTERNSHIP CREDENTIAL <span aria-hidden="true">↗</span>
+                    </a>
+                  )}
                 </li>
               ))}
             </ol>
@@ -187,6 +194,7 @@ export default function About() {
              </div>
           ))}
         </div>
+        <Certifications />
       </div>
 
     </section>
