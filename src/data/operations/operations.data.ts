@@ -2,7 +2,7 @@ import type { Operation } from "@/types/operations/operations.types";
 export const operations: Operation[] = [
   {
     name: "Corporate Web Platform",
-    detail: "Zylxy Technologies corporate site and CRM consulting workflow.",
+    detail: "Zylxy Technology Pvt. Ltd. site and consultation workflows.",
     status: "ACTIVE",
   },
   {
@@ -12,7 +12,7 @@ export const operations: Operation[] = [
   },
   {
     name: "Python API Expansion",
-    detail: "Researching FastAPI, Pydantic, and SQLAlchemy ecosystems.",
+    detail: "Expanding into FastAPI, Pydantic, and SQLAlchemy.",
     status: "RESEARCH",
   },
 ];

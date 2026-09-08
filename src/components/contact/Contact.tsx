@@ -144,9 +144,9 @@ export default function Contact() {
           </h3>
 
           <p className="contact-reveal mt-6 max-w-md text-sm leading-relaxed text-paper-dim">
-            Recruiters, founders, and clients - if you need someone who can
-            architect, build, and ship a production system end-to-end, the
-            channel is open.
+            Open to full-stack and backend opportunities where I can contribute
+            practical web experience and continue growing into Python and
+            AI-oriented engineering.
           </p>
 
           <a

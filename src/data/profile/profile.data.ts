@@ -10,14 +10,14 @@ export const identity: ProfileIdentity = {
     "Backend & API Developer",
     "JavaScript · TypeScript · Python",
     "React · Next.js · Node.js",
-    "FastAPI · Pydantic · SQLAlchemy — Expanding Stack",
+    "FastAPI · Pydantic · SQLAlchemy (Expanding)",
   ],
   location: "Kakinada, Andhra Pradesh, India",
   email: "sasikumarnallana956@gmail.com",
   phone: "+91 9553886216",
-  tagline: "Building scalable, intuitive and user-focused web applications across modern frontend, backend and API systems.",
+  tagline: "Building web products across interfaces, APIs, and data flows.",
   summary:
-    "Full-Stack Developer focused on scalable, intuitive and user-focused web applications, with experience delivering production-ready solutions, collaborating in agile environments and mentoring 60+ aspiring developers through a corporate CSR initiative. Currently expanding into Python backend engineering and pursuing a B.Tech in Artificial Intelligence and Data Science.",
+    "Full-Stack Developer with production internship experience and mentorship of 60+ aspiring developers. Currently deepening Python backend skills while pursuing a B.Tech in Artificial Intelligence and Data Science.",
   links: {
     github: "https://github.com/kumarnallana",
     linkedin: "https://linkedin.com/in/sasi-kumar-nallana",

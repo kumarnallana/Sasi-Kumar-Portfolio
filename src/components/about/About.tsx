@@ -107,13 +107,13 @@ export default function About() {
           <div className="about-reveal">
             <div className="tech-label mb-5 text-cyan">PROFESSIONAL NARRATIVE</div>
             <p className="text-base leading-relaxed text-paper-dim md:text-lg">
-              I build responsive and maintainable web applications using modern frontend and backend technologies, with practical experience working on production-oriented Next.js and React systems.
+              I build web applications with React, Next.js, Node.js, and REST APIs, backed by practical experience on a production corporate platform.
             </p>
             <p className="mt-4 text-base leading-relaxed text-paper-dim md:text-lg">
-              During my Web Developer Internship at Zylxy Technology Pvt. Ltd., I translated business requirements into functional web experiences, developed reusable UI components, worked with lead-generation workflows, integrated REST-based systems, and debugged end-to-end application behavior.
+              At Zylxy Technology Pvt. Ltd., I translated requirements into reusable interfaces, lead-generation workflows, REST API integrations, and tested application behavior.
             </p>
             <p className="mt-4 text-base leading-relaxed text-paper-dim md:text-lg">
-              Alongside JavaScript and TypeScript full-stack development, I am currently expanding my Python backend skills through <span className="text-amber">FastAPI, Pydantic, and SQLAlchemy</span>. I am also pursuing a B.Tech in Artificial Intelligence and Data Science while continuing to strengthen practical full-stack engineering skills.
+              I am currently expanding my Python backend skills through <span className="text-amber">FastAPI, Pydantic, and SQLAlchemy</span> while pursuing a B.Tech in Artificial Intelligence and Data Science.
             </p>
           </div>
 

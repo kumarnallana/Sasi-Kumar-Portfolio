@@ -6,11 +6,11 @@ export const experience: Experience[] = [
     company: "Zylxy Technology Pvt. Ltd.",
     mode: "On-Site (Kakinada)",
     points: [
-      "Translated business requirements into a corporate website and CRM platform using Next.js and React.",
-      "Developed reusable UI components using Tailwind CSS and centralized styling.",
-      "Built lead-generation workflows using React Hooks, Next.js Server Actions and REST API integrations.",
-      "Refactored complex form functionality into modular, domain-oriented components.",
-      "Debugged end-to-end integrations through browser DevTools and Network inspection.",
+      "Translated requirements into a Next.js and React corporate website and consultation workflows.",
+      "Developed reusable UI components with Tailwind CSS and shared styling.",
+      "Implemented lead-generation workflows with React Hooks, Server Actions, and REST API integrations.",
+      "Refactored complex forms into modular, domain-oriented components.",
+      "Resolved integration issues with browser DevTools and network inspection.",
     ],
   },
   {
@@ -20,18 +20,18 @@ export const experience: Experience[] = [
     mode: "Parallel Contribution",
     points: [
       "Mentored 60+ aspiring developers through technical guidance and code reviews.",
-      "Led practical placement preparation, JavaScript, React, and Node.js sessions.",
+      "Delivered placement preparation sessions covering JavaScript, React, and Node.js.",
     ],
   },
   {
-    role: "Industrial Trainee — Web Development",
+    role: "Industrial Trainee, Web Development",
     period: "November 2022 – May 2023",
     company: "iSAN Computers Education",
     mode: "On-Site (Kakinada)",
     points: [
       "Completed six months of industrial web-development training.",
-      "Built responsive static and dynamic interfaces.",
-      "Worked with semantic HTML5, CSS3 and JavaScript DOM manipulation.",
+      "Built responsive static and dynamic web interfaces.",
+      "Worked with semantic HTML5, CSS3, and JavaScript DOM manipulation.",
     ],
   },
 ];

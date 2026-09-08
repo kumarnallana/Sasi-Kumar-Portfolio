@@ -8,7 +8,7 @@ export const projects: Project[] = [
     year: "2026",
     classification: "WEB DEVELOPMENT · CRM WORKFLOWS · PRODUCTION",
     summary:
-      "Built and maintained a production corporate platform with Next.js and React during a three-month internship at Zylxy Technologies. My work focused on responsive UI, reusable components, lead-generation workflows, Server Actions, API integrations, and production debugging.",
+      "Contributed to a production corporate platform with Next.js and React during a three-month internship. Work covered responsive interfaces, reusable components, consultation workflows, Server Actions, REST API integrations, and production debugging.",
     stack: [
       "Next.js",
       "React",
@@ -23,8 +23,8 @@ export const projects: Project[] = [
     ],
     highlights: [
       "Built reusable responsive interfaces with centralized styling and configuration.",
-      "Implemented consultation and lead-generation workflows using Server Actions and REST integrations.",
-      "Debugged integration and production issues using browser DevTools.",
+      "Implemented consultation and lead-generation workflows with Server Actions and REST APIs.",
+      "Resolved integration and production issues with browser DevTools.",
     ],
     links: {
       live: "https://zylxytech.com/",
@@ -45,7 +45,7 @@ export const projects: Project[] = [
     year: "2026",
     classification: "FULL-STACK ASSESSMENT · AUTHENTICATION · SOCIAL PLATFORM",
     summary:
-      "Built a full-stack social platform for the 3W assessment using React, Express, MongoDB, and JWT authentication. The application supports protected feeds, image posts, likes, comments, replies, and @mentions with persistent data and responsive behavior.",
+      "Built a full-stack social platform for the 3W assessment with React, Express.js, Node.js, MongoDB, and JWT authentication. It supports protected feeds, image posts, likes, comments, replies, and @mentions with persistent data and responsive layouts.",
     stack: [
       "React",
       "Express.js",
@@ -55,7 +55,7 @@ export const projects: Project[] = [
       "Cloudinary",
     ],
     expandedStack: {
-      "Authentication": ["JWT", "bcrypt", "HTTP-only cookies"],
+      "Authentication": ["JWT", "bcrypt", "HttpOnly cookies"],
       "Backend": ["Express.js", "Node.js", "REST APIs"],
       "Database": ["MongoDB", "Mongoose"],
       "Frontend": ["React", "JavaScript", "CSS"],
@@ -67,9 +67,9 @@ export const projects: Project[] = [
       { value: "6", label: "Verified Viewports" },
     ],
     highlights: [
-      "Implemented signup and login with bcrypt, JWT authentication, and HTTP-only cookie sessions.",
+      "Implemented signup and login with bcrypt, JWT authentication, and HttpOnly cookie sessions.",
       "Built posts, images, likes, comments, replies, and @mention interactions.",
-      "Designed User and Post persistence and validated authentication, data, and responsive flows through targeted testing.",
+      "Designed User and Post persistence, then validated authentication, data, and responsive behavior with targeted testing.",
     ],
     links: {
       live: "https://mini-social-sk.vercel.app/feed",
@@ -92,7 +92,7 @@ export const projects: Project[] = [
     year: "2026",
     classification: "FRONTEND ASSESSMENT · INTERACTIVE EXPERIENCE · E2E TESTING",
     summary:
-      "Built an interactive product experience for the Grinning Co technical assessment using Next.js, React, and TypeScript. It combines product storytelling, canvas and motion interactions, pricing and modal flows, lightweight state management, and Playwright end-to-end validation.",
+      "Built an interactive product experience for the Grinning Co technical assessment with Next.js, React, and TypeScript. It combines canvas and motion interactions, pricing and modal flows, React Context state, and Playwright end-to-end tests.",
     stack: [
       "Next.js",
       "React",
@@ -116,9 +116,9 @@ export const projects: Project[] = [
       { value: "3", label: "Playwright E2E Suites" },
     ],
     highlights: [
-      "Built modular product sections using reusable React and TypeScript components.",
-      "Created responsive canvas, motion, pricing, ingredient, and modal interactions.",
-      "Implemented lightweight state with React Context and Playwright coverage for key user journeys.",
+      "Built reusable product sections with React and TypeScript.",
+      "Created responsive canvas and motion interactions, plus pricing, ingredient, and modal flows.",
+      "Managed lightweight state with React Context and covered key user journeys with Playwright.",
     ],
     links: {
       live: "https://redroot-digital-experience.vercel.app/",
