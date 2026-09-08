@@ -32,7 +32,7 @@ export const stackLayers: StackLayer[] = [
     code: "L4",
     role: "DATA / PERSISTENCE",
     title: "Data / Persistence",
-    narrative: "Application state, browser storage, and SQL, while expanding into SQLAlchemy.",
+    narrative: "Application state, browser storage, and SQL, with SQLAlchemy as an expanding ORM skill.",
     items: ["SQL", "SQLAlchemy ORM", "State Management", "Browser Storage"],
     accent: "cyan",
     status: "LIVE",

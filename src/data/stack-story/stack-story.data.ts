@@ -6,6 +6,6 @@ export const stackStory: {
   layers: StackLayer[];
 } = {
   title: "THE STACK",
-  line: "Seven layers of demonstrated work and active expansion, from language core to product delivery.",
+  line: "Seven layers spanning demonstrated work and active expansion, from language core to product delivery.",
   layers: stackLayers,
 };

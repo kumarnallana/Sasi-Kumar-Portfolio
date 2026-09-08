@@ -69,7 +69,7 @@ export const projects: Project[] = [
     highlights: [
       "Implemented signup and login with bcrypt, JWT authentication, and HttpOnly cookie sessions.",
       "Built posts, images, likes, comments, replies, and @mention interactions.",
-      "Designed User and Post persistence, then validated authentication, data, and responsive behavior with targeted testing.",
+      "Designed User and Post data models, then validated authentication, persistence, and responsive behavior with targeted testing.",
     ],
     links: {
       live: "https://mini-social-sk.vercel.app/feed",
