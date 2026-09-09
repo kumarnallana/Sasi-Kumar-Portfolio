@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { getLenis } from "@/lib/lenis";
+import { getLenis, isScrollOwned, snapToPosition } from "@/lib/lenis";
 import { NAV_SECTIONS } from "@/lib/sections";
 
 // Proximity scroll-snap: once scrolling settles, if we've come to rest near a
@@ -19,7 +19,6 @@ export default function ScrollSnap() {
     if (reduce) return;
 
     let settle: ReturnType<typeof setTimeout>;
-    let snapping = false;
 
     const stationTops = () => {
       const tops = [0]; // the hero / top of the descent
@@ -32,7 +31,7 @@ export default function ScrollSnap() {
 
     const trySnap = () => {
       const lenis = getLenis();
-      if (!lenis || snapping) return;
+      if (!lenis || isScrollOwned() || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       // don't fight a body-locked overlay (e.g. the stack story)
       if (document.body.style.overflow === "hidden") return;
 
@@ -49,18 +48,12 @@ export default function ScrollSnap() {
       }
       if (best == null || bd <= MIN_DELTA || bd >= vh * SNAP_WINDOW) return;
 
-      snapping = true;
-      lenis.scrollTo(best, {
-        duration: 0.7,
-        easing: (t: number) => 1 - Math.pow(1 - t, 3),
-        onComplete: () => {
-          snapping = false;
-        },
-      });
+      snapToPosition(best);
     };
 
     const onScroll = () => {
       clearTimeout(settle);
+      if (isScrollOwned()) return;
       settle = setTimeout(trySnap, SETTLE_MS);
     };
 
