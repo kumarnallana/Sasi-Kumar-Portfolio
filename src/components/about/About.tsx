@@ -23,11 +23,12 @@ export default function About() {
     const ctx = gsap.context(() => {
       gsap.utils.toArray<HTMLElement>(".about-reveal").forEach((node) => {
         gsap.from(node, {
-          scrollTrigger: { trigger: node, start: "top 85%" },
+          scrollTrigger: { trigger: node, start: "top 85%", once: true },
           y: 24,
           opacity: 0,
           duration: 0.7,
           ease: "power3.out",
+          immediateRender: false,
         });
       });
       

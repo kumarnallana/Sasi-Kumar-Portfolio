@@ -136,7 +136,7 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
             name={project.name}
             image={project.image}
             liveUrl={project.links?.live}
-            priority={i === 0}
+            eager={i < 2}
           />
         </div>
 

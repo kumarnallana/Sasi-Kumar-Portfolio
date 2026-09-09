@@ -7,14 +7,14 @@ interface ProjectVisualProps {
   name: string;
   image?: string;
   liveUrl?: string;
-  priority?: boolean;
+  eager?: boolean;
 }
 
 export default function ProjectVisual({
   name,
   image,
   liveUrl,
-  priority = false,
+  eager = false,
 }: ProjectVisualProps) {
   return (
     <div className="relative flex w-full flex-col overflow-hidden border border-line-faint bg-ink-900/60">
@@ -29,7 +29,7 @@ export default function ProjectVisual({
                 src={image}
                 alt={`${name} preview`}
                 fill
-                priority={priority}
+                loading={eager ? "eager" : "lazy"}
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover object-top opacity-90 transition-all duration-300 ease-out group-hover/preview:scale-[1.01] group-hover/preview:opacity-100"
               />
