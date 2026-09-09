@@ -3,7 +3,6 @@
 import SectionHeader from "@/components/shared/SectionHeader";
 import { achievements } from "@/data/profile/achievements.data";
 import { experience } from "@/data/profile/experience.data";
-import { skillGroups } from "@/data/profile/skills.data";
 import { identity } from "@/data/profile/profile.data";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -11,6 +10,7 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Certifications from "./Certifications";
 import { internshipCredential } from "@/data/profile/certifications.data";
+import CapabilityMatrix from "./CapabilityMatrix";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -49,7 +49,7 @@ export default function About() {
     <section
       id="profile"
       ref={ref}
-      className="relative mx-auto max-w-6xl px-6 py-24 md:px-10"
+      className="relative mx-auto max-w-6xl px-6 py-16 md:px-10 md:py-24"
     >
       {/* Anchor alias to ensure backward compatibility with lingering #architect URL hashes */}
       <span id="architect" className="sr-only pointer-events-none absolute -top-24" aria-hidden="true" />
@@ -59,10 +59,10 @@ export default function About() {
         caption="Operator identity & professional narrative."
       />
 
-      <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
+      <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
         
         {/* Portrait & Core Identity */}
-        <div className="portrait-container about-reveal relative h-fit border border-line-faint bg-ink-800/40 p-1">
+        <div className="portrait-container about-reveal relative mx-auto h-fit w-full max-w-[18rem] border border-line-faint bg-ink-800/40 p-1 sm:max-w-sm lg:max-w-none">
           {/* Decorative Blueprint frame */}
           <div className="portrait-line absolute left-0 top-0 h-px w-full bg-cyan/50" />
           <div className="portrait-line absolute bottom-0 left-0 h-px w-full bg-cyan/50" />
@@ -72,14 +72,15 @@ export default function About() {
               src="/logos/sasi-portrait-glasses-candidate-rgb.png"
               alt="Nallana Sasi Kumar Portrait"
               fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover object-top opacity-90 mix-blend-screen grayscale transition-all duration-700 hover:grayscale-0 hover:opacity-100"
+              sizes="(max-width: 639px) 288px, (max-width: 1023px) 384px, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover object-top opacity-100 grayscale-0 transition-all duration-700 md:opacity-90 md:mix-blend-screen md:grayscale md:hover:grayscale-0 md:hover:opacity-100"
             />
             {/* Tech annotations over portrait */}
             <div className="absolute bottom-4 left-4 border border-cyan/30 bg-ink-900/80 px-2 py-1 backdrop-blur">
               <span className="font-mono text-[0.65rem] text-cyan">ID: {identity.callsign}</span>
             </div>
-            <div className="absolute right-4 top-4 border border-line-faint bg-ink-900/80 px-2 py-1 backdrop-blur">
+            <div className="absolute right-4 top-4 flex items-center gap-2 border border-line-faint bg-ink-900/80 px-2 py-1 backdrop-blur">
+              <span className="h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_6px_var(--cyan)]" />
               <span className="font-mono text-[0.65rem] text-amber">STATUS: ONLINE</span>
             </div>
           </div>
@@ -156,34 +157,12 @@ export default function About() {
       </div>
 
       {/* skills as subsystems */}
-      <div className="about-reveal mt-16">
-        <div className="tech-label mb-5">SUBSYSTEMS · CAPABILITY MATRIX</div>
-        <div className="grid gap-px border border-line-faint bg-line-faint sm:grid-cols-2 lg:grid-cols-4">
-          {skillGroups.map((g) => (
-            <div key={g.group} className="bg-ink-900 p-4">
-              <div className="mb-3 flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_6px_var(--cyan)]" />
-                <span className="font-display text-sm font-semibold text-paper">
-                  {g.group}
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {g.items.map((it) => (
-                  <span
-                    key={it}
-                    className="border border-line-faint px-2 py-0.5 text-xs text-paper-dim"
-                  >
-                    {it}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+      <div className="about-reveal mt-12 hidden md:block md:mt-16">
+        <CapabilityMatrix />
       </div>
       
       {/* Education / Foundation */}
-      <div className="about-reveal mt-16 border border-line-faint bg-ink-900/50 p-6">
+      <div className="about-reveal mt-12 border border-line-faint bg-ink-900/50 p-5 md:mt-16 md:p-6">
         <div className="tech-label mb-5 text-paper">EDUCATION & FOUNDATION</div>
         <div className="grid gap-6 md:grid-cols-2">
           {achievements.map((ach, idx) => (

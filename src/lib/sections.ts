@@ -6,5 +6,5 @@ export const NAV_SECTIONS = [
   { id: "systems", label: "SYSTEMS" },
   { id: "signals", label: "SIGNALS" },
   { id: "profile", label: "PROFILE" },
-  { id: "comms", label: "COMMS" },
+  { id: "comms", label: "CONTACT" },
 ] as const;

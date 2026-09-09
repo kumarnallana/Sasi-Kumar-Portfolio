@@ -114,11 +114,11 @@ export default function Contact() {
     <section
       id="comms"
       ref={ref}
-      className="relative mx-auto max-w-6xl px-6 py-24 md:px-10"
+      className="relative mx-auto max-w-6xl px-6 py-16 md:px-10 md:py-24"
     >
       <SectionHeader
         index="05"
-        title="ESTABLISH COMMS"
+        title="CONTACT"
         caption="Channel open. Awaiting transmission."
       />
 
@@ -126,9 +126,7 @@ export default function Contact() {
         <div>
           <div className="contact-reveal flex items-center gap-3">
             <span
-              className={`h-2.5 w-2.5 rounded-full ${
-                armed ? "bg-cyan shadow-[0_0_10px_var(--cyan)]" : "bg-line-dim"
-              }`}
+              className="h-2.5 w-2.5 rounded-full bg-cyan shadow-[0_0_10px_var(--cyan)]"
             />
             <span className="tech-label text-cyan">
               {armed ? "SIGNAL ACQUIRED" : "ACQUIRING..."}
@@ -246,7 +244,7 @@ export default function Contact() {
       <MissionDebrief />
 
       {/* footer */}
-      <div className="mt-24 flex flex-wrap items-center justify-between gap-4 border-t border-line-faint pt-6 tech-label">
+      <div className="mt-16 flex flex-wrap items-center justify-between gap-4 border-t border-line-faint pt-6 tech-label md:mt-24">
         <span>
           © 2026 {identity.name.toUpperCase()}
         </span>

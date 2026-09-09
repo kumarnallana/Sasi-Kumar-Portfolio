@@ -6,7 +6,7 @@ const stations = [
   ["SYSTEMS", "systems"],
   ["SIGNALS", "signals"],
   ["PROFILE", "profile"],
-  ["COMMS", "comms"],
+  ["CONTACT", "comms"],
 ] as const;
 
 test.use({
@@ -68,7 +68,7 @@ test("latest request wins, including when it interrupts a proximity snap", async
     window.scrollTo({ top: top - 200, behavior: "instant" });
   });
   await page.waitForTimeout(250);
-  for (const label of ["OPS", "SYSTEMS", "COMMS"]) {
+  for (const label of ["OPS", "SYSTEMS", "CONTACT"]) {
     await page.getByRole("button", { name: label, exact: true }).click();
     await page.waitForTimeout(120);
   }
@@ -104,16 +104,26 @@ test("keyboard navigation still works after resizing", async ({ page }) => {
   await expectDestination(page, "profile");
 });
 
-test("mobile navigation and rotation preserve the existing overflow baseline", async ({ page }) => {
+test("mobile section menu uses usable targets and survives rotation", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openPortfolio(page);
-  const overflow = () => page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - innerWidth));
-  const before = await overflow();
-  // Known existing Signals tile overflow is outside this scroll-only fix.
-  expect(before).toBeLessThanOrEqual(17);
-  await page.getByRole("button", { name: "SYSTEMS", exact: true }).click();
+  const viewport = await page.evaluate(() => ({
+    scrollWidth: document.documentElement.scrollWidth,
+    innerWidth: window.innerWidth,
+  }));
+  expect(viewport.scrollWidth).toBeLessThanOrEqual(viewport.innerWidth);
+  const menu = page.getByRole("button", { name: "Open section navigation" });
+  const menuBox = await menu.boundingBox();
+  expect(menuBox?.height).toBeGreaterThanOrEqual(44);
+  await menu.click();
+  const projects = page.getByRole("button", { name: "Go to Projects", exact: true });
+  const projectsBox = await projects.boundingBox();
+  expect(projectsBox?.height).toBeGreaterThanOrEqual(44);
+  await projects.click();
   await expectDestination(page, "systems");
-  expect(await overflow()).toBeLessThanOrEqual(before);
+  await page.getByRole("button", { name: "Open section navigation" }).click();
+  await page.getByRole("button", { name: "Go to Overview", exact: true }).click();
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeLessThanOrEqual(3);
   await page.setViewportSize({ width: 844, height: 390 });
   await page.getByRole("button", { name: "PROFILE", exact: true }).click();
   await expectDestination(page, "profile");

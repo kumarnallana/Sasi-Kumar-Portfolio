@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { projects } from "@/data/projects/projects.data";
@@ -39,7 +39,7 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
   return (
     <div
       ref={ref}
-      className="grid items-start gap-10 border-t border-line-faint py-20 lg:grid-cols-2 lg:gap-16"
+      className="grid items-start gap-10 border-t border-line-faint py-12 md:py-20 lg:grid-cols-2 lg:gap-16"
     >
       {/* details */}
       <div className={reverse ? "lg:order-2" : ""}>
@@ -107,11 +107,11 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
               {stackExpanded ? "[-] HIDE COMPLETE STACK" : "[+] VIEW COMPLETE STACK"}
             </button>
             {stackExpanded && (
-              <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2 text-xs border border-line-faint bg-ink-900/40 p-4">
+              <div className="mt-3 grid grid-cols-1 gap-x-6 gap-y-5 border border-line-faint bg-ink-900/40 p-4 text-xs sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
                 {Object.entries(project.expandedStack).map(([category, items]) => (
                   <div key={category}>
-                    <div className="tech-label text-[0.55rem] text-paper-dim/70 mb-1">{category}</div>
-                    <div className="text-paper">{items.join(", ")}</div>
+                    <div className="tech-label mb-1.5 text-[0.55rem] leading-tight text-paper-dim/70">{category}</div>
+                    <div className="leading-relaxed text-paper">{items.join(", ")}</div>
                   </div>
                 ))}
               </div>
@@ -154,7 +154,7 @@ export default function Projects() {
   return (
     <section
       id="systems"
-      className="relative mx-auto max-w-6xl px-6 py-24 md:px-10"
+      className="relative mx-auto max-w-6xl px-6 py-16 md:px-10 md:py-24"
     >
       <SectionHeader
         index="02"

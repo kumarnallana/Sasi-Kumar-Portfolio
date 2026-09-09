@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { NAV_SECTIONS } from "@/lib/sections";
-import { scrollToSection, getLenis } from "@/lib/lenis";
+import { scrollToSection } from "@/lib/lenis";
 import { sendCat } from "@/lib/catSignals";
 import { sound } from "@/lib/sound";
 import { identity } from "@/data/profile/profile.data";
@@ -19,7 +19,7 @@ const CHAPTER: Record<string, string> = {
   signals: "OPEN SIGNALS",
   profile: "OPERATOR PROFILE",
   architect: "OPERATOR PROFILE",
-  comms: "ESTABLISH COMMS",
+  comms: "CONTACT",
 };
 
 const N = NAV_SECTIONS.length;
@@ -49,11 +49,13 @@ export default function MissionDebrief() {
     };
 
     if (reduce) {
-      setReviewed(N);
-      setCompiled(true);
-      counter.p = 100;
-      writeMeter();
-      return;
+      const frame = window.requestAnimationFrame(() => {
+        setReviewed(N);
+        setCompiled(true);
+        counter.p = 100;
+        writeMeter();
+      });
+      return () => window.cancelAnimationFrame(frame);
     }
 
     const ctx = gsap.context(() => {
@@ -133,13 +135,11 @@ export default function MissionDebrief() {
   const observe = () => {
     sound.play("blip");
     setChoice("observer");
-    const l = getLenis();
-    if (l) l.scrollTo(0, { duration: 1.4 });
-    else window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollToSection("top");
   };
 
   return (
-    <div ref={root} className="mt-24 border-t border-line-faint pt-12">
+    <div ref={root} className="mt-16 border-t border-line-faint pt-10 md:mt-24 md:pt-12">
       {/* header */}
       <div className="debrief-head flex flex-wrap items-end justify-between gap-6">
         <div>
@@ -215,7 +215,7 @@ export default function MissionDebrief() {
       {compiled && (
         <div className="debrief-choice mt-12">
           <div className="tech-label mb-4 text-amber glow-amber">
-            // one decision remains
+            {"// one decision remains"}
           </div>
           <div className="flex flex-col gap-4 sm:flex-row">
             {/* INITIATE CONTACT */}

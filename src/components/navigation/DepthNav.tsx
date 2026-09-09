@@ -8,9 +8,20 @@ import { NAV_SECTIONS as SECTIONS } from "@/lib/sections";
 // the navigation IS the depth axis - each section is a station at its true
 // scroll depth, so spacing itself reads as a schematic of the descent.
 type Pt = { id: string; label: string; frac: number };
+type SectionId = (typeof SECTIONS)[number]["id"];
+
+const MOBILE_LABELS: Record<SectionId, string> = {
+  operations: "Operations",
+  principles: "Principles",
+  systems: "Projects",
+  signals: "Open Source",
+  profile: "Profile",
+  comms: "Contact",
+};
 
 export default function DepthNav() {
   const [progress, setProgress] = useState(0);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [pts, setPts] = useState<Pt[]>(() =>
     SECTIONS.map((s, i) => ({ ...s, frac: (i + 1) / (SECTIONS.length + 1) })),
   );
@@ -47,6 +58,15 @@ export default function DepthNav() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [mobileOpen]);
+
   // active = the deepest station we've descended past (-1 = still at the hero)
   let active = -1;
   for (let i = 0; i < pts.length; i++) {
@@ -55,8 +75,13 @@ export default function DepthNav() {
 
   const go = (id: string) => {
     sound.play("blip");
+    setMobileOpen(false);
     scrollToSection(id);
   };
+
+  const currentMobileLabel = active >= 0
+    ? MOBILE_LABELS[pts[active].id as SectionId]
+    : "Overview";
 
   return (
     <>
@@ -124,24 +149,87 @@ export default function DepthNav() {
         </span>
       </div>
 
-      {/* ---- mobile: compact dot-strip so phones aren't stranded ---- */}
-      <div className="pointer-events-auto fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-full border border-line-faint bg-ink-900/85 px-4 py-2 backdrop-blur md:hidden">
-        <span className="tech-label text-[0.55rem] text-cyan">
-          {pts[active]?.label ?? "HERO"}
-        </span>
-        {pts.map((p, i) => (
+      {/* ---- mobile: labeled section menu with phone-sized touch targets ---- */}
+      <nav
+        aria-label="Section navigation"
+        className={`pointer-events-auto fixed inset-x-4 z-50 md:hidden ${
+          mobileOpen
+            ? "bottom-[calc(4rem+env(safe-area-inset-bottom))]"
+            : "bottom-[calc(1rem+env(safe-area-inset-bottom))]"
+        }`}
+      >
+        <div className={`mx-auto w-full ${mobileOpen ? "max-w-sm" : "max-w-[13rem]"}`}>
+          {mobileOpen && (
+            <div
+              id="mobile-section-menu"
+              className="mb-2 border border-line-faint bg-ink-900/95 p-2 shadow-[0_0_30px_rgba(0,0,0,0.55)] backdrop-blur"
+            >
+              <div className="tech-label px-2 pb-2 pt-1 text-[0.55rem] text-paper-dim">
+                JUMP TO SECTION
+              </div>
+              <div className="grid grid-cols-2 gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => go("top")}
+                  aria-label="Go to Overview"
+                  aria-current={active === -1 ? "page" : undefined}
+                  className={`col-span-2 flex min-h-11 items-center justify-between border px-3 text-left transition-colors ${
+                    active === -1
+                      ? "border-cyan bg-cyan/10 text-cyan"
+                      : "border-line-faint text-paper hover:border-cyan/60"
+                  }`}
+                >
+                  <span className="tech-label text-[0.55rem]">00</span>
+                  <span className="font-display text-sm">Overview</span>
+                </button>
+                {pts.map((p, i) => {
+                  const isActive = i === active;
+                  return (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => go(p.id)}
+                      aria-label={`Go to ${MOBILE_LABELS[p.id as SectionId]}`}
+                      aria-current={isActive ? "page" : undefined}
+                      className={`flex min-h-11 items-center justify-between gap-2 border px-3 text-left transition-colors ${
+                        isActive
+                          ? "border-cyan bg-cyan/10 text-cyan"
+                          : "border-line-faint text-paper hover:border-cyan/60"
+                      }`}
+                    >
+                      <span className="tech-label text-[0.55rem]">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className="font-display text-sm">
+                        {MOBILE_LABELS[p.id as SectionId]}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           <button
-            key={p.id}
-            onClick={() => go(p.id)}
-            aria-label={p.label}
-            className={`h-2 w-2 rounded-full transition-all ${
-              i === active
-                ? "scale-125 bg-cyan shadow-[0_0_8px_var(--cyan)]"
-                : "bg-line-dim"
-            }`}
-          />
-        ))}
-      </div>
+            type="button"
+            onClick={() => setMobileOpen((open) => !open)}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-section-menu"
+            aria-label={mobileOpen ? "Close section navigation" : "Open section navigation"}
+            className="flex min-h-12 w-full items-center justify-between border border-line-faint bg-ink-900/95 px-4 text-left shadow-[0_0_24px_rgba(0,0,0,0.45)] backdrop-blur"
+          >
+            <span className="flex min-w-0 items-center gap-3">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-cyan shadow-[0_0_8px_var(--cyan)]" />
+              <span className="truncate font-display text-sm text-paper">
+                {currentMobileLabel}
+              </span>
+            </span>
+            <span className="tech-label shrink-0 text-[0.55rem] text-cyan">
+              {mobileOpen ? "CLOSE" : "MENU"}
+            </span>
+          </button>
+        </div>
+      </nav>
     </>
   );
 }

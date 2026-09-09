@@ -67,12 +67,15 @@ export function scrollToSection(id: string) {
   if (target === "architect" || target === "#architect") {
     target = "profile";
   }
+  const isTop = target === "top" || target === "#top";
+  if (document.body.style.overflow === "hidden") return;
   const sel = target.startsWith("#") ? target : `#${target}`;
-  const el = document.querySelector<HTMLElement>(sel);
-  if (!el || document.body.style.overflow === "hidden") return;
+  const el = isTop ? null : document.querySelector<HTMLElement>(sel);
+  if (!isTop && !el) return;
+  const destination = isTop ? 0 : el!;
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (instance && !reduce) {
-    scrollWithOwner(el, "navigation");
+    scrollWithOwner(destination, "navigation");
   } else {
     // Immediate fallback also works before Lenis initializes, and does not
     // defer to a CSS scroll-behavior rule for reduced-motion users.
@@ -80,7 +83,8 @@ export function scrollToSection(id: string) {
     requestId += 1;
     owner = null;
     settledUntil = performance.now() + COMPLETION_GUARD_MS;
-    if (instance) instance.scrollTo(el, { immediate: true });
-    else el.scrollIntoView({ behavior: "instant", block: "start" });
+    if (instance) instance.scrollTo(destination, { immediate: true });
+    else if (isTop) window.scrollTo({ top: 0, behavior: "instant" });
+    else el!.scrollIntoView({ behavior: "instant", block: "start" });
   }
 }

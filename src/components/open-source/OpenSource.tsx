@@ -40,7 +40,7 @@ export default function OpenSource() {
     <section
       id="signals"
       ref={ref}
-      className="relative mx-auto max-w-6xl px-6 py-24 md:px-10"
+      className="relative mx-auto max-w-6xl px-6 py-16 md:px-10 md:py-24"
     >
       <SectionHeader
         index="03"
@@ -49,7 +49,7 @@ export default function OpenSource() {
       />
 
       {/* stat bar */}
-      <div className="mb-10 grid grid-cols-3 gap-px border border-line-faint bg-line-faint">
+      <div className="mb-10 grid grid-cols-2 gap-px border border-line-faint bg-line-faint sm:grid-cols-3">
         <div className="os-card bg-ink-900 px-5 py-5">
           <div className="font-display text-3xl font-semibold text-amber glow-amber">
             {isLoading ? (
@@ -75,7 +75,7 @@ export default function OpenSource() {
           target="_blank"
           rel="noreferrer"
           onMouseEnter={() => sound.play("hover")}
-          className="os-card group flex flex-col justify-between bg-ink-900 px-5 py-5 transition-colors hover:bg-ink-800"
+          className="os-card group col-span-2 flex flex-col justify-between bg-ink-900 px-5 py-5 transition-colors hover:bg-ink-800 sm:col-span-1"
         >
           <div className="font-display text-lg font-semibold text-paper transition-colors group-hover:text-cyan">
             @{github.handle}
