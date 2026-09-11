@@ -219,7 +219,7 @@ export default function DepthNav() {
             className="flex min-h-12 w-full items-center justify-between border border-line-faint bg-ink-900/95 px-4 text-left shadow-[0_0_24px_rgba(0,0,0,0.45)] backdrop-blur"
           >
             <span className="flex min-w-0 items-center gap-3">
-              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-cyan shadow-[0_0_8px_var(--cyan)]" />
+              <span className="mobile-signal-dot h-1.5 w-1.5 shrink-0 rounded-full bg-cyan shadow-[0_0_8px_var(--cyan)]" />
               <span className="truncate font-display text-sm text-paper">
                 {currentMobileLabel}
               </span>

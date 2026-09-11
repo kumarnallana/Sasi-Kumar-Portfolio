@@ -47,7 +47,7 @@ export default function Operations() {
     <section
       id="operations"
       ref={ref}
-      className="relative mx-auto max-w-6xl px-6 py-24 md:px-10"
+      className="relative mx-auto max-w-6xl px-6 py-16 md:px-10 md:py-24 md:max-lg:pr-16"
     >
       {/* operating philosophy - the myth */}
       <div className="max-w-3xl">
@@ -73,7 +73,7 @@ export default function Operations() {
       <div className="op-grid mt-16">
         <div className="tech-label mb-5 flex items-center gap-3">
           CURRENT OPERATIONS
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan shadow-[0_0_8px_var(--cyan)]" />
+          <span className="mobile-signal-dot h-1.5 w-1.5 animate-pulse rounded-full bg-cyan shadow-[0_0_8px_var(--cyan)]" />
           <span className="text-paper-dim/50">LIVE</span>
         </div>
 
@@ -99,8 +99,8 @@ export default function Operations() {
                   style={{ color }}
                 >
                   <span
-                    className="h-1.5 w-1.5 animate-pulse rounded-full"
-                    style={{ background: color, boxShadow: `0 0 8px ${color}` }}
+                    className={`${o.status === "ACTIVE" ? "mobile-signal-dot " : ""}h-1.5 w-1.5 animate-pulse rounded-full`}
+                    style={{ background: color, boxShadow: `0 0 var(--mobile-signal-glow, 8px) ${color}` }}
                   />
                   {o.status}
                 </span>

@@ -120,7 +120,7 @@ export default function Hero({ started }: { started: boolean }) {
       ref={root}
       className="relative flex min-h-screen items-center overflow-hidden"
     >
-      <div className="mx-auto grid w-full max-w-7xl items-center gap-8 px-6 py-16 md:px-10 md:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:gap-6">
+      <div className="mx-auto grid w-full max-w-7xl items-center gap-8 px-6 py-16 md:px-10 md:py-24 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-6 lg:py-16 xl:py-24">
         {/* ---- LEFT: text column ---- */}
         <div ref={textCol} className="relative z-10">
           <div className="hero-anim tech-label mb-6 flex items-center gap-3 text-cyan">
@@ -128,7 +128,7 @@ export default function Hero({ started }: { started: boolean }) {
             DRAWING NO. NSK-2026 · MASTER SCHEMATIC
           </div>
 
-          <h1 className="hero-anim font-display text-[14vw] font-bold leading-[0.92] tracking-tight sm:text-[10vw] lg:text-[5.5rem] xl:text-[6.2rem]">
+          <h1 className="hero-anim font-display text-[14vw] font-bold leading-[0.92] tracking-tight sm:text-[10vw] lg:text-[6.25vw] xl:text-[6.2rem]">
             NALLANA
             <br />
             <span className="text-line">SASI KUMAR</span>
@@ -196,7 +196,7 @@ export default function Hero({ started }: { started: boolean }) {
       {!isMobile && <StackStory open={storyOpen} onClose={() => setStoryOpen(false)} />}
 
       {/* scroll cue */}
-      <div className="hero-anim absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 md:flex">
+      <div className="hero-anim absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 md:flex [@media(max-height:700px)]:hidden">
         <span className="tech-label">DESCEND THROUGH THE SYSTEM</span>
         <span className="h-8 w-px animate-pulse bg-gradient-to-b from-cyan to-transparent" />
       </div>

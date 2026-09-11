@@ -127,7 +127,7 @@ export default function Contact() {
         <div>
           <div className="contact-reveal flex items-center gap-3">
             <span
-              className="h-2.5 w-2.5 rounded-full bg-cyan shadow-[0_0_10px_var(--cyan)]"
+              className="mobile-signal-dot h-2.5 w-2.5 rounded-full bg-cyan shadow-[0_0_10px_var(--cyan)]"
             />
             <span className="tech-label text-cyan">
               {armed ? "SIGNAL ACQUIRED" : "ACQUIRING..."}

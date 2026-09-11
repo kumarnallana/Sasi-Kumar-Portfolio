@@ -129,7 +129,7 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
           <div className="tech-label mb-3 flex items-center justify-between text-cyan">
             <span>SYS.PREVIEW</span>
             <span className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_8px_var(--cyan)]" />
+              <span className="mobile-signal-dot h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_8px_var(--cyan)]" />
               ONLINE
             </span>
           </div>

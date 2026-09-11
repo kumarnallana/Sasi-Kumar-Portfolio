@@ -138,6 +138,18 @@ body {
   text-shadow: 0 0 12px rgba(255, 179, 71, 0.5);
 }
 
+/* Persistent phone status markers share a steady, restrained signal. */
+@media (width < 48rem) {
+  .mobile-signal-dot {
+    --mobile-signal-glow: 6px;
+    width: 0.375rem;
+    height: 0.375rem;
+    flex-shrink: 0;
+    box-shadow: 0 0 6px var(--cyan);
+    animation: none;
+  }
+}
+
 
 
 /* ============================================================

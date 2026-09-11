@@ -8,21 +8,23 @@ export default function CapabilityMatrix({ compact = false }: { compact?: boolea
       </div>
       <div
         className={`grid gap-px border border-line-faint bg-line-faint ${
-          compact ? "grid-cols-2" : "sm:grid-cols-2 lg:grid-cols-4"
+          compact ? "grid-cols-1 sm:grid-cols-2" : "sm:grid-cols-2 lg:grid-cols-4"
         }`}
       >
         {skillGroups.map((group) => (
-          <div key={group.group} className={`bg-ink-900 ${compact ? "p-3" : "p-4"}`}>
+          <div key={group.group} className="bg-ink-900 p-4">
             <div className={`flex items-center gap-2 ${compact ? "mb-2" : "mb-3"}`}>
-              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-cyan shadow-[0_0_6px_var(--cyan)]" />
-              <span className={`font-display font-semibold text-paper ${compact ? "text-xs" : "text-sm"}`}>
+              <span className="mobile-signal-dot h-1.5 w-1.5 shrink-0 rounded-full bg-cyan shadow-[0_0_6px_var(--cyan)]" />
+              <span className="font-display text-sm font-semibold text-paper">
                 {group.group}
               </span>
             </div>
             {compact ? (
-              <p className="text-[0.65rem] leading-relaxed text-paper-dim">
-                {group.items.join(" · ")}
-              </p>
+              <ul className="flex flex-wrap gap-x-3 gap-y-1 text-xs leading-5 text-paper-dim">
+                {group.items.map((item) => (
+                  <li key={item} className="whitespace-nowrap">{item}</li>
+                ))}
+              </ul>
             ) : (
               <div className="flex flex-wrap gap-1.5">
                 {group.items.map((item) => (

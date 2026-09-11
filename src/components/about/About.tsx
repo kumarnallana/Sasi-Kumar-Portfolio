@@ -69,7 +69,7 @@ export default function About() {
           <div className="portrait-line absolute left-0 top-0 h-px w-full bg-cyan/50" />
           <div className="portrait-line absolute bottom-0 left-0 h-px w-full bg-cyan/50" />
           
-          <div className="relative aspect-[3/4] w-full overflow-hidden bg-ink-900">
+          <div className="relative aspect-[4/5] w-full overflow-hidden bg-ink-900 sm:aspect-[3/4]">
             <Image
               src="/logos/sasi-portrait-glasses-candidate-rgb.png"
               alt="Nallana Sasi Kumar Portrait"
@@ -82,7 +82,7 @@ export default function About() {
               <span className="font-mono text-[0.65rem] text-cyan">ID: {identity.callsign}</span>
             </div>
             <div className="absolute right-4 top-4 flex items-center gap-2 border border-line-faint bg-ink-900/80 px-2 py-1 backdrop-blur">
-              <span className="h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_6px_var(--cyan)]" />
+              <span className="mobile-signal-dot h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_6px_var(--cyan)]" />
               <span className="font-mono text-[0.65rem] text-amber">STATUS: ONLINE</span>
             </div>
           </div>
