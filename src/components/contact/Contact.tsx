@@ -10,6 +10,7 @@ import CatField, { type CatMood } from "@/components/contact/CatField";
 import MissionDebrief from "@/components/contact/MissionDebrief";
 import { sendCat, type CatAct } from "@/lib/catSignals";
 import { sound } from "@/lib/sound";
+import { revealContent } from "@/lib/contentReveal";
 
 const CAT_ACTIONS: { icon: string; label: string; act: CatAct }[] = [
   { icon: "◍", label: "give a ball", act: "ball" },
@@ -81,7 +82,7 @@ export default function Contact() {
     const el = ref.current;
     if (!el) return;
     const ctx = gsap.context(() => {
-      gsap.from(".contact-reveal", {
+      revealContent(".contact-reveal", {
         scrollTrigger: { trigger: el, start: "top 75%" },
         y: 28,
         opacity: 0,

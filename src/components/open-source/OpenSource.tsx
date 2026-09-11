@@ -8,6 +8,7 @@ import SectionHeader from "@/components/shared/SectionHeader";
 import { sound } from "@/lib/sound";
 import { useGithubPortfolio } from "@/integrations/github/use-github-portfolio";
 import AnimatedMetric from "@/components/shared/AnimatedMetric";
+import { revealContent } from "@/lib/contentReveal";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -24,7 +25,7 @@ export default function OpenSource() {
     const el = ref.current;
     if (!el) return;
     const ctx = gsap.context(() => {
-      gsap.from(".os-card", {
+      revealContent(".os-card", {
         scrollTrigger: { trigger: el, start: "top 80%" },
         y: 28,
         opacity: 0,

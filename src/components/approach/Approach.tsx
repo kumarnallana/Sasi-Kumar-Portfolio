@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionHeader from "@/components/shared/SectionHeader";
+import { revealContent } from "@/lib/contentReveal";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -37,7 +38,7 @@ export default function Approach() {
     const el = ref.current;
     if (!el) return;
     const ctx = gsap.context(() => {
-      gsap.from(".pr-card", {
+      revealContent(".pr-card", {
         scrollTrigger: { trigger: el, start: "top 78%" },
         y: 30,
         opacity: 0,

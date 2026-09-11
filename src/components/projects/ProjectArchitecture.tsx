@@ -326,7 +326,7 @@ export default function ProjectArchitecture({
   );
 
   return (
-    <div className="w-full relative" ref={containerRef}>
+    <div className="relative hidden w-full md:block" ref={containerRef}>
       <div className="tech-label mb-6 flex items-center justify-between text-cyan border-t border-line-faint/50 pt-8">
         <span>SYS.ARCHITECTURE</span>
       </div>

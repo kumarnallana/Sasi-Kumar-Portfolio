@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { revealContent } from "@/lib/contentReveal";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -27,7 +28,7 @@ export default function SectionHeader({
         duration: 1,
         ease: "power3.out",
       });
-      gsap.from(".sh-item", {
+      revealContent(".sh-item", {
         scrollTrigger: { trigger: el, start: "top 85%" },
         y: 20,
         opacity: 0,

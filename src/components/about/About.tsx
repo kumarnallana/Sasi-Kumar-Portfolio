@@ -11,6 +11,7 @@ import Image from "next/image";
 import Certifications from "./Certifications";
 import { internshipCredential } from "@/data/profile/certifications.data";
 import CapabilityMatrix from "./CapabilityMatrix";
+import { revealContent } from "@/lib/contentReveal";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -22,7 +23,7 @@ export default function About() {
     if (!el) return;
     const ctx = gsap.context(() => {
       gsap.utils.toArray<HTMLElement>(".about-reveal").forEach((node) => {
-        gsap.from(node, {
+        revealContent(node, {
           scrollTrigger: { trigger: node, start: "top 85%", once: true },
           y: 24,
           opacity: 0,

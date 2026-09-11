@@ -68,6 +68,7 @@ export default function MissionDebrief() {
         opacity: 0,
         duration: 0.5,
         ease: "power2.out",
+        immediateRender: false,
       });
 
       // compile the dossier: each chapter flips to REVIEWED in sequence
@@ -76,7 +77,7 @@ export default function MissionDebrief() {
         const at = 0.5 + i * 0.18;
         tl.from(
           row,
-          { x: -14, opacity: 0, duration: 0.3, ease: "power2.out" },
+          { x: -14, opacity: 0, duration: 0.3, ease: "power2.out", immediateRender: false },
           at,
         ).call(
           () => {

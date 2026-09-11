@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { manifesto } from "@/data/operations/manifesto.data";
 import { operations } from "@/data/operations/operations.data";
 import type { Operation } from "@/types/operations/operations.types";
+import { revealContent } from "@/lib/contentReveal";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -22,7 +23,7 @@ export default function Operations() {
     const el = ref.current;
     if (!el) return;
     const ctx = gsap.context(() => {
-      gsap.from(".manifesto-line", {
+      revealContent(".manifesto-line", {
         scrollTrigger: { trigger: el, start: "top 75%" },
         y: 26,
         opacity: 0,
@@ -30,7 +31,7 @@ export default function Operations() {
         stagger: 0.18,
         ease: "power3.out",
       });
-      gsap.from(".op-row", {
+      revealContent(".op-row", {
         scrollTrigger: { trigger: ".op-grid", start: "top 85%" },
         x: -20,
         opacity: 0,

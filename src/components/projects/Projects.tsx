@@ -10,6 +10,7 @@ import ProjectArchitecture from "@/components/projects/ProjectArchitecture";
 import SectionHeader from "@/components/shared/SectionHeader";
 import { sound } from "@/lib/sound";
 import AnimatedMetric from "@/components/shared/AnimatedMetric";
+import { revealContent } from "@/lib/contentReveal";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -24,7 +25,7 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
     const el = ref.current;
     if (!el) return;
     const ctx = gsap.context(() => {
-      gsap.from(".proj-reveal", {
+      revealContent(".proj-reveal", {
         scrollTrigger: { trigger: el, start: "top 78%" },
         y: 30,
         opacity: 0,

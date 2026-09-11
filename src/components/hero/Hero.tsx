@@ -41,12 +41,16 @@ export default function Hero({ started }: { started: boolean }) {
   useEffect(() => {
     if (!started) return;
     const ctx = gsap.context(() => {
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const items = gsap.utils.toArray<HTMLElement>(".hero-anim")
+        .filter((node) => node.getClientRects().length > 0);
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-      tl.from(".hero-anim", {
-        y: 26,
-        opacity: 0,
-        duration: 0.9,
-        stagger: 0.12,
+      tl.from(items, {
+        y: reduce ? 0 : 26,
+        opacity: reduce ? 1 : 0,
+        duration: reduce ? 0 : 0.9,
+        stagger: reduce ? 0 : 0.12,
+        immediateRender: false,
       });
       if (!isMobile) {
         tl.from(
@@ -158,12 +162,12 @@ export default function Hero({ started }: { started: boolean }) {
           </div>
         </div>
 
-        {isMobile ? (
-          <div className="hero-anim w-full">
-            <CapabilityMatrix compact />
-          </div>
-        ) : (
-          <div className="hero-globe group relative h-[42vh] min-h-[320px] w-full lg:h-[78vh]">
+        {/* CSS chooses the layout before hydration; the hook only gates the globe's work. */}
+        <div className="hero-anim w-full md:hidden">
+          <CapabilityMatrix compact />
+        </div>
+        {!isMobile && (
+          <div className="hero-globe group relative hidden h-[42vh] min-h-[320px] w-full md:block lg:h-[78vh]">
             <HeroStackGlobe
               activeRef={activeRef}
               onOpen={() => setStoryOpen(true)}
