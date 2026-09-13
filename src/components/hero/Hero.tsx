@@ -53,18 +53,24 @@ export default function Hero({ started }: { started: boolean }) {
         immediateRender: false,
       });
       if (!isMobile) {
-        tl.from(
-          ".hero-globe",
-          { opacity: 0, scale: 0.9, duration: 1.2, ease: "power2.out" },
-          0.2,
-        );
-        gsap.to(power.current, {
-          v: STACK_MAX,
-          duration: 1.6,
-          ease: "power2.out",
-          delay: 0.35,
-          onUpdate: writePower,
-        });
+        if (reduce) {
+          gsap.set(".hero-globe", { opacity: 1, scale: 1 });
+          power.current.v = STACK_MAX;
+          writePower();
+        } else {
+          tl.from(
+            ".hero-globe",
+            { opacity: 0, scale: 0.9, duration: 1.2, ease: "power2.out" },
+            0.2,
+          );
+          gsap.to(power.current, {
+            v: STACK_MAX,
+            duration: 1.6,
+            ease: "power2.out",
+            delay: 0.35,
+            onUpdate: writePower,
+          });
+        }
       }
     }, root);
     return () => ctx.revert();
@@ -80,17 +86,18 @@ export default function Hero({ started }: { started: boolean }) {
       return;
     }
     const tc = textCol.current;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (storyOpen) {
       gsap.to(tc, {
         opacity: 0,
-        y: -12,
-        duration: 0.4,
+        y: reduce ? 0 : -12,
+        duration: reduce ? 0 : 0.4,
         ease: "power2.in",
         overwrite: "auto",
       });
       gsap.to(power.current, {
         v: -1.2,
-        duration: 0.75,
+        duration: reduce ? 0 : 0.75,
         ease: "power2.inOut",
         overwrite: "auto",
         onUpdate: writePower,
@@ -99,15 +106,15 @@ export default function Hero({ started }: { started: boolean }) {
       gsap.to(tc, {
         opacity: 1,
         y: 0,
-        duration: 0.6,
+        duration: reduce ? 0 : 0.6,
         ease: "power3.out",
-        delay: 0.15,
+        delay: reduce ? 0 : 0.15,
         overwrite: "auto",
         clearProps: "opacity,transform",
       });
       gsap.to(power.current, {
         v: STACK_MAX,
-        duration: 1.0,
+        duration: reduce ? 0 : 1.0,
         ease: "power2.out",
         overwrite: "auto",
         onUpdate: writePower,
@@ -181,7 +188,7 @@ export default function Hero({ started }: { started: boolean }) {
             </div>
             <button
               onClick={() => setStoryOpen(true)}
-              className="pointer-events-auto absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap border border-cyan/40 bg-ink-900/80 px-3 py-1.5 backdrop-blur transition-all duration-300 hover:border-cyan hover:bg-cyan/10 hover:shadow-[0_0_12px_rgba(67,201,255,0.3)]"
+              className="pointer-events-auto absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap border border-cyan/40 bg-ink-900/80 px-3 py-1.5 backdrop-blur transition-all duration-300 hover:border-cyan hover:bg-cyan/10 hover:shadow-[0_0_12px_rgba(67,201,255,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900"
               aria-label="Explore the stack story"
             >
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan shadow-[0_0_8px_var(--cyan)]" />

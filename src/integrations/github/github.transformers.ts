@@ -5,7 +5,7 @@ export function transformPortfolioData(rawData: any): GitHubPortfolioData {
   const user = rawData?.data?.user;
   
   if (!user) {
-    throw new Error("Invalid GitHub GraphQL response structure");
+    throw new Error("INVALID_RESPONSE");
   }
 
   return {

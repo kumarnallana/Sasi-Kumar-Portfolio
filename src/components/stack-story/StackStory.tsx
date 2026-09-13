@@ -5,7 +5,6 @@ import dynamic from "next/dynamic";
 import { stackStory } from "@/data/stack-story/stack-story.data";
 import { sound } from "@/lib/sound";
 import type { GlobeControls, HoverNode } from "@/components/stack-story/three/StackGlobe";
-import type { StackLayer } from "@/types/stack-story/stack-story.types";
 
 const StackGlobe = dynamic(() => import("@/components/stack-story/three/StackGlobe"), {
   ssr: false,
@@ -24,9 +23,10 @@ export default function StackStory({
 }) {
   const [active, setActive] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const dialog = useRef<HTMLDivElement>(null);
+  const closeButton = useRef<HTMLButtonElement>(null);
   const scroller = useRef<HTMLDivElement>(null);
   const activeRef = useRef(0);
-  activeRef.current = active;
   const atEnd = active >= lastIdx;
 
   // globe drag-rotate state + hovered-tag node
@@ -99,40 +99,75 @@ export default function StackStory({
   const scrollToChapter = useCallback((i: number) => {
     const el = scroller.current;
     if (!el) return;
-    el.scrollTo({ top: clampIdx(i) * el.clientHeight, behavior: "smooth" });
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollTo({
+      top: clampIdx(i) * el.clientHeight,
+      behavior: reduce ? "auto" : "smooth",
+    });
   }, []);
 
   // open: reset + intro animation + body lock + keyboard
   useEffect(() => {
     if (!open) return;
-    setActive(0);
-    activeRef.current = 0;
-    if (scroller.current) scroller.current.scrollTop = 0;
+    const previouslyFocused =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const resetFrame = window.requestAnimationFrame(() => {
+      setActive(0);
+      activeRef.current = 0;
+      if (scroller.current) scroller.current.scrollTop = 0;
+      closeButton.current?.focus({ preventScroll: true });
+    });
 
     // hold the fade so the hero globe's power-down is visible before we cover it
-    const t = setTimeout(() => setMounted(true), 260);
+    const t = setTimeout(() => setMounted(true), reduce ? 0 : 260);
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     sound.play("online");
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
+        e.preventDefault();
         onClose();
+      } else if (e.key === "Tab") {
+        const focusable = dialog.current?.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])',
+        );
+        if (!focusable?.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
       } else if (e.key === "ArrowDown" || e.key === "PageDown") {
         e.preventDefault();
         scrollToChapter(activeRef.current + 1);
       } else if (e.key === "ArrowUp" || e.key === "PageUp") {
         e.preventDefault();
         scrollToChapter(activeRef.current - 1);
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        scrollToChapter(0);
+      } else if (e.key === "End") {
+        e.preventDefault();
+        scrollToChapter(lastIdx);
       }
     };
     window.addEventListener("keydown", onKey);
 
     return () => {
+      window.cancelAnimationFrame(resetFrame);
       clearTimeout(t);
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
       setMounted(false);
+      window.requestAnimationFrame(() => previouslyFocused?.focus());
     };
   }, [open, onClose, scrollToChapter]);
 
@@ -141,6 +176,7 @@ export default function StackStory({
     if (!el) return;
     const i = clampIdx(Math.round(el.scrollTop / el.clientHeight));
     if (i !== activeRef.current) {
+      activeRef.current = i;
       setActive(i);
       sound.play("blip");
     }
@@ -150,45 +186,57 @@ export default function StackStory({
 
   return (
     <div
+      ref={dialog}
       className={`fixed inset-0 z-[60] origin-center bg-ink-900/95 backdrop-blur-sm transition-all duration-500 ease-out ${
         mounted ? "opacity-100 scale-100" : "opacity-0 scale-95"
       }`}
       role="dialog"
       aria-modal="true"
-      aria-label="The Stack - system layers"
+      aria-labelledby="stack-story-title"
+      aria-describedby="stack-story-description"
     >
+      <p id="stack-story-description" className="sr-only">
+        {line} Use the arrow keys, Page Up, Page Down, Home, or End to move
+        between chapters. Press Escape to return to the portfolio.
+      </p>
+      <p className="sr-only" aria-live="polite" aria-atomic="true">
+        Chapter {active + 1} of {layers.length}: {layers[active].title}
+      </p>
       <div className="pointer-events-none absolute inset-0 blueprint-grid opacity-50" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,var(--ink-900)_100%)]" />
 
       {/* globe - fills the right on desktop, sits behind text on mobile */}
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-full opacity-60 lg:w-[58%] lg:opacity-100">
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-full opacity-60 lg:w-[58%] lg:opacity-100 xl:w-1/2">
         <StackGlobe
           layers={layers}
           activeRef={activeRef}
           controlsRef={controlsRef}
           hoverRef={hoverRef}
+          staticActive={active}
         />
       </div>
 
       {/* header */}
       <div className="pointer-events-none absolute left-6 top-6 z-10 max-w-sm md:left-10">
-        <div className="tech-label flex items-center gap-3 text-cyan">
+        <div id="stack-story-title" className="tech-label flex items-center gap-3 text-cyan">
           <span className="h-px w-8 bg-cyan" />
           {title} · {layers.length} LAYERS
         </div>
-        <p className="mt-2 hidden text-xs leading-relaxed text-paper-dim sm:block">
+        <p className="mt-2 hidden text-xs leading-relaxed text-paper-dim sm:block [@media(max-height:700px)]:hidden">
           {line}
         </p>
       </div>
 
       {/* exit button - always allows closing, highlights RETURN when at end */}
       <button
+        ref={closeButton}
+        type="button"
         onClick={() => {
           sound.play("online");
           onClose();
         }}
         onMouseEnter={() => sound.play("hover")}
-        className={`absolute right-5 top-5 z-20 flex h-9 items-center gap-2 border px-3 font-mono text-xs transition-colors md:right-10 ${
+        className={`absolute right-5 top-5 z-20 flex h-9 items-center gap-2 border px-3 font-mono text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900 md:right-10 ${
           atEnd
             ? "border-cyan/60 bg-ink-900/80 text-cyan hover:bg-cyan/10"
             : "border-line-faint bg-ink-900/70 text-paper-dim hover:border-cyan hover:text-cyan"
@@ -211,13 +259,15 @@ export default function StackStory({
         {layers.map((L, i) => (
           <button
             key={L.code}
+            type="button"
             onClick={() => scrollToChapter(i)}
             onMouseEnter={() => sound.play("hover")}
             aria-label={`Go to ${L.title}`}
-            className="group flex items-center justify-end gap-2"
+            aria-current={i === active ? "step" : undefined}
+            className="group flex items-center justify-end gap-2 focus-visible:outline-none"
           >
             <span
-              className={`tech-label text-[0.55rem] transition-opacity ${
+              className={`tech-label text-[0.55rem] transition-opacity group-focus-visible:translate-x-0 group-focus-visible:text-cyan group-focus-visible:opacity-100 ${
                 i === active
                   ? "opacity-100 text-cyan"
                   : "opacity-0 group-hover:opacity-60"
@@ -226,7 +276,7 @@ export default function StackStory({
               {L.code}
             </span>
             <span
-              className={`h-2 w-2 rounded-full border transition-all ${
+              className={`h-2 w-2 rounded-full border transition-all group-focus-visible:ring-2 group-focus-visible:ring-cyan group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-ink-900 ${
                 i === active
                   ? "scale-125 border-cyan bg-cyan shadow-[0_0_8px_var(--cyan)]"
                   : i < active
@@ -248,6 +298,8 @@ export default function StackStory({
         onPointerLeave={onGlobeUp}
         onPointerCancel={onGlobeUp}
         data-lenis-prevent
+        tabIndex={0}
+        aria-label="Stack Story chapters"
         className="absolute inset-0 z-10 touch-pan-y snap-y snap-mandatory overflow-y-auto overscroll-contain"
       >
         {layers.map((L, i) => {
@@ -256,10 +308,11 @@ export default function StackStory({
           return (
             <section
               key={L.code}
+              aria-labelledby={`stack-layer-title-${i}`}
               className="flex h-full snap-start items-center px-6 md:px-10"
             >
               <div
-                className={`max-w-xl transition-all duration-500 lg:max-w-[44%] ${
+                className={`w-full min-w-0 max-w-xl transition-all duration-500 lg:w-[44%] lg:max-w-none xl:w-[calc(50%_-_2.5rem)] ${
                   focused
                     ? "translate-y-0 opacity-100"
                     : "translate-y-3 opacity-30"
@@ -282,6 +335,7 @@ export default function StackStory({
                 </div>
 
                 <h2
+                  id={`stack-layer-title-${i}`}
                   className={`mt-4 font-display text-4xl font-bold leading-[0.95] sm:text-5xl lg:text-6xl ${
                     amber ? "text-amber glow-amber" : "text-paper"
                   }`}
@@ -293,10 +347,13 @@ export default function StackStory({
                   {L.narrative}
                 </p>
 
-                <div className="mt-7 flex flex-wrap gap-2">
+                <div className="mt-7 flex max-w-full flex-wrap gap-x-2.5 gap-y-2.5">
                   {L.items.map((it, k) => (
-                    <span
+                    <button
                       key={it}
+                      type="button"
+                      tabIndex={focused ? 0 : -1}
+                      aria-label={`Highlight ${it} in ${L.title}`}
                       onMouseEnter={() => {
                         hoverRef.current = { layer: i, item: k };
                         sound.play("hover");
@@ -304,14 +361,20 @@ export default function StackStory({
                       onMouseLeave={() => {
                         hoverRef.current = null;
                       }}
-                      className={`cursor-default border bg-ink-900/70 px-2.5 py-1 font-mono text-xs backdrop-blur transition-colors ${
+                      onFocus={() => {
+                        hoverRef.current = { layer: i, item: k };
+                      }}
+                      onBlur={() => {
+                        hoverRef.current = null;
+                      }}
+                      className={`cursor-default whitespace-nowrap border bg-ink-900/70 px-2.5 py-1.5 font-mono text-[0.8125rem] leading-none backdrop-blur transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900 ${
                         amber
-                          ? "border-amber/40 text-amber-bright hover:border-amber hover:bg-amber/10"
-                          : "border-cyan/30 text-cyan-bright hover:border-cyan hover:bg-cyan/10"
+                          ? "border-amber/40 text-amber-bright hover:border-amber hover:bg-amber/10 focus-visible:border-amber focus-visible:bg-amber/10 focus-visible:ring-amber"
+                          : "border-cyan/30 text-cyan-bright hover:border-cyan hover:bg-cyan/10 focus-visible:border-cyan focus-visible:bg-cyan/10 focus-visible:ring-cyan"
                       }`}
                     >
                       {it}
-                    </span>
+                    </button>
                   ))}
                 </div>
 
@@ -325,7 +388,7 @@ export default function StackStory({
       </div>
 
       {/* scroll hint */}
-      <div className="pointer-events-none absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-1.5">
+      <div className="pointer-events-none absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-1.5 [@media(max-height:700px)]:hidden">
         <span className="tech-label text-[0.55rem]">
           {atEnd ? "STACK COMPLETE · EXIT UNLOCKED" : "SCROLL TO DESCEND"}
         </span>

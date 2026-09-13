@@ -19,6 +19,8 @@ export default function ScrollSnap() {
     if (reduce) return;
 
     let settle: ReturnType<typeof setTimeout>;
+    let lastY = window.scrollY;
+    let direction: -1 | 0 | 1 = 0;
 
     const stationTops = () => {
       const tops = [0]; // the hero / top of the descent
@@ -40,7 +42,12 @@ export default function ScrollSnap() {
       let best: number | null = null;
       let bd = Infinity;
       for (const t of stationTops()) {
-        const d = Math.abs(t - y);
+        const delta = t - y;
+        if (direction > 0 && delta <= MIN_DELTA) continue;
+        if (direction < 0 && delta >= -MIN_DELTA) continue;
+        if (direction === 0) continue;
+
+        const d = Math.abs(delta);
         if (d < bd) {
           bd = d;
           best = t;
@@ -53,7 +60,15 @@ export default function ScrollSnap() {
 
     const onScroll = () => {
       clearTimeout(settle);
-      if (isScrollOwned()) return;
+      const y = window.scrollY;
+      if (isScrollOwned()) {
+        lastY = y;
+        return;
+      }
+
+      const delta = y - lastY;
+      if (Math.abs(delta) > 1) direction = delta > 0 ? 1 : -1;
+      lastY = y;
       settle = setTimeout(trySnap, SETTLE_MS);
     };
 

@@ -3,24 +3,30 @@ import { PORTFOLIO_GRAPHQL_QUERY } from "./github.queries";
 import { transformPortfolioData } from "./github.transformers";
 import type { GitHubPortfolioData } from "./github.types";
 
-export const EMPTY_GITHUB_PORTFOLIO: GitHubPortfolioData = {
-  publicReposCount: 0,
-  totalStars: 0,
-  totalCommitContributions: 0,
-  totalPullRequestContributions: 0,
-  pinnedRepositories: [],
-  recentRepositories: [],
-};
+const GITHUB_FAILURE_CODES = [
+  "AUTH_ERROR",
+  "RATE_LIMIT",
+  "UPSTREAM_UNAVAILABLE",
+  "FETCH_ERROR",
+  "GRAPHQL_ERROR",
+  "INVALID_RESPONSE",
+] as const;
+
+export type GitHubFailureCode = (typeof GITHUB_FAILURE_CODES)[number];
+
+export function getGitHubFailureCode(error: unknown): GitHubFailureCode {
+  const message = error instanceof Error ? error.message : "";
+  return GITHUB_FAILURE_CODES.find((code) => code === message) ?? "FETCH_ERROR";
+}
 
 export async function getGitHubPortfolioData(): Promise<GitHubPortfolioData> {
   // Use Next.js 16 explicit caching directive
   "use cache";
-  cacheLife("hours");
+  cacheLife({ stale: 300, revalidate: 600, expire: 3600 });
 
   const token = process.env.GITHUB_TOKEN;
   if (!token) {
-    console.warn("GITHUB_TOKEN is not defined in environment variables. Returning empty fallback data.");
-    return EMPTY_GITHUB_PORTFOLIO;
+    throw new Error("AUTH_ERROR");
   }
 
   let response: Response;
@@ -57,7 +63,7 @@ export async function getGitHubPortfolioData(): Promise<GitHubPortfolioData> {
 
   const rawData = await response.json();
   if (rawData.errors) {
-    console.error("GitHub GraphQL Errors:", rawData.errors);
+    console.warn("[github] GitHub GraphQL returned an error response.");
     throw new Error("GRAPHQL_ERROR");
   }
 

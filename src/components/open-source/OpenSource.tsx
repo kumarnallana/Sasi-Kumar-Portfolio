@@ -16,10 +16,11 @@ export default function OpenSource() {
   const ref = useRef<HTMLDivElement>(null);
 
   // Single typed query via integration hook
-  const { data, isLoading, isError, error } = useGithubPortfolio();
+  const { data, isPending, isError } = useGithubPortfolio();
 
-  const totalStars = data?.totalStars ?? 0;
-  const publicRepos = data?.publicReposCount ?? 0;
+  const hasRepositories = Boolean(
+    data && (data.pinnedRepositories.length > 0 || data.recentRepositories.length > 0),
+  );
 
   useEffect(() => {
     const el = ref.current;
@@ -50,23 +51,27 @@ export default function OpenSource() {
       />
 
       {/* stat bar */}
-      <div className="mb-10 grid grid-cols-2 gap-px border border-line-faint bg-line-faint sm:grid-cols-3">
+      <div
+        className="mb-10 grid grid-cols-2 gap-px border border-line-faint bg-line-faint sm:grid-cols-3"
+        aria-busy={isPending}
+        aria-live="polite"
+      >
         <div className="os-card bg-ink-900 px-5 py-5">
           <div className="font-display text-3xl font-semibold text-amber glow-amber">
-            {isLoading ? (
-              <span className="animate-pulse">---</span>
+            {isPending || isError ? (
+              <span className={isPending ? "animate-pulse" : ""} aria-label={isPending ? "Loading total stars" : "Total stars unavailable"}>—</span>
             ) : (
-              <AnimatedMetric value={`${totalStars}★`} className="star-count" />
+              <AnimatedMetric value={`${data.totalStars}★`} className="star-count" />
             )}
           </div>
           <div className="tech-label mt-1">TOTAL STARS</div>
         </div>
         <div className="os-card bg-ink-900 px-5 py-5">
           <div className="font-display text-3xl font-semibold text-cyan glow-cyan">
-             {isLoading ? (
-               <span className="animate-pulse">---</span>
+             {isPending || isError ? (
+               <span className={isPending ? "animate-pulse" : ""} aria-label={isPending ? "Loading public repositories" : "Public repository count unavailable"}>—</span>
              ) : (
-               <AnimatedMetric value={publicRepos} />
+               <AnimatedMetric value={data.publicReposCount} />
              )}
           </div>
           <div className="tech-label mt-1">PUBLIC REPOS</div>
@@ -90,16 +95,21 @@ export default function OpenSource() {
         </a>
       </div>
 
-      {isLoading ? (
-        <div className="os-card flex min-h-32 flex-col items-center justify-center border border-line-faint bg-ink-900 p-5 text-center">
-           <span className="tech-label animate-pulse text-cyan">SYNCING GITHUB SIGNALS...</span>
+      {isPending ? (
+        <div className="os-card grid min-h-64 gap-px border border-line-faint bg-line-faint md:grid-cols-2 lg:grid-cols-3" role="status" aria-label="Loading GitHub repositories">
+          {[0, 1, 2].map((index) => (
+            <div key={index} className="flex min-h-48 flex-col justify-between bg-ink-900 p-5">
+              <span className="h-3 w-24 animate-pulse bg-line-faint" />
+              <span className="h-5 w-3/4 animate-pulse bg-line-faint" />
+              <span className="h-3 w-full animate-pulse bg-line-faint" />
+            </div>
+          ))}
+          <span className="sr-only">Syncing GitHub signals</span>
         </div>
       ) : isError ? (
-        <div className="os-card flex min-h-32 flex-col items-center justify-center border border-amber border-opacity-30 bg-ink-900 p-5 text-center">
-           <span className="tech-label text-amber">
-              {error?.message === "RATE_LIMIT" ? "GITHUB API RATE LIMIT REACHED" : "UNABLE TO SYNC REPOSITORIES"}
-           </span>
-           <span className="mt-2 text-xs text-paper-dim">Will retry automatically...</span>
+        <div className="os-card flex min-h-64 flex-col items-center justify-center border border-line-faint bg-ink-900 p-5 text-center" role="status">
+           <span className="tech-label text-amber">LIVE GITHUB SIGNAL TEMPORARILY UNAVAILABLE</span>
+           <span className="mt-2 max-w-md text-sm leading-relaxed text-paper-dim">The portfolio remains available while this section reconnects automatically.</span>
         </div>
       ) : (
         <>
@@ -127,7 +137,7 @@ export default function OpenSource() {
                         {r.primaryLanguage?.color && (
                           <span className="w-2 h-2 rounded-full inline-block" style={{ backgroundColor: r.primaryLanguage.color }}></span>
                         )}
-                        {r.primaryLanguage?.name || "Markdown"}
+                        {r.primaryLanguage?.name ?? "LANGUAGE NOT REPORTED"}
                       </span>
                       <span className="flex items-center gap-1 font-mono text-sm text-paper-dim transition-colors group-hover:text-amber">
                         {r.stargazerCount} ★
@@ -161,7 +171,7 @@ export default function OpenSource() {
                         {r.primaryLanguage?.color && (
                           <span className="w-1.5 h-1.5 rounded-full inline-block opacity-50 group-hover:opacity-100 transition-opacity" style={{ backgroundColor: r.primaryLanguage.color }}></span>
                         )}
-                        {r.primaryLanguage?.name || "Markdown"}
+                        {r.primaryLanguage?.name ?? "LANGUAGE NOT REPORTED"}
                       </span>
                       <span className="flex items-center gap-1 font-mono text-sm text-paper-dim transition-colors group-hover:text-amber">
                         {r.stargazerCount} ★
@@ -177,11 +187,12 @@ export default function OpenSource() {
                 ))}
               </div>
             </div>
-          ) : (
-            <div className="os-card flex min-h-32 flex-col items-center justify-center border border-line-faint bg-ink-900 p-5 text-center">
-               <span className="tech-label text-paper-dim">GITHUB REPOSITORIES UNAVAILABLE</span>
+          ) : !hasRepositories ? (
+            <div className="os-card flex min-h-64 flex-col items-center justify-center border border-line-faint bg-ink-900 p-5 text-center" role="status">
+               <span className="tech-label text-paper-dim">NO PUBLIC REPOSITORY ACTIVITY</span>
+               <span className="mt-2 max-w-md text-sm leading-relaxed text-paper-dim">GitHub responded successfully, but no public repositories are available for this account.</span>
             </div>
-          )}
+          ) : null}
         </>
       )}
     </section>

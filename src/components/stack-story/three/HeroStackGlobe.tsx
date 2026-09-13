@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { sound } from "@/lib/sound";
 import { stackStory } from "@/data/stack-story/stack-story.data";
@@ -23,6 +23,8 @@ export default function HeroStackGlobe({
   activeRef: React.RefObject<number>;
   onOpen: () => void;
 }) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(true);
   const controlsRef = useRef<GlobeControls>({
     dragging: false,
     vy: 0.12,
@@ -114,8 +116,21 @@ export default function HeroStackGlobe({
     drag.current.rotating = false;
   };
 
+  useEffect(() => {
+    const node = rootRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0.01 },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div
+      ref={rootRef}
       className="absolute inset-0 cursor-pointer touch-pan-y select-none"
       onPointerDown={onDown}
       onPointerMove={onMove}
@@ -129,6 +144,8 @@ export default function HeroStackGlobe({
         controlsRef={controlsRef}
         hoverRef={hoverRef}
         staticFrame
+        running={isVisible}
+        staticActive={layers.length - 1}
       />
     </div>
   );

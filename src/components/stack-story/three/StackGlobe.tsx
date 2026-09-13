@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
-import { useMemo, useRef, Suspense } from "react";
+import { useEffect, useMemo, useRef, useState, Suspense } from "react";
 import * as THREE from "three";
 import type { StackLayer } from "@/data/stack-story/stack-layers.data";
 
@@ -43,12 +43,16 @@ function Globe({
   controlsRef,
   hoverRef,
   staticFrame = false,
+  reducedMotion,
+  staticActive,
 }: {
   layers: StackLayer[];
   activeRef: React.RefObject<number>;
   controlsRef: React.RefObject<GlobeControls>;
   hoverRef: React.RefObject<HoverNode>;
   staticFrame?: boolean;
+  reducedMotion: boolean;
+  staticActive?: number;
 }) {
   const group = useRef<THREE.Group>(null);
   const nodeMat = useRef<THREE.PointsMaterial>(null);
@@ -175,12 +179,20 @@ function Globe({
   useFrame((state, delta) => {
     const g = group.current;
     if (!g) return;
-    const active = activeRef.current ?? 0;
+    const active = reducedMotion
+      ? (staticActive ?? activeRef.current ?? 0)
+      : (activeRef.current ?? 0);
     const c = controlsRef.current;
     const w = size.width || 1;
     const dt = Math.max(delta, 0.001);
 
-    if (c && c.dragging) {
+    if (reducedMotion) {
+      g.rotation.x = staticFrame
+        ? BASE_TILT
+        : layerLatitude(active, layers.length) + BASE_TILT;
+      g.rotation.x = THREE.MathUtils.clamp(g.rotation.x, -X_CLAMP, X_CLAMP);
+      g.position.y = 0;
+    } else if (c && c.dragging) {
       // user is spinning it - apply the swipe directly and derive momentum
       const ry = (c.accumDX / w) * DRAG_SENS;
       const rx = (c.accumDY / w) * DRAG_SENS;
@@ -212,9 +224,11 @@ function Globe({
       g.rotation.x += (targetX - g.rotation.x) * Math.min(1, delta * 1.6);
       g.rotation.x = THREE.MathUtils.clamp(g.rotation.x, -X_CLAMP, X_CLAMP);
     }
-    g.position.y = Math.sin(state.clock.elapsedTime * 0.4) * 0.08;
+    if (!reducedMotion) {
+      g.position.y = Math.sin(state.clock.elapsedTime * 0.4) * 0.08;
+    }
 
-    const k = Math.min(1, delta * 5);
+    const k = reducedMotion ? 1 : Math.min(1, delta * 5);
     const hover = hoverRef.current;
 
     // node colors: every layer down to the active one stays lit (cumulative);
@@ -231,9 +245,11 @@ function Globe({
     }
     colAttr.needsUpdate = true;
 
-    if (nodeMat.current)
-      nodeMat.current.size =
-        0.14 + Math.sin(state.clock.elapsedTime * 1.8) * 0.015;
+    if (nodeMat.current) {
+      nodeMat.current.size = reducedMotion
+        ? 0.14
+        : 0.14 + Math.sin(state.clock.elapsedTime * 1.8) * 0.015;
+    }
 
     // ring brightness: lit rings (i <= active) draw their full loop over the
     // sphere (depthTest off) so the highlighted line is always complete.
@@ -267,7 +283,9 @@ function Globe({
       if (p) {
         halo.current.position.copy(p);
         halo.current.visible = true;
-        const s = 1 + Math.sin(state.clock.elapsedTime * 6) * 0.18;
+        const s = reducedMotion
+          ? 1
+          : 1 + Math.sin(state.clock.elapsedTime * 6) * 0.18;
         halo.current.scale.setScalar(s);
       } else {
         halo.current.visible = false;
@@ -350,7 +368,7 @@ function Globe({
   );
 }
 
-function FitCamera() {
+function FitCamera({ live }: { live: boolean }) {
   const { camera, size } = useThree();
   useFrame(() => {
     const cam = camera as THREE.PerspectiveCamera;
@@ -361,11 +379,55 @@ function FitCamera() {
     const distH = target / (Math.tan(vFov / 2) * aspect);
     const dist = Math.max(distV, distH);
     if (Math.abs(cam.position.z - dist) > 0.01) {
-      cam.position.z += (dist - cam.position.z) * 0.15;
+      cam.position.setZ(
+        live ? cam.position.z + (dist - cam.position.z) * 0.15 : dist,
+      );
       cam.updateProjectionMatrix();
     }
   });
   return null;
+}
+
+function DemandInvalidator({ signal }: { signal: string }) {
+  const invalidate = useThree((state) => state.invalidate);
+
+  useEffect(() => {
+    invalidate();
+  }, [invalidate, signal]);
+
+  return null;
+}
+
+function useGlobePlayback(running: boolean) {
+  const [reducedMotion, setReducedMotion] = useState(() =>
+    typeof window === "undefined"
+      ? false
+      : window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+  const [pageVisible, setPageVisible] = useState(() =>
+    typeof document === "undefined" ? true : !document.hidden,
+  );
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncMotion = () => setReducedMotion(media.matches);
+    const syncVisibility = () => setPageVisible(!document.hidden);
+
+    syncMotion();
+    syncVisibility();
+    media.addEventListener("change", syncMotion);
+    document.addEventListener("visibilitychange", syncVisibility);
+
+    return () => {
+      media.removeEventListener("change", syncMotion);
+      document.removeEventListener("visibilitychange", syncVisibility);
+    };
+  }, []);
+
+  return {
+    reducedMotion,
+    shouldAnimate: running && pageVisible && !reducedMotion,
+  };
 }
 
 export default function StackGlobe({
@@ -374,27 +436,40 @@ export default function StackGlobe({
   controlsRef,
   hoverRef,
   staticFrame = false,
+  running = true,
+  staticActive,
 }: {
   layers: StackLayer[];
   activeRef: React.RefObject<number>;
   controlsRef: React.RefObject<GlobeControls>;
   hoverRef: React.RefObject<HoverNode>;
   staticFrame?: boolean;
+  running?: boolean;
+  staticActive?: number;
 }) {
+  const { reducedMotion, shouldAnimate } = useGlobePlayback(running);
+  const renderSignal = `${shouldAnimate}:${reducedMotion}:${staticActive ?? "ref"}`;
+
   return (
     <Canvas
+      aria-hidden="true"
+      tabIndex={-1}
       camera={{ position: [0, 0, 11], fov: 50 }}
       dpr={[1, 1.8]}
+      frameloop={shouldAnimate ? "always" : "demand"}
       gl={{ antialias: true, alpha: true }}
     >
       <Suspense fallback={null}>
-        <FitCamera />
+        <DemandInvalidator signal={renderSignal} />
+        <FitCamera live={shouldAnimate} />
         <Globe
           layers={layers}
           activeRef={activeRef}
           controlsRef={controlsRef}
           hoverRef={hoverRef}
           staticFrame={staticFrame}
+          reducedMotion={reducedMotion}
+          staticActive={staticActive}
         />
         <EffectComposer>
           <Bloom

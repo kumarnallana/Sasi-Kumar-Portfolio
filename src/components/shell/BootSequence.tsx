@@ -182,20 +182,20 @@ export default function BootSequence({ onDone }: { onDone: () => void }) {
 
       <div
         ref={core}
-        className={`boot-flicker relative w-[min(92vw,560px)] font-mono ${
+        className={`boot-flicker relative w-[min(92vw,560px)] font-mono lg:w-[min(84vw,640px)] xl:w-[min(76vw,680px)] [@media(max-height:700px)]:w-[min(92vw,560px)] ${
           glitch ? "boot-glitch" : ""
         }`}
       >
         <div className="mb-6 flex items-center justify-between">
-          <span className="tech-label text-cyan">BLUEPRINT OS · v2.0</span>
-          <span className="tech-label text-paper-dim/60">
+          <span className="tech-label text-cyan lg:text-xs [@media(max-height:700px)]:text-[0.68rem]">BLUEPRINT OS · v2.0</span>
+          <span className="tech-label text-paper-dim/60 lg:text-xs [@media(max-height:700px)]:text-[0.68rem]">
             {phase >= 3 ? "ONLINE" : "BOOT"}
           </span>
         </div>
 
         {/* phase label */}
         <div
-          className={`tech-label mb-3 ${
+          className={`tech-label mb-3 lg:text-xs [@media(max-height:700px)]:text-[0.68rem] ${
             phase >= 3 ? "text-amber glow-amber" : "text-paper-dim"
           }`}
         >
@@ -205,7 +205,7 @@ export default function BootSequence({ onDone }: { onDone: () => void }) {
 
         {/* sync meter */}
         <div className="flex items-center gap-3">
-          <span className="tech-label text-paper-dim/70">SYNC</span>
+          <span className="tech-label text-paper-dim/70 lg:text-xs [@media(max-height:700px)]:text-[0.68rem]">SYNC</span>
           <div className="relative h-2 flex-1 overflow-hidden border border-line-faint bg-ink-800">
             <div
               ref={bar}
@@ -213,13 +213,13 @@ export default function BootSequence({ onDone }: { onDone: () => void }) {
               style={{ width: 0 }}
             />
           </div>
-          <span className="font-mono text-sm text-cyan glow-cyan">
+          <span className="font-mono text-sm text-cyan glow-cyan lg:text-base [@media(max-height:700px)]:text-sm">
             <span ref={pct}>000</span>%
           </span>
         </div>
 
         {/* streaming diagnostics */}
-        <div className="mt-5 min-h-[7.5rem] text-sm leading-relaxed">
+        <div className="mt-5 min-h-[7.5rem] text-sm leading-relaxed lg:min-h-[8.5rem] lg:text-base lg:leading-relaxed [@media(max-height:700px)]:min-h-[7.5rem] [@media(max-height:700px)]:text-sm">
           {DIAG_LINES.slice(0, shown).map((l, i) => (
             <div key={i} className="text-paper-dim">
               <span className="text-cyan/70">&gt;</span> {l}
@@ -234,7 +234,7 @@ export default function BootSequence({ onDone }: { onDone: () => void }) {
         </div>
 
         {/* the deviant line */}
-        <div className="mt-2 h-6 text-sm">
+        <div className="mt-2 h-6 text-sm lg:h-7 lg:text-base [@media(max-height:700px)]:h-6 [@media(max-height:700px)]:text-sm">
           {deviant && (
             <span className="text-amber glow-amber">
               {deviant}
@@ -244,7 +244,7 @@ export default function BootSequence({ onDone }: { onDone: () => void }) {
         </div>
       </div>
 
-      <div className="pointer-events-none absolute bottom-6 left-1/2 -translate-x-1/2 tech-label text-[0.55rem] text-paper-dim/40">
+      <div className="pointer-events-none absolute bottom-6 left-1/2 -translate-x-1/2 tech-label text-[0.55rem] text-paper-dim/40 sm:text-[0.6rem] lg:text-[0.65rem]">
         TAP / PRESS ANY KEY TO SKIP
       </div>
     </div>
