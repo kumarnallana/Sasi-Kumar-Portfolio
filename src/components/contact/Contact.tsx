@@ -182,7 +182,7 @@ export default function Contact() {
                   if (c.label === "GITHUB")
                     sendCat({ type: "perk", label: "monitoring repositories" });
                 }}
-                className="group bg-ink-900 p-5 transition-colors hover:bg-ink-800"
+                className="group bg-ink-900 px-4 py-5 transition-colors hover:bg-ink-800 xl:p-5"
               >
                 <div className="tech-label flex items-center justify-between">
                   {c.label}
