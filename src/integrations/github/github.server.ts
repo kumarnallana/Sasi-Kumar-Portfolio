@@ -1,4 +1,3 @@
-import { cacheLife } from "next/cache";
 import { PORTFOLIO_GRAPHQL_QUERY } from "./github.queries";
 import { transformPortfolioData } from "./github.transformers";
 import type { GitHubPortfolioData } from "./github.types";
@@ -20,10 +19,6 @@ export function getGitHubFailureCode(error: unknown): GitHubFailureCode {
 }
 
 export async function getGitHubPortfolioData(): Promise<GitHubPortfolioData> {
-  // Use Next.js 16 explicit caching directive
-  "use cache";
-  cacheLife({ stale: 300, revalidate: 600, expire: 3600 });
-
   const token = process.env.GITHUB_TOKEN;
   if (!token) {
     throw new Error("AUTH_ERROR");
@@ -45,6 +40,8 @@ export async function getGitHubPortfolioData(): Promise<GitHubPortfolioData> {
           username: "kumarnallana",
         },
       }),
+      cache: "force-cache",
+      next: { revalidate: 600 },
       signal: AbortSignal.timeout(6_000),
     });
   } catch {

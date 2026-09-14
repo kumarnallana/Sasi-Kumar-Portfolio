@@ -6,6 +6,16 @@ test.describe("Portfolio E2E Tests - Active & Exit Flows", () => {
 
     page.on("console", (msg) => {
       const text = msg.text();
+      const source = msg.location().url;
+      const expectedTelemetryBlock =
+        source.startsWith("https://va.vercel-scripts.com/") &&
+        text.includes("ERR_NETWORK_ACCESS_DENIED");
+      const expectedGitHubOutage =
+        source.includes("/api/github/graphql") &&
+        text.includes("503 (Service Unavailable)");
+
+      if (expectedTelemetryBlock || expectedGitHubOutage) return;
+
       // Catch any unhandled errors or missing target bugs
       if (
         text.includes("Target not found") ||
@@ -40,6 +50,21 @@ test.describe("Portfolio E2E Tests - Active & Exit Flows", () => {
     // Verify Hero is visible and active
     const heroTitle = page.locator("h1");
     await expect(heroTitle).toContainText("SASI KUMAR");
+  });
+
+  test("2a. Hero recruiter actions reach projects, resume, and contact", async ({ page }) => {
+    await page.goto("/");
+    await page.keyboard.press("Space");
+
+    const resume = page.getByRole("link", { name: "RESUME ↗", exact: true });
+    await expect(resume).toHaveAttribute("href", "/resume/Nallana_SasiKumar_FullStack_Resume.pdf");
+    const resumeResponse = await page.request.get("/resume/Nallana_SasiKumar_FullStack_Resume.pdf");
+    expect(resumeResponse.ok()).toBeTruthy();
+
+    await page.getByRole("link", { name: "VIEW PROJECTS" }).click();
+    await expect(page.locator("#systems")).toBeInViewport();
+    await page.getByRole("link", { name: "CONTACT", exact: true }).click();
+    await expect(page.locator("#comms")).toBeInViewport();
   });
 
   test("3. Stack Story Modal - Active & Exit Flows", async ({ page }) => {
@@ -138,5 +163,83 @@ test.describe("Portfolio E2E Tests - Active & Exit Flows", () => {
       const profileSection = page.locator("#profile");
       await expect(profileSection).toBeInViewport();
     }
+  });
+});
+
+test.describe("GitHub portfolio states", () => {
+  const livePayload = {
+    publicReposCount: 1,
+    totalStars: 7,
+    totalCommitContributions: 12,
+    totalPullRequestContributions: 2,
+    pinnedRepositories: [
+      {
+        name: "verified-repository",
+        description: "Deterministic live-state fixture.",
+        url: "https://github.com/kumarnallana/verified-repository",
+        stargazerCount: 7,
+        primaryLanguage: { name: "TypeScript", color: "#3178c6" },
+        updatedAt: "2026-09-14T00:00:00.000Z",
+      },
+    ],
+    recentRepositories: [],
+  };
+
+  test("loading settles into live data without fake zero values", async ({ page }) => {
+    await page.route("**/api/github/graphql", async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(livePayload) });
+    });
+
+    await page.goto("/");
+    await page.keyboard.press("Space");
+    const signals = page.locator("#signals");
+    await expect(signals.getByRole("status", { name: "Loading GitHub repositories" })).toBeVisible();
+    await expect(signals.getByText("verified-repository")).toBeVisible();
+    await expect(signals.getByText("7★").first()).toBeVisible();
+  });
+
+  test("successful empty data is presented as an empty state", async ({ page }) => {
+    await page.route("**/api/github/graphql", (route) => route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ ...livePayload, publicReposCount: 0, totalStars: 0, pinnedRepositories: [] }),
+    }));
+
+    await page.goto("/");
+    await page.keyboard.press("Space");
+    await expect(page.locator("#signals").getByText("NO PUBLIC REPOSITORY ACTIVITY")).toBeVisible();
+  });
+
+  test("an outage stays truthful and a later response recovers automatically", async ({ page }) => {
+    let requests = 0;
+    await page.route("**/api/github/graphql", (route) => {
+      requests += 1;
+      if (requests === 1) {
+        return route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ available: false }) });
+      }
+      return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(livePayload) });
+    });
+
+    await page.goto("/");
+    await page.keyboard.press("Space");
+    const signals = page.locator("#signals");
+    await expect(signals.getByText("verified-repository")).toBeVisible({ timeout: 7000 });
+    expect(requests).toBeGreaterThan(1);
+  });
+
+  test("a sustained outage shows unavailable values and preserves the page", async ({ page }) => {
+    await page.route("**/api/github/graphql", (route) => route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: JSON.stringify({ available: false }),
+    }));
+
+    await page.goto("/");
+    await page.keyboard.press("Space");
+    const signals = page.locator("#signals");
+    await expect(signals.getByText("LIVE GITHUB SIGNAL TEMPORARILY UNAVAILABLE")).toBeVisible({ timeout: 10000 });
+    await expect(signals.getByLabel("Total stars unavailable")).toHaveText("—");
+    await expect(page.getByRole("heading", { name: /contact/i })).toBeAttached();
   });
 });
