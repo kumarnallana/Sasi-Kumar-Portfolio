@@ -190,7 +190,13 @@ export default function Contact() {
                     ↗
                   </span>
                 </div>
-                <div className="mt-2 break-all font-display text-sm text-paper transition-colors group-hover:text-cyan">
+                <div
+                  className={`mt-2 font-display text-paper transition-colors group-hover:text-cyan ${
+                    c.label === "EMAIL"
+                      ? "whitespace-nowrap text-xs tracking-tight xl:text-sm"
+                      : "break-words text-sm"
+                  }`}
+                >
                   {c.value}
                 </div>
               </a>
