@@ -10,6 +10,8 @@ import Typewriter from "@/components/shared/Typewriter";
 import AnimatedMetric from "@/components/shared/AnimatedMetric";
 import CapabilityMatrix from "@/components/about/CapabilityMatrix";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { useGithubPortfolio } from "@/integrations/github/use-github-portfolio";
+import { scrollToSection } from "@/lib/lenis";
 
 const HeroStackGlobe = dynamic(
   () => import("@/components/stack-story/three/HeroStackGlobe"),
@@ -27,6 +29,21 @@ export default function Hero({ started }: { started: boolean }) {
   const textCol = useRef<HTMLDivElement>(null);
   const [storyOpen, setStoryOpen] = useState(false);
   const isMobile = useIsMobile();
+  const githubQuery = useGithubPortfolio();
+
+  const proofStats = [
+    ...systemStats,
+    {
+      label: "GITHUB STARS",
+      value: githubQuery.data ? `${githubQuery.data.totalStars}★` : "—",
+      pending: githubQuery.isPending,
+    },
+    {
+      label: "PUBLIC REPOS",
+      value: githubQuery.data ? String(githubQuery.data.publicReposCount) : "—",
+      pending: githubQuery.isPending,
+    },
+  ];
 
   // activeRef is an animated power level for the globe. It starts OFF (dark) and
   // energizes layer-by-layer the moment the boot sequence hands off - the globe's
@@ -125,7 +142,7 @@ export default function Hero({ started }: { started: boolean }) {
   return (
     <section
       ref={root}
-      className="relative flex min-h-screen items-center overflow-hidden"
+      className="relative flex min-h-[100svh] items-center overflow-hidden"
     >
       <div className="mx-auto grid w-full max-w-7xl items-center gap-8 px-6 py-16 md:px-10 md:py-24 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-6 lg:py-16 xl:py-24">
         {/* ---- LEFT: text column ---- */}
@@ -141,26 +158,60 @@ export default function Hero({ started }: { started: boolean }) {
             <span className="text-line">SASI KUMAR</span>
           </h1>
 
-          <div className="hero-anim mt-6 max-w-xl">
-            <p className="font-display text-lg text-paper md:text-2xl">
+          <div className="hero-anim mt-5 max-w-xl">
+            <p className="font-display text-xl font-medium text-paper md:text-2xl">
+              {identity.role}
+            </p>
+            <p className="mt-1 min-h-5 font-mono text-sm text-cyan glow-cyan md:text-base">
               <Typewriter
-                words={identity.roleFramings}
-                className="text-cyan glow-cyan"
+                words={identity.roleFramings.slice(1)}
+                className="text-cyan"
               />
             </p>
-            <p className="mt-3 text-sm leading-relaxed text-paper-dim">
+            <p className="mt-2 text-sm leading-relaxed text-paper-dim md:text-base">
               {identity.tagline}
             </p>
           </div>
 
+          <nav aria-label="Recruiter actions" className="hero-anim mt-6 grid max-w-xl grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+            <a
+              href="#systems"
+              onClick={(event) => {
+                event.preventDefault();
+                scrollToSection("systems");
+              }}
+              className="col-span-2 flex min-h-11 items-center justify-center border border-cyan bg-cyan/10 px-5 font-mono text-xs font-semibold tracking-[0.12em] text-cyan transition-colors hover:bg-cyan/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900 sm:col-auto"
+            >
+              VIEW PROJECTS
+            </a>
+            <a
+              href={identity.links.resume}
+              target="_blank"
+              rel="noreferrer"
+              className="flex min-h-11 items-center justify-center border border-line-faint bg-ink-900/70 px-5 font-mono text-xs font-semibold tracking-[0.12em] text-paper transition-colors hover:border-cyan/70 hover:text-cyan focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900"
+            >
+              RESUME ↗
+            </a>
+            <a
+              href="#comms"
+              onClick={(event) => {
+                event.preventDefault();
+                scrollToSection("comms");
+              }}
+              className="flex min-h-11 items-center justify-center border border-line-faint bg-ink-900/70 px-5 font-mono text-xs font-semibold tracking-[0.12em] text-paper transition-colors hover:border-cyan/70 hover:text-cyan focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900"
+            >
+              CONTACT
+            </a>
+          </nav>
+
           {/* stat strip */}
-          <div className="hero-anim mt-10 grid max-w-2xl grid-cols-2 gap-px border border-line-faint bg-line-faint sm:grid-cols-4">
-            {systemStats.map((s) => (
+          <div className="hero-anim mt-6 grid max-w-2xl grid-cols-2 gap-px border border-line-faint bg-line-faint sm:grid-cols-4">
+            {proofStats.map((s) => (
               <div
                 key={s.label}
                 className="bg-ink-900/80 px-4 py-3 backdrop-blur"
               >
-                <div className="font-display text-2xl font-semibold text-cyan glow-cyan">
+                <div className={`min-h-8 font-display text-2xl font-semibold text-cyan glow-cyan ${"pending" in s && s.pending ? "animate-pulse" : ""}`}>
                   <AnimatedMetric value={s.value} />
                 </div>
                 <div className="tech-label mt-1">{s.label}</div>

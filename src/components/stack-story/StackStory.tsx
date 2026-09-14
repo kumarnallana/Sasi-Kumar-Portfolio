@@ -192,7 +192,7 @@ export default function StackStory({
       }`}
       role="dialog"
       aria-modal="true"
-      aria-labelledby="stack-story-title"
+      aria-label="The Stack — system layers"
       aria-describedby="stack-story-description"
     >
       <p id="stack-story-description" className="sr-only">
@@ -312,13 +312,13 @@ export default function StackStory({
               className="flex h-full snap-start items-center px-6 md:px-10"
             >
               <div
-                className={`w-full min-w-0 max-w-xl transition-all duration-500 lg:w-[44%] lg:max-w-none xl:w-[calc(50%_-_2.5rem)] ${
+                className={`w-full min-w-0 max-w-xl transition-all duration-500 lg:w-[46%] lg:max-w-none xl:w-[calc(50%_-_2.5rem)] ${
                   focused
                     ? "translate-y-0 opacity-100"
                     : "translate-y-3 opacity-30"
                 }`}
               >
-                <div className="tech-label flex flex-wrap items-center gap-3">
+                <div className="tech-label flex flex-wrap items-center gap-3 text-[0.7rem] sm:text-xs">
                   <span className={amber ? "text-amber" : "text-cyan"}>
                     {L.code} · {L.role}
                   </span>
@@ -336,18 +336,18 @@ export default function StackStory({
 
                 <h2
                   id={`stack-layer-title-${i}`}
-                  className={`mt-4 font-display text-4xl font-bold leading-[0.95] sm:text-5xl lg:text-6xl ${
+                  className={`mt-4 font-display text-[2.75rem] font-bold leading-[0.95] sm:text-[3.4rem] lg:text-[4.25rem] [@media(max-height:650px)]:text-5xl ${
                     amber ? "text-amber glow-amber" : "text-paper"
                   }`}
                 >
                   {L.title}
                 </h2>
 
-                <p className="mt-5 max-w-md text-sm leading-relaxed text-paper-dim sm:text-base">
+                <p className="mt-6 max-w-lg text-base leading-relaxed text-paper-dim lg:text-lg [@media(max-height:650px)]:mt-4 [@media(max-height:650px)]:text-base">
                   {L.narrative}
                 </p>
 
-                <div className="mt-7 flex max-w-full flex-wrap gap-x-2.5 gap-y-2.5">
+                <div className="mt-8 flex max-w-full flex-wrap gap-x-2.5 gap-y-2.5 [@media(max-height:650px)]:mt-5">
                   {L.items.map((it, k) => (
                     <button
                       key={it}
@@ -367,7 +367,7 @@ export default function StackStory({
                       onBlur={() => {
                         hoverRef.current = null;
                       }}
-                      className={`cursor-default whitespace-nowrap border bg-ink-900/70 px-2.5 py-1.5 font-mono text-[0.8125rem] leading-none backdrop-blur transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900 ${
+                      className={`cursor-default whitespace-nowrap border bg-ink-900/70 px-3 py-2 font-mono text-sm leading-none backdrop-blur transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900 [@media(max-height:650px)]:px-2.5 [@media(max-height:650px)]:py-1.5 [@media(max-height:650px)]:text-[0.8125rem] ${
                         amber
                           ? "border-amber/40 text-amber-bright hover:border-amber hover:bg-amber/10 focus-visible:border-amber focus-visible:bg-amber/10 focus-visible:ring-amber"
                           : "border-cyan/30 text-cyan-bright hover:border-cyan hover:bg-cyan/10 focus-visible:border-cyan focus-visible:bg-cyan/10 focus-visible:ring-cyan"
@@ -378,7 +378,7 @@ export default function StackStory({
                   ))}
                 </div>
 
-                <p className="mt-3 hidden text-[0.6rem] tracking-wide text-paper-dim/50 lg:block">
+                <p className="mt-4 hidden text-[0.65rem] tracking-wide text-paper-dim/50 lg:block [@media(max-height:650px)]:mt-3 [@media(max-height:650px)]:text-[0.6rem]">
                   ▸ HOVER A TAG TO LOCATE IT · DRAG THE GLOBE TO ROTATE
                 </p>
               </div>
