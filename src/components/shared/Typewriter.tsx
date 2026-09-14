@@ -1,6 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useSyncExternalStore, useState } from "react";
+
+const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
+
+function getReducedMotionSnapshot() {
+  return window.matchMedia(reducedMotionQuery).matches;
+}
+
+function getServerReducedMotionSnapshot() {
+  return false;
+}
 
 export default function Typewriter({
   words,
@@ -18,15 +28,19 @@ export default function Typewriter({
   const [text, setText] = useState("");
   const [wordIdx, setWordIdx] = useState(0);
   const [deleting, setDeleting] = useState(false);
+  const subscribeToReducedMotion = useCallback((onChange: () => void) => {
+    const media = window.matchMedia(reducedMotionQuery);
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
+  }, []);
+  const reduce = useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotionSnapshot,
+    getServerReducedMotionSnapshot,
+  );
 
   useEffect(() => {
-    const reduce =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
-      setText(words[0]);
-      return;
-    }
+    if (reduce || words.length === 0) return;
 
     const current = words[wordIdx % words.length];
     let delay = deleting ? deleteSpeed : typeSpeed;
@@ -53,11 +67,11 @@ export default function Typewriter({
     }, delay);
 
     return () => clearTimeout(id);
-  }, [text, deleting, wordIdx, words, typeSpeed, deleteSpeed, hold]);
+  }, [text, deleting, wordIdx, words, typeSpeed, deleteSpeed, hold, reduce]);
 
   return (
     <span className={className}>
-      {text}
+      {reduce ? (words[0] ?? "") : text}
       <span className="cursor-blink text-cyan">▮</span>
     </span>
   );

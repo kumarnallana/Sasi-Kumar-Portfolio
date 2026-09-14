@@ -8,19 +8,16 @@ interface AnimatedMetricProps {
 }
 
 export default function AnimatedMetric({ value, className = "" }: AnimatedMetricProps) {
-  const [displayValue, setDisplayValue] = useState<string | number>(value);
+  const [animation, setAnimation] = useState<{
+    source: string;
+    display: string | number;
+  } | null>(null);
   const ref = useRef<HTMLSpanElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const animatedRef = useRef(false);
 
   const stringValue = String(value);
-
-  useEffect(() => {
-    // If the value changes (e.g. data loaded async), update displayValue.
-    // We only update if we haven't animated yet, OR if we want to show the final value immediately.
-    // If we've already animated, we should let the displayValue update normally if it's a real change.
-    setDisplayValue(value);
-  }, [value]);
+  const displayValue = animation?.source === stringValue ? animation.display : value;
 
   useEffect(() => {
     // If reduced motion is preferred, just show the final value.
@@ -44,6 +41,7 @@ export default function AnimatedMetric({ value, className = "" }: AnimatedMetric
     const el = ref.current;
     if (!el) return;
 
+    let frame = 0;
     observerRef.current = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !animatedRef.current) {
@@ -62,7 +60,7 @@ export default function AnimatedMetric({ value, className = "" }: AnimatedMetric
           };
 
           // Set to 0 at the start of intersection
-          setDisplayValue(formatNumber(0));
+          setAnimation({ source: stringValue, display: formatNumber(0) });
 
           const animate = (timestamp: number) => {
             if (!startTime) startTime = timestamp;
@@ -72,16 +70,16 @@ export default function AnimatedMetric({ value, className = "" }: AnimatedMetric
             const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
             const currentNum = easeProgress * targetNum;
 
-            setDisplayValue(formatNumber(currentNum));
+            setAnimation({ source: stringValue, display: formatNumber(currentNum) });
 
             if (progress < 1) {
-              requestAnimationFrame(animate);
+              frame = requestAnimationFrame(animate);
             } else {
-              setDisplayValue(value); // Ensure final exact string is displayed
+              setAnimation(null);
             }
           };
 
-          requestAnimationFrame(animate);
+          frame = requestAnimationFrame(animate);
         }
       },
       { threshold: 0.25 } // Trigger when 25% visible
@@ -91,8 +89,9 @@ export default function AnimatedMetric({ value, className = "" }: AnimatedMetric
 
     return () => {
       observerRef.current?.disconnect();
+      cancelAnimationFrame(frame);
     };
-  }, [stringValue, value]);
+  }, [stringValue]);
 
   return (
     <span ref={ref} className={className}>

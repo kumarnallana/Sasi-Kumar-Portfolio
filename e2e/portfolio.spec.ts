@@ -69,7 +69,7 @@ test.describe("Portfolio E2E Tests - Active & Exit Flows", () => {
     await expect(modal).not.toBeVisible({ timeout: 2500 });
   });
 
-  test("4. Blueprint Diagram Modal - Active & Exit Flows", async ({ page }) => {
+  test("4. Inline Project Architecture - Responsive Visibility", async ({ page }) => {
     await page.goto("/");
     await page.keyboard.press("Space");
     await page.waitForTimeout(500);
@@ -78,23 +78,11 @@ test.describe("Portfolio E2E Tests - Active & Exit Flows", () => {
     const systemsSection = page.locator("#systems");
     await systemsSection.scrollIntoViewIfNeeded();
 
-    const maxBtn = systemsSection.getByRole("button", { name: /maximize diagram/i }).first();
-    await expect(maxBtn).toBeVisible();
-    await maxBtn.click();
+    const architecture = systemsSection.getByText("SYS.ARCHITECTURE", { exact: true }).first();
+    await expect(architecture).toBeVisible();
 
-    // Verify modal is active
-    const closeBtn = page.getByRole("button", { name: /close diagram/i });
-    await expect(closeBtn).toBeVisible();
-
-    // Test Exit Flow 1: Close button
-    await closeBtn.click();
-    await expect(closeBtn).not.toBeVisible();
-
-    // Test Exit Flow 2: Keyboard ESC
-    await maxBtn.click();
-    await expect(closeBtn).toBeVisible();
-    await page.keyboard.press("Escape");
-    await expect(closeBtn).not.toBeVisible();
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(architecture).toBeHidden();
   });
 
   test("5. Reconstruction Build History Modal - Active & Exit Flows", async ({ page }) => {

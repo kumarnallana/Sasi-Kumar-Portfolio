@@ -1,21 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 
 export function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    // Initial check
-    setIsMobile(window.innerWidth < breakpoint);
-
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < breakpoint);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+  const subscribe = useCallback((onChange: () => void) => {
+    const media = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
   }, [breakpoint]);
+  const getSnapshot = useCallback(
+    () => window.matchMedia(`(max-width: ${breakpoint - 1}px)`).matches,
+    [breakpoint],
+  );
 
-  return isMobile;
+  return useSyncExternalStore(subscribe, getSnapshot, () => false);
 }

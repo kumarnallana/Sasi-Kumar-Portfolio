@@ -41,9 +41,15 @@ export default function CatField({
   const wrap = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const moodCb = useRef(onMood);
-  moodCb.current = onMood;
   const thoughtCb = useRef(onThought);
-  thoughtCb.current = onThought;
+
+  useEffect(() => {
+    moodCb.current = onMood;
+  }, [onMood]);
+
+  useEffect(() => {
+    thoughtCb.current = onThought;
+  }, [onThought]);
 
   useEffect(() => {
     const box = wrap.current;
