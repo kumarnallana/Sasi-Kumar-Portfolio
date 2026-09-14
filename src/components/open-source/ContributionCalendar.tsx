@@ -11,7 +11,8 @@ const levelClass = {
 
 function CalendarYear({ calendar, isCurrent }: { calendar: GitHubContributionYear; isCurrent: boolean }) {
   const days = useMemo(() => {
-    const reported = calendar.weeks.flatMap((week) => week.contributionDays);
+    const weeks = Array.isArray(calendar.weeks) ? calendar.weeks : [];
+    const reported = weeks.flatMap((week) => Array.isArray(week?.contributionDays) ? week.contributionDays : []);
     const byDate = new Map(reported.map((day) => [day.date, day]));
     const lastReportedDate = reported.at(-1)?.date ?? "";
     const result: Array<{ day: GitHubContributionDay; future: boolean }> = [];
@@ -27,7 +28,7 @@ function CalendarYear({ calendar, isCurrent }: { calendar: GitHubContributionYea
   const [active, setActive] = useState<GitHubContributionDay | null>(null);
   const describe = (day: GitHubContributionDay) => `${day.contributionCount} contribution${day.contributionCount === 1 ? "" : "s"} on ${new Date(`${day.date}T00:00:00Z`).toLocaleDateString(undefined, { dateStyle: "long", timeZone: "UTC" })}`;
   return <div className="min-w-0">
-    <h4 className="font-display text-base font-semibold text-paper">{calendar.totalContributions.toLocaleString()} contributions in {calendar.year}</h4>
+    <h4 className="font-display text-base font-semibold text-paper">{Number(calendar.totalContributions || 0).toLocaleString()} contributions in {calendar.year}</h4>
     <div className="mt-3 max-w-full overflow-x-auto pb-2" aria-label={`GitHub contributions in ${calendar.year}`}>
       <div className="grid min-w-max grid-flow-col grid-rows-7 gap-[0.2rem]">
         {days.map(({ day, future }, index) => <button key={day.date} type="button" aria-label={future ? `Future date ${day.date}` : describe(day)} title={future ? undefined : describe(day)} disabled={future}
@@ -40,13 +41,15 @@ function CalendarYear({ calendar, isCurrent }: { calendar: GitHubContributionYea
   </div>;
 }
 
-export default function ContributionCalendar({ history, availableYears }: { history: GitHubContributionYear[]; availableYears: number[] }) {
-  const sortedYears = [...availableYears].sort((a, b) => b - a);
+export default function ContributionCalendar({ history, availableYears }: { history?: GitHubContributionYear[]; availableYears?: number[] }) {
+  const safeHistory = Array.isArray(history) ? history : [];
+  const safeYears = Array.isArray(availableYears) ? availableYears : [];
+  const sortedYears = [...safeYears].filter(Number.isInteger).sort((a, b) => b - a);
   const [selectedYear, setSelectedYear] = useState(sortedYears[0] ?? 0);
-  const initial = history.find((item) => item.year === selectedYear);
+  const initial = safeHistory.find((item) => item?.year === selectedYear);
   const historical = useGitHubContributionYear(selectedYear, !initial);
   const selected = initial ?? historical.data;
-  if (history.length === 0) return null;
+  if (safeHistory.length === 0 || sortedYears.length === 0) return null;
   return <section className="os-card mb-10 border border-line-faint bg-ink-900 p-4 sm:p-5" aria-labelledby="contribution-heading">
     <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
       <div><div className="tech-label text-cyan">CONTRIBUTION HISTORY</div><h3 id="contribution-heading" className="mt-1 font-display text-xl font-semibold text-paper">GitHub contribution calendar</h3></div>

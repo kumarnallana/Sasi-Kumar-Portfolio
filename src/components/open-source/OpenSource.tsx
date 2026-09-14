@@ -72,7 +72,7 @@ export default function OpenSource() {
   const hasRepositories = Boolean(
     data && (data.pinnedRepositories.length > 0 || data.recentRepositories.length > 0),
   );
-  const currentContributions = data?.contributionHistory[0];
+  const currentContributions = Array.isArray(data?.contributionHistory) ? data.contributionHistory[0] : undefined;
   const currentYearLabel = currentContributions?.year ?? "CURRENT";
 
   useEffect(() => {
@@ -143,7 +143,7 @@ export default function OpenSource() {
 
         {!isPending && (
           <div className="grid gap-px border-x border-b border-line-faint bg-line-faint sm:grid-cols-2 lg:grid-cols-4">
-            <ProfileSignal label="AVAILABLE FOR WORK" value={data ? (data.isHireable ? "AVAILABLE FOR HIRE" : "NOT MARKED AVAILABLE") : "—"} active={Boolean(data?.isHireable)} />
+            <ProfileSignal label="AVAILABLE FOR WORK" value={data ? (data.isHireable ? "I AM AVAILABLE TO WORK" : "NOT MARKED AVAILABLE") : "—"} active={Boolean(data?.isHireable)} />
             <ProfileSignal label="FOLLOWING" value={data ? data.followingCount.toLocaleString() : "—"} />
             <ProfileSignal label="GITHUB LOCATION" value={data?.location ?? (isError ? "—" : "NOT LISTED")} />
             <ProfileSignal label="GITHUB COMPANY" value={data?.company ?? (isError ? "—" : "NOT LISTED")} />

@@ -61,7 +61,9 @@ export default function CatField({
     const reduce = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // Nyx is decorative; a 1.5 DPR ceiling keeps the line art crisp without
+    // doubling the canvas workload on high-density laptop displays.
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     let W = 0;
     let H = 0;
 
@@ -123,8 +125,8 @@ export default function CatField({
     box.addEventListener("pointercancel", onLeave);
 
     let running = true;
-    const io = new IntersectionObserver(([e]) => (running = e.isIntersecting), {
-      threshold: 0,
+    const io = new IntersectionObserver(([e]) => (running = e.isIntersecting && e.intersectionRatio >= 0.1), {
+      threshold: [0, 0.1],
     });
     io.observe(box);
 
@@ -845,8 +847,13 @@ export default function CatField({
     };
 
     let raf = 0;
+    let lastFrame = 0;
+    const frameInterval = 1000 / 30;
     const tick = (now: number) => {
-      if (running) draw(now);
+      if (running && now - lastFrame >= frameInterval) {
+        draw(now);
+        lastFrame = now - ((now - lastFrame) % frameInterval);
+      }
       raf = requestAnimationFrame(tick);
     };
     if (reduce) draw(performance.now());
