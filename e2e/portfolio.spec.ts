@@ -170,8 +170,22 @@ test.describe("GitHub portfolio states", () => {
   const livePayload = {
     publicReposCount: 1,
     totalStars: 7,
+    followersCount: 9,
+    followingCount: 4,
+    company: "Verified Company",
+    location: "Verified Location",
+    isHireable: true,
+    totalContributions: 14,
     totalCommitContributions: 12,
     totalPullRequestContributions: 2,
+    contributionWeeks: [
+      {
+        contributionDays: [
+          { contributionCount: 0, contributionLevel: "NONE", date: "2026-09-13", weekday: 0 },
+          { contributionCount: 2, contributionLevel: "SECOND_QUARTILE", date: "2026-09-14", weekday: 1 },
+        ],
+      },
+    ],
     pinnedRepositories: [
       {
         name: "verified-repository",
@@ -197,6 +211,8 @@ test.describe("GitHub portfolio states", () => {
     await expect(signals.getByRole("status", { name: "Loading GitHub repositories" })).toBeVisible();
     await expect(signals.getByText("verified-repository")).toBeVisible();
     await expect(signals.getByText("7★").first()).toBeVisible();
+    await expect(signals.getByText("14 GitHub contributions")).toBeVisible();
+    await expect(signals.getByText("Verified Location")).toBeVisible();
   });
 
   test("successful empty data is presented as an empty state", async ({ page }) => {
@@ -239,7 +255,7 @@ test.describe("GitHub portfolio states", () => {
     await page.keyboard.press("Space");
     const signals = page.locator("#signals");
     await expect(signals.getByText("LIVE GITHUB SIGNAL TEMPORARILY UNAVAILABLE")).toBeVisible({ timeout: 10000 });
-    await expect(signals.getByLabel("Total stars unavailable")).toHaveText("—");
+    await expect(signals.getByLabel("total stars unavailable")).toHaveText("—");
     await expect(page.getByRole("heading", { name: /contact/i })).toBeAttached();
   });
 });

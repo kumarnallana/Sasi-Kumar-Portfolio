@@ -10,11 +10,18 @@ export function transformPortfolioData(rawData: any): GitHubPortfolioData {
 
   return {
     publicReposCount: user.repositories?.totalCount || 0,
+    followersCount: user.followers?.totalCount || 0,
+    followingCount: user.following?.totalCount || 0,
+    company: user.company || null,
+    location: user.location || null,
+    isHireable: Boolean(user.isHireable),
+    totalContributions: user.contributionsCollection?.contributionCalendar?.totalContributions || 0,
     // Sum stargazerCount across all owned public repos (up to 100)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     totalStars: (user.allRepos?.nodes || []).reduce((sum: number, r: any) => sum + (r.stargazerCount || 0), 0),
     totalCommitContributions: user.contributionsCollection?.totalCommitContributions || 0,
     totalPullRequestContributions: user.contributionsCollection?.totalPullRequestContributions || 0,
+    contributionWeeks: user.contributionsCollection?.contributionCalendar?.weeks || [],
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     pinnedRepositories: (user.pinnedItems?.nodes || []).map((repo: any) => ({
       name: repo.name,

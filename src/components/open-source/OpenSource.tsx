@@ -9,14 +9,65 @@ import { sound } from "@/lib/sound";
 import { useGithubPortfolio } from "@/integrations/github/use-github-portfolio";
 import AnimatedMetric from "@/components/shared/AnimatedMetric";
 import { revealContent } from "@/lib/contentReveal";
+import ContributionCalendar from "./ContributionCalendar";
+import { usePortfolioAnalytics } from "@/integrations/analytics/use-portfolio-analytics";
 
 gsap.registerPlugin(ScrollTrigger);
+
+function SignalMetric({
+  label,
+  value,
+  suffix = "",
+  pending = false,
+  unavailable = false,
+  unavailableLabel = "Temporarily unavailable",
+  accent = "cyan",
+}: {
+  label: string;
+  value?: number;
+  suffix?: string;
+  pending?: boolean;
+  unavailable?: boolean;
+  unavailableLabel?: string;
+  accent?: "cyan" | "amber";
+}) {
+  const hasValue = typeof value === "number" && Number.isFinite(value);
+  const displayUnavailable = unavailable || (!pending && !hasValue);
+
+  return (
+    <div className="os-card min-h-28 bg-ink-900 px-4 py-4 sm:min-h-32 sm:px-5 sm:py-5">
+      <div className={`font-display text-2xl font-semibold sm:text-3xl ${accent === "amber" ? "text-amber glow-amber" : "text-cyan glow-cyan"}`}>
+        {pending ? (
+          <span className="animate-pulse" aria-label={`Loading ${label.toLowerCase()}`}>—</span>
+        ) : displayUnavailable ? (
+          <span aria-label={`${label.toLowerCase()} unavailable`}>—</span>
+        ) : (
+          <AnimatedMetric value={`${value!.toLocaleString()}${suffix}`} />
+        )}
+      </div>
+      <div className="tech-label mt-2 leading-relaxed">{label}</div>
+      {displayUnavailable && <div className="mt-1 font-mono text-[0.58rem] uppercase tracking-wider text-line-dim">{unavailableLabel}</div>}
+    </div>
+  );
+}
+
+function ProfileSignal({ label, value, active = false }: { label: string; value: string; active?: boolean }) {
+  return (
+    <div className="os-card min-w-0 bg-ink-900 px-4 py-3 sm:px-5">
+      <div className="tech-label text-[0.6rem]">{label}</div>
+      <div className={`mt-1 truncate font-display text-sm font-semibold sm:text-base ${active ? "text-cyan" : "text-paper"}`} title={value}>
+        {value}
+      </div>
+    </div>
+  );
+}
 
 export default function OpenSource() {
   const ref = useRef<HTMLDivElement>(null);
 
   // Single typed query via integration hook
   const { data, isPending, isError } = useGithubPortfolio();
+  const { data: analytics, isPending: isAnalyticsPending } = usePortfolioAnalytics();
 
   const hasRepositories = Boolean(
     data && (data.pinnedRepositories.length > 0 || data.recentRepositories.length > 0),
@@ -50,50 +101,57 @@ export default function OpenSource() {
         caption="Public repositories and activity sourced directly from GitHub."
       />
 
-      {/* stat bar */}
-      <div
-        className="mb-10 grid grid-cols-2 gap-px border border-line-faint bg-line-faint sm:grid-cols-3"
-        aria-busy={isPending}
-        aria-live="polite"
-      >
-        <div className="os-card bg-ink-900 px-5 py-5">
-          <div className="font-display text-3xl font-semibold text-amber glow-amber">
-            {isPending || isError ? (
-              <span className={isPending ? "animate-pulse" : ""} aria-label={isPending ? "Loading total stars" : "Total stars unavailable"}>—</span>
-            ) : (
-              <AnimatedMetric value={`${data.totalStars}★`} className="star-count" />
-            )}
+      <div className="mb-10" aria-busy={isPending || isAnalyticsPending} aria-live="polite">
+        <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <div className="tech-label text-cyan">PUBLIC ENGINEERING TELEMETRY</div>
+            <h3 className="mt-1 font-display text-xl font-semibold text-paper">GitHub & portfolio stats</h3>
           </div>
-          <div className="tech-label mt-1">TOTAL STARS</div>
+          <a
+            href={github.url}
+            target="_blank"
+            rel="noreferrer"
+            onMouseEnter={() => sound.play("hover")}
+            className="group font-mono text-sm text-paper-dim transition-colors hover:text-cyan"
+          >
+            @{github.handle} <span className="inline-block transition-transform group-hover:translate-x-0.5">↗</span>
+          </a>
         </div>
-        <div className="os-card bg-ink-900 px-5 py-5">
-          <div className="font-display text-3xl font-semibold text-cyan glow-cyan">
-             {isPending || isError ? (
-               <span className={isPending ? "animate-pulse" : ""} aria-label={isPending ? "Loading public repositories" : "Public repository count unavailable"}>—</span>
-             ) : (
-               <AnimatedMetric value={data.publicReposCount} />
-             )}
-          </div>
-          <div className="tech-label mt-1">PUBLIC REPOS</div>
+
+        <div className="grid grid-cols-2 gap-px border border-line-faint bg-line-faint sm:grid-cols-3 lg:grid-cols-6">
+          <SignalMetric
+            label="PORTFOLIO VIEWS"
+            value={analytics?.pageviews}
+            pending={isAnalyticsPending}
+            unavailableLabel="Live when authorized"
+            accent="amber"
+          />
+          <SignalMetric
+            label="UNIQUE VISITORS"
+            value={analytics?.visitors}
+            pending={isAnalyticsPending}
+            unavailableLabel="Live when authorized"
+            accent="amber"
+          />
+          <SignalMetric label="CONTRIBUTIONS" value={data?.totalContributions} pending={isPending} unavailable={isError} />
+          <SignalMetric label="TOTAL STARS" value={data?.totalStars} suffix="★" pending={isPending} unavailable={isError} accent="amber" />
+          <SignalMetric label="PUBLIC REPOS" value={data?.publicReposCount} pending={isPending} unavailable={isError} />
+          <SignalMetric label="FOLLOWERS" value={data?.followersCount} pending={isPending} unavailable={isError} />
         </div>
-        <a
-          href={github.url}
-          target="_blank"
-          rel="noreferrer"
-          onMouseEnter={() => sound.play("hover")}
-          className="os-card group col-span-2 flex flex-col justify-between bg-ink-900 px-5 py-5 transition-colors hover:bg-ink-800 sm:col-span-1"
-        >
-          <div className="font-display text-lg font-semibold text-paper transition-colors group-hover:text-cyan">
-            @{github.handle}
+
+        {!isPending && !isError && data && (
+          <div className="grid gap-px border-x border-b border-line-faint bg-line-faint sm:grid-cols-2 lg:grid-cols-4">
+            <ProfileSignal label="AVAILABLE FOR WORK" value={data.isHireable ? "YES" : "NOT LISTED"} active={data.isHireable} />
+            <ProfileSignal label="FOLLOWING" value={data.followingCount.toLocaleString()} />
+            <ProfileSignal label="GITHUB LOCATION" value={data.location ?? "NOT LISTED"} />
+            <ProfileSignal label="GITHUB COMPANY" value={data.company ?? "NOT LISTED"} />
           </div>
-          <div className="tech-label mt-1 flex items-center gap-1">
-            VIEW PROFILE
-            <span className="transition-transform group-hover:translate-x-0.5">
-              ↗
-            </span>
-          </div>
-        </a>
+        )}
       </div>
+
+      {!isPending && !isError && data && (
+        <ContributionCalendar weeks={data.contributionWeeks} total={data.totalContributions} />
+      )}
 
       {isPending ? (
         <div className="os-card grid min-h-64 gap-px border border-line-faint bg-line-faint md:grid-cols-2 lg:grid-cols-3" role="status" aria-label="Loading GitHub repositories">

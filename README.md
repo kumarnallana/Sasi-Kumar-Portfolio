@@ -30,8 +30,19 @@ This portfolio is built as a highly interactive, cinematic engineering experienc
 
 - **Interactive 3D Stack Globe:** A React Three Fiber globe representing the technology stack with 360-degree drag rotation, bloom post-processing, and node constellations.
 - **Cinematic Navigation:** Depth navigation, GSAP sequencing, and timeline reveals for an authored engineering atmosphere.
-- **Dynamic GitHub Integration:** Live fetching of open-source signals (stars, repositories, followers) using TanStack Query and the GitHub REST API.
+- **Dynamic GitHub Integration:** Live fetching of repositories, stars, followers, profile metadata, and the 12-month contribution calendar using TanStack Query and the GitHub GraphQL API.
+- **Truthful Portfolio Analytics:** The public view count is read server-side from Vercel Web Analytics when authorized, and never falls back to a fabricated number.
 - **System Architecture Diagrams:** Interactive blueprint diagrams showcasing real-world workflows, such as CRM integrations and lead-generation architecture.
+
+## Open-source signal configuration
+
+The GitHub telemetry requires `GITHUB_TOKEN`. To show the optional lifetime production view count, configure these server-only Vercel environment variables:
+
+- `VERCEL_ANALYTICS_TOKEN` — a Vercel access token with access to the project
+- `VERCEL_ANALYTICS_PROJECT_ID` — the portfolio project ID
+- `VERCEL_ANALYTICS_TEAM_ID` — required only when the project belongs to a team
+
+Without the Vercel credentials, the portfolio keeps the analytics slot stable and reports the view metric as unavailable. Tokens are never sent to the browser.
 
 ## 💼 Featured Work
 

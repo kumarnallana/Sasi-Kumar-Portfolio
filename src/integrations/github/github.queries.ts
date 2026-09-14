@@ -1,6 +1,15 @@
 export const PORTFOLIO_GRAPHQL_QUERY = `
   query PortfolioData($username: String!) {
     user(login: $username) {
+      company
+      location
+      isHireable
+      followers {
+        totalCount
+      }
+      following {
+        totalCount
+      }
       repositories(first: 1) {
         totalCount
       }
@@ -40,6 +49,17 @@ export const PORTFOLIO_GRAPHQL_QUERY = `
       contributionsCollection {
         totalCommitContributions
         totalPullRequestContributions
+        contributionCalendar {
+          totalContributions
+          weeks {
+            contributionDays {
+              contributionCount
+              contributionLevel
+              date
+              weekday
+            }
+          }
+        }
       }
     }
   }
