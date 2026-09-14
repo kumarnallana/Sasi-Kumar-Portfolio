@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useSyncExternalStore, useState } from "react";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
 
@@ -28,6 +29,7 @@ export default function Typewriter({
   const [text, setText] = useState("");
   const [wordIdx, setWordIdx] = useState(0);
   const [deleting, setDeleting] = useState(false);
+  const isMobile = useIsMobile();
   const subscribeToReducedMotion = useCallback((onChange: () => void) => {
     const media = window.matchMedia(reducedMotionQuery);
     media.addEventListener("change", onChange);
@@ -40,7 +42,7 @@ export default function Typewriter({
   );
 
   useEffect(() => {
-    if (reduce || words.length === 0) return;
+    if (reduce || isMobile || words.length === 0) return;
 
     const current = words[wordIdx % words.length];
     let delay = deleting ? deleteSpeed : typeSpeed;
@@ -67,12 +69,14 @@ export default function Typewriter({
     }, delay);
 
     return () => clearTimeout(id);
-  }, [text, deleting, wordIdx, words, typeSpeed, deleteSpeed, hold, reduce]);
+  }, [text, deleting, wordIdx, words, typeSpeed, deleteSpeed, hold, reduce, isMobile]);
+
+  const isStatic = reduce || isMobile;
 
   return (
     <span className={className}>
-      {reduce ? (words[0] ?? "") : text}
-      <span className="cursor-blink text-cyan">▮</span>
+      {isStatic ? (words[0] ?? "") : text}
+      <span className={isStatic ? "text-cyan" : "cursor-blink text-cyan"}>▮</span>
     </span>
   );
 }
