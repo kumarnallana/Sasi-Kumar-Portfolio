@@ -9,7 +9,7 @@ import { identity } from "@/data/profile/profile.data";
 import Typewriter from "@/components/shared/Typewriter";
 import AnimatedMetric from "@/components/shared/AnimatedMetric";
 import CapabilityMatrix from "@/components/about/CapabilityMatrix";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsDesktop } from "@/hooks/useIsMobile";
 import { useGithubPortfolio } from "@/integrations/github/use-github-portfolio";
 import { scrollToSection } from "@/lib/lenis";
 
@@ -28,7 +28,7 @@ export default function Hero({ started }: { started: boolean }) {
   const root = useRef<HTMLDivElement>(null);
   const textCol = useRef<HTMLDivElement>(null);
   const [storyOpen, setStoryOpen] = useState(false);
-  const isMobile = useIsMobile();
+  const isDesktop = useIsDesktop();
   const githubQuery = useGithubPortfolio();
 
   const proofStats = [
@@ -61,9 +61,9 @@ export default function Hero({ started }: { started: boolean }) {
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const items = gsap.utils.toArray<HTMLElement>(".hero-anim")
         .filter((node) => node.getClientRects().length > 0);
-      if (isMobile || reduce) {
+      if (!isDesktop || reduce) {
         gsap.set(items, { clearProps: "all" });
-        if (!isMobile) {
+        if (isDesktop) {
           gsap.set(".hero-globe", { opacity: 1, scale: 1 });
           power.current.v = STACK_MAX;
           writePower();
@@ -78,7 +78,7 @@ export default function Hero({ started }: { started: boolean }) {
         stagger: reduce ? 0 : 0.12,
         immediateRender: false,
       });
-      if (!isMobile) {
+      if (isDesktop) {
           tl.from(
             ".hero-globe",
             { opacity: 0, scale: 0.9, duration: 1.2, ease: "power2.out" },
@@ -94,7 +94,7 @@ export default function Hero({ started }: { started: boolean }) {
       }
     }, root);
     return () => ctx.revert();
-  }, [isMobile, started]);
+  }, [isDesktop, started]);
 
   // double-tap transition: fade the hero text out and power the globe DOWN so
   // every node and layer visibly switches off before the story takes over;
@@ -227,7 +227,7 @@ export default function Hero({ started }: { started: boolean }) {
         <div className="hero-anim w-full md:hidden">
           <CapabilityMatrix compact />
         </div>
-        {!isMobile && (
+        {isDesktop && (
           <div className="hero-globe group relative hidden h-[42vh] min-h-[320px] w-full md:block lg:h-[78vh]">
             <HeroStackGlobe
               activeRef={activeRef}
@@ -254,7 +254,7 @@ export default function Hero({ started }: { started: boolean }) {
         )}
       </div>
 
-      {!isMobile && <StackStory open={storyOpen} onClose={() => setStoryOpen(false)} />}
+      {isDesktop && <StackStory open={storyOpen} onClose={() => setStoryOpen(false)} />}
 
       {/* scroll cue */}
       <div className="hero-anim absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 md:flex [@media(max-height:700px)]:hidden">

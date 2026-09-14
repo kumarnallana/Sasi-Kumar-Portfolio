@@ -74,7 +74,7 @@ export default function Operations() {
         <div className="tech-label mb-5 flex items-center gap-3">
           CURRENT OPERATIONS
           <span className="mobile-signal-dot h-1.5 w-1.5 animate-pulse rounded-full bg-cyan shadow-[0_0_8px_var(--cyan)]" />
-          <span className="text-paper-dim/50">LIVE</span>
+          <span className="text-paper-dim">LIVE</span>
         </div>
 
         <div className="grid gap-px border border-line-faint bg-line-faint">

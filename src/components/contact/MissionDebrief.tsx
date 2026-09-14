@@ -187,11 +187,11 @@ export default function MissionDebrief() {
               onMouseEnter={() => sound.play("hover")}
               className="debrief-row group flex items-center gap-3 bg-ink-900 px-4 py-4 text-left transition-colors hover:bg-ink-800"
             >
-              <span className="tech-label w-6 shrink-0 text-paper-dim/50">
+              <span className="tech-label w-6 shrink-0 text-paper-dim">
                 {String(i + 1).padStart(2, "0")}
               </span>
               <span
-                className={`h-2 w-2 shrink-0 rounded-full transition-all ${
+                className={`h-2 w-2 shrink-0 rounded-full transition-colors ${
                   done ? "bg-cyan shadow-[0_0_8px_var(--cyan)]" : "bg-line-dim"
                 }`}
               />

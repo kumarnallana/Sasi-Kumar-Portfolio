@@ -46,7 +46,7 @@ function SignalMetric({
         )}
       </div>
       <div className="tech-label mt-2 leading-relaxed">{label}</div>
-      {displayUnavailable && <div className="mt-1 font-mono text-[0.58rem] uppercase tracking-wider text-line-dim">{unavailableLabel}</div>}
+      {displayUnavailable && <div className="mt-1 font-mono text-[0.58rem] uppercase tracking-wider text-paper-dim">{unavailableLabel}</div>}
     </div>
   );
 }

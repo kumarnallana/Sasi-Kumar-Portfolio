@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useSyncExternalStore, useState } from "react";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsDesktop } from "@/hooks/useIsMobile";
 
 const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
 
@@ -29,7 +29,7 @@ export default function Typewriter({
   const [text, setText] = useState("");
   const [wordIdx, setWordIdx] = useState(0);
   const [deleting, setDeleting] = useState(false);
-  const isMobile = useIsMobile();
+  const isDesktop = useIsDesktop();
   const subscribeToReducedMotion = useCallback((onChange: () => void) => {
     const media = window.matchMedia(reducedMotionQuery);
     media.addEventListener("change", onChange);
@@ -42,7 +42,7 @@ export default function Typewriter({
   );
 
   useEffect(() => {
-    if (reduce || isMobile || words.length === 0) return;
+    if (reduce || !isDesktop || words.length === 0) return;
 
     const current = words[wordIdx % words.length];
     let delay = deleting ? deleteSpeed : typeSpeed;
@@ -69,9 +69,9 @@ export default function Typewriter({
     }, delay);
 
     return () => clearTimeout(id);
-  }, [text, deleting, wordIdx, words, typeSpeed, deleteSpeed, hold, reduce, isMobile]);
+  }, [text, deleting, wordIdx, words, typeSpeed, deleteSpeed, hold, reduce, isDesktop]);
 
-  const isStatic = reduce || isMobile;
+  const isStatic = reduce || !isDesktop;
 
   return (
     <span className={className}>

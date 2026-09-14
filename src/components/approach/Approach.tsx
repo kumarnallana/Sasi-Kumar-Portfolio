@@ -69,7 +69,7 @@ export default function Approach() {
           >
             <div className="flex items-baseline justify-between">
               <span className="tech-label text-amber">{p.no}</span>
-              <span className="font-display text-3xl text-line-faint transition-colors group-hover:text-line-dim">
+              <span className="font-display text-3xl text-paper-dim transition-colors group-hover:text-paper">
                 {p.no.split("-")[1]}
               </span>
             </div>

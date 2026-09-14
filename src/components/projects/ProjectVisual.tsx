@@ -38,6 +38,7 @@ export default function ProjectVisual({
                   href={liveUrl}
                   target="_blank"
                   rel="noreferrer"
+                  aria-label={`View ${name} live site (opens in a new tab)`}
                   onClick={() => sound.play("blip")}
                   className="absolute inset-0 flex items-center justify-center bg-ink-900/0 opacity-0 transition-all duration-300 ease-out group-hover/preview:bg-ink-900/55 group-hover/preview:opacity-100 focus-visible:opacity-100 focus-visible:bg-ink-900/55"
                 >
@@ -54,7 +55,7 @@ export default function ProjectVisual({
                 <span className="font-display text-xl font-semibold text-paper-dim/80">
                   {name}
                 </span>
-                <span className="mt-2 text-xs font-mono text-paper-dim/50">
+                <span className="mt-2 text-xs font-mono text-paper-dim">
                   Preview image not yet available
                 </span>
               </div>

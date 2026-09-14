@@ -378,7 +378,7 @@ export default function StackStory({
                   ))}
                 </div>
 
-                <p className="mt-4 hidden text-[0.65rem] tracking-wide text-paper-dim/50 lg:block [@media(max-height:650px)]:mt-3 [@media(max-height:650px)]:text-[0.6rem]">
+                <p className="mt-4 hidden text-[0.65rem] tracking-wide text-paper-dim lg:block [@media(max-height:650px)]:mt-3 [@media(max-height:650px)]:text-[0.6rem]">
                   ▸ HOVER A TAG TO LOCATE IT · DRAG THE GLOBE TO ROTATE
                 </p>
               </div>

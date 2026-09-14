@@ -5,6 +5,11 @@ import type { GitHubContributionDay, GitHubContributionYear } from "@/integratio
 import { useGitHubContributionYear } from "@/integrations/github/use-github-contribution-year";
 
 const levelClass = {
+  NONE: "after:bg-ink-700/70", FIRST_QUARTILE: "after:bg-cyan/25", SECOND_QUARTILE: "after:bg-cyan/45",
+  THIRD_QUARTILE: "after:bg-cyan/70", FOURTH_QUARTILE: "after:bg-cyan after:shadow-[0_0_7px_rgba(67,201,255,0.45)]",
+} as const;
+
+const legendLevelClass = {
   NONE: "bg-ink-700/70", FIRST_QUARTILE: "bg-cyan/25", SECOND_QUARTILE: "bg-cyan/45",
   THIRD_QUARTILE: "bg-cyan/70", FOURTH_QUARTILE: "bg-cyan shadow-[0_0_7px_rgba(67,201,255,0.45)]",
 } as const;
@@ -34,7 +39,7 @@ function CalendarYear({ calendar, isCurrent }: { calendar: GitHubContributionYea
         {days.map(({ day, future }, index) => <button key={day.date} type="button" aria-label={future ? `Future date ${day.date}` : describe(day)} title={future ? undefined : describe(day)} disabled={future}
           style={index === 0 ? { gridRow: day.weekday + 1 } : undefined}
           onFocus={() => !future && setActive(day)} onMouseEnter={() => !future && setActive(day)} onClick={() => !future && setActive(day)}
-          className={`h-[0.7rem] w-[0.7rem] border border-line-faint/70 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-cyan disabled:cursor-default disabled:bg-transparent disabled:opacity-35 ${levelClass[day.contributionLevel]}`} />)}
+          className={`relative h-6 w-6 after:absolute after:left-1/2 after:top-1/2 after:h-[0.7rem] after:w-[0.7rem] after:-translate-x-1/2 after:-translate-y-1/2 after:border after:border-line-faint/70 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-cyan disabled:cursor-default disabled:opacity-35 disabled:after:bg-transparent sm:h-[0.7rem] sm:w-[0.7rem] ${levelClass[day.contributionLevel]}`} />)}
       </div>
     </div>
     <div className="mt-1 min-h-4 font-mono text-[0.62rem] text-paper-dim" aria-live="polite">{active ? describe(active) : "Focus or tap a cell for its daily count."}</div>
@@ -53,7 +58,7 @@ export default function ContributionCalendar({ history, availableYears }: { hist
   return <section className="os-card mb-10 border border-line-faint bg-ink-900 p-4 sm:p-5" aria-labelledby="contribution-heading">
     <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
       <div><div className="tech-label text-cyan">CONTRIBUTION HISTORY</div><h3 id="contribution-heading" className="mt-1 font-display text-xl font-semibold text-paper">GitHub contribution calendar</h3></div>
-      <div className="flex items-center gap-1.5 font-mono text-[0.65rem] text-paper-dim" aria-hidden="true"><span>LESS</span>{Object.values(levelClass).map((value) => <span key={value} className={`h-2.5 w-2.5 border border-line-faint ${value}`} />)}<span>MORE</span></div>
+      <div className="flex items-center gap-1.5 font-mono text-[0.65rem] text-paper-dim" aria-hidden="true"><span>LESS</span>{Object.values(legendLevelClass).map((value) => <span key={value} className={`h-2.5 w-2.5 border border-line-faint ${value}`} />)}<span>MORE</span></div>
     </div>
     <div className="mb-5 flex max-w-full gap-2 overflow-x-auto pb-1" aria-label="Contribution year">
       {sortedYears.map((year) => <button key={year} type="button" onClick={() => setSelectedYear(year)} aria-pressed={year === selectedYear}
