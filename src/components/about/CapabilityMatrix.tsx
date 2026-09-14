@@ -8,7 +8,7 @@ export default function CapabilityMatrix({ compact = false }: { compact?: boolea
       </div>
       <div
         className={`grid gap-px border border-line-faint bg-line-faint ${
-          compact ? "grid-cols-1 sm:grid-cols-2" : "sm:grid-cols-2 lg:grid-cols-4"
+          compact ? "grid-cols-2" : "sm:grid-cols-2 lg:grid-cols-4"
         }`}
       >
         {skillGroups.map((group) => (
@@ -19,24 +19,16 @@ export default function CapabilityMatrix({ compact = false }: { compact?: boolea
                 {group.group}
               </span>
             </div>
-            {compact ? (
-              <ul className="flex flex-wrap gap-x-3 gap-y-1 text-xs leading-5 text-paper-dim">
-                {group.items.map((item) => (
-                  <li key={item} className="whitespace-nowrap">{item}</li>
-                ))}
-              </ul>
-            ) : (
-              <div className="flex flex-wrap gap-1.5">
+            <div className={`flex flex-wrap ${compact ? "gap-1" : "gap-1.5"}`}>
                 {group.items.map((item) => (
                   <span
                     key={item}
-                    className="border border-line-faint px-2 py-0.5 text-xs text-paper-dim"
+                    className={`border border-line-faint text-paper-dim ${compact ? "px-1.5 py-0.5 text-[0.62rem] leading-4" : "px-2 py-0.5 text-xs"}`}
                   >
                     {item}
                   </span>
                 ))}
               </div>
-            )}
           </div>
         ))}
       </div>

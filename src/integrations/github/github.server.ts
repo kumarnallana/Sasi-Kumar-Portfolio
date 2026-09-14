@@ -1,6 +1,6 @@
-import { PORTFOLIO_GRAPHQL_QUERY } from "./github.queries";
+import { CONTRIBUTION_YEAR_GRAPHQL_QUERY, PORTFOLIO_GRAPHQL_QUERY } from "./github.queries";
 import { transformPortfolioData } from "./github.transformers";
-import type { GitHubPortfolioData } from "./github.types";
+import type { GitHubContributionYear, GitHubPortfolioData } from "./github.types";
 
 const GITHUB_FAILURE_CODES = [
   "AUTH_ERROR",
@@ -18,11 +18,19 @@ export function getGitHubFailureCode(error: unknown): GitHubFailureCode {
   return GITHUB_FAILURE_CODES.find((code) => code === message) ?? "FETCH_ERROR";
 }
 
-export async function getGitHubPortfolioData(): Promise<GitHubPortfolioData> {
+function yearRange(year: number, now = new Date()) {
+  const currentYear = now.getUTCFullYear();
+  return {
+    from: new Date(Date.UTC(year, 0, 1)).toISOString(),
+    to: year === currentYear
+      ? now.toISOString()
+      : new Date(Date.UTC(year, 11, 31, 23, 59, 59, 999)).toISOString(),
+  };
+}
+
+async function requestGitHub(query: string, variables: Record<string, unknown>, revalidate: number) {
   const token = process.env.GITHUB_TOKEN;
-  if (!token) {
-    throw new Error("AUTH_ERROR");
-  }
+  if (!token) throw new Error("AUTH_ERROR");
 
   let response: Response;
   try {
@@ -34,14 +42,9 @@ export async function getGitHubPortfolioData(): Promise<GitHubPortfolioData> {
         "User-Agent": "sasi-portfolio",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        query: PORTFOLIO_GRAPHQL_QUERY,
-        variables: {
-          username: "kumarnallana",
-        },
-      }),
+      body: JSON.stringify({ query, variables }),
       cache: "force-cache",
-      next: { revalidate: 600 },
+      next: { revalidate },
       signal: AbortSignal.timeout(6_000),
     });
   } catch {
@@ -49,12 +52,8 @@ export async function getGitHubPortfolioData(): Promise<GitHubPortfolioData> {
   }
 
   if (!response.ok) {
-    if (response.status === 403 || response.status === 429) {
-      throw new Error("RATE_LIMIT");
-    }
-    if (response.status === 401) {
-      throw new Error("AUTH_ERROR");
-    }
+    if (response.status === 403 || response.status === 429) throw new Error("RATE_LIMIT");
+    if (response.status === 401) throw new Error("AUTH_ERROR");
     throw new Error("FETCH_ERROR");
   }
 
@@ -63,6 +62,34 @@ export async function getGitHubPortfolioData(): Promise<GitHubPortfolioData> {
     console.warn("[github] GitHub GraphQL returned an error response.");
     throw new Error("GRAPHQL_ERROR");
   }
+  return rawData;
+}
 
-  return transformPortfolioData(rawData);
+export async function getGitHubPortfolioData(): Promise<GitHubPortfolioData> {
+  const now = new Date();
+  const currentYear = now.getUTCFullYear();
+  const current = yearRange(currentYear, now);
+  const previous = yearRange(currentYear - 1, now);
+  const rawData = await requestGitHub(PORTFOLIO_GRAPHQL_QUERY, {
+    username: "kumarnallana",
+    currentFrom: current.from,
+    currentTo: current.to,
+    previousFrom: previous.from,
+    previousTo: previous.to,
+  }, 600);
+  return transformPortfolioData(rawData, currentYear);
+}
+
+export async function getGitHubContributionYear(year: number): Promise<GitHubContributionYear> {
+  const currentYear = new Date().getUTCFullYear();
+  if (!Number.isInteger(year) || year < 2008 || year > currentYear) throw new Error("INVALID_RESPONSE");
+  const range = yearRange(year);
+  const rawData = await requestGitHub(CONTRIBUTION_YEAR_GRAPHQL_QUERY, {
+    username: "kumarnallana",
+    from: range.from,
+    to: range.to,
+  }, 3600);
+  const calendar = rawData?.data?.user?.contributionsCollection?.contributionCalendar;
+  if (!calendar) throw new Error("INVALID_RESPONSE");
+  return { year, totalContributions: calendar.totalContributions || 0, weeks: calendar.weeks || [] };
 }

@@ -72,6 +72,8 @@ export default function OpenSource() {
   const hasRepositories = Boolean(
     data && (data.pinnedRepositories.length > 0 || data.recentRepositories.length > 0),
   );
+  const currentContributions = data?.contributionHistory[0];
+  const currentYearLabel = currentContributions?.year ?? "CURRENT";
 
   useEffect(() => {
     const el = ref.current;
@@ -133,24 +135,24 @@ export default function OpenSource() {
             unavailableLabel="Live when authorized"
             accent="amber"
           />
-          <SignalMetric label="CONTRIBUTIONS" value={data?.totalContributions} pending={isPending} unavailable={isError} />
+          <SignalMetric label={`${currentYearLabel} CONTRIBUTIONS`} value={currentContributions?.totalContributions} pending={isPending} unavailable={isError} />
           <SignalMetric label="TOTAL STARS" value={data?.totalStars} suffix="★" pending={isPending} unavailable={isError} accent="amber" />
           <SignalMetric label="PUBLIC REPOS" value={data?.publicReposCount} pending={isPending} unavailable={isError} />
           <SignalMetric label="FOLLOWERS" value={data?.followersCount} pending={isPending} unavailable={isError} />
         </div>
 
-        {!isPending && !isError && data && (
+        {!isPending && (
           <div className="grid gap-px border-x border-b border-line-faint bg-line-faint sm:grid-cols-2 lg:grid-cols-4">
-            <ProfileSignal label="AVAILABLE FOR WORK" value={data.isHireable ? "YES" : "NOT LISTED"} active={data.isHireable} />
-            <ProfileSignal label="FOLLOWING" value={data.followingCount.toLocaleString()} />
-            <ProfileSignal label="GITHUB LOCATION" value={data.location ?? "NOT LISTED"} />
-            <ProfileSignal label="GITHUB COMPANY" value={data.company ?? "NOT LISTED"} />
+            <ProfileSignal label="AVAILABLE FOR WORK" value={data ? (data.isHireable ? "AVAILABLE FOR HIRE" : "NOT MARKED AVAILABLE") : "—"} active={Boolean(data?.isHireable)} />
+            <ProfileSignal label="FOLLOWING" value={data ? data.followingCount.toLocaleString() : "—"} />
+            <ProfileSignal label="GITHUB LOCATION" value={data?.location ?? (isError ? "—" : "NOT LISTED")} />
+            <ProfileSignal label="GITHUB COMPANY" value={data?.company ?? (isError ? "—" : "NOT LISTED")} />
           </div>
         )}
       </div>
 
       {!isPending && !isError && data && (
-        <ContributionCalendar weeks={data.contributionWeeks} total={data.totalContributions} />
+        <ContributionCalendar history={data.contributionHistory} availableYears={data.contributionYears} />
       )}
 
       {isPending ? (

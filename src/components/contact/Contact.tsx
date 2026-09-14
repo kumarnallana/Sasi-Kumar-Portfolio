@@ -11,6 +11,7 @@ import MissionDebrief from "@/components/contact/MissionDebrief";
 import { sendCat, type CatAct } from "@/lib/catSignals";
 import { sound } from "@/lib/sound";
 import { revealContent } from "@/lib/contentReveal";
+import { useIsDesktop } from "@/hooks/useIsMobile";
 
 const CAT_ACTIONS: { icon: string; label: string; act: CatAct }[] = [
   { icon: "◍", label: "give a ball", act: "ball" },
@@ -52,6 +53,7 @@ const STATUS: Record<CatMood, string> = {
 };
 
 export default function Contact() {
+  const isDesktop = useIsDesktop();
   const ref = useRef<HTMLDivElement>(null);
   const [armed, setArmed] = useState(false);
   const [mood, setMood] = useState<CatMood>("DOZING");
@@ -81,6 +83,7 @@ export default function Contact() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    if (!isDesktop) return;
     const ctx = gsap.context(() => {
       revealContent(".contact-reveal", {
         scrollTrigger: { trigger: el, start: "top 75%" },
@@ -100,7 +103,7 @@ export default function Contact() {
       });
     }, el);
     return () => ctx.revert();
-  }, []);
+  }, [isDesktop]);
 
   useEffect(() => {
     if (!menu) return;
@@ -130,7 +133,7 @@ export default function Contact() {
               className="mobile-signal-dot h-2.5 w-2.5 rounded-full bg-cyan shadow-[0_0_10px_var(--cyan)]"
             />
             <span className="tech-label text-cyan">
-              {armed ? "SIGNAL ACQUIRED" : "ACQUIRING..."}
+              {isDesktop && !armed ? "ACQUIRING..." : "SIGNAL ACQUIRED"}
             </span>
           </div>
 
@@ -195,7 +198,7 @@ export default function Contact() {
           </div>
 
           {/* Nyx - watches the cursor, purrs when pet, chases a toy; right-click for tricks */}
-          <div
+          {isDesktop && <div
             data-testid="nyx-box"
             className="contact-reveal relative min-h-[240px] flex-1 overflow-hidden rounded border border-line-faint bg-ink-900/40"
             onContextMenu={(e) => {
@@ -237,7 +240,7 @@ export default function Contact() {
             <div className="pointer-events-none absolute bottom-3 right-3 tech-label text-[0.5rem] text-paper-dim/40">
               TAP TO PET · DRAG TO PLAY · HOLD / RIGHT-CLICK
             </div>
-          </div>
+          </div>}
         </div>
       </div>
 
@@ -254,7 +257,7 @@ export default function Contact() {
       </div>
 
       {/* Nyx command menu (right-click) - portaled so it escapes the box clip */}
-      {menu &&
+      {isDesktop && menu &&
         createPortal(
           <div
             className="fixed inset-0 z-[70]"

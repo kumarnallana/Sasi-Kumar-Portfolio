@@ -175,17 +175,19 @@ test.describe("GitHub portfolio states", () => {
     company: "Verified Company",
     location: "Verified Location",
     isHireable: true,
-    totalContributions: 14,
-    totalCommitContributions: 12,
-    totalPullRequestContributions: 2,
-    contributionWeeks: [
-      {
-        contributionDays: [
-          { contributionCount: 0, contributionLevel: "NONE", date: "2026-09-13", weekday: 0 },
-          { contributionCount: 2, contributionLevel: "SECOND_QUARTILE", date: "2026-09-14", weekday: 1 },
-        ],
-      },
-    ],
+    contributionYears: [2026, 2025, 2024],
+    contributionHistory: [{
+      year: 2026,
+      totalContributions: 14,
+      weeks: [{ contributionDays: [
+        { contributionCount: 0, contributionLevel: "NONE", date: "2026-09-13", weekday: 0 },
+        { contributionCount: 2, contributionLevel: "SECOND_QUARTILE", date: "2026-09-14", weekday: 1 },
+      ] }],
+    }, {
+      year: 2025,
+      totalContributions: 8,
+      weeks: [{ contributionDays: [{ contributionCount: 1, contributionLevel: "FIRST_QUARTILE", date: "2025-01-01", weekday: 3 }] }],
+    }],
     pinnedRepositories: [
       {
         name: "verified-repository",
@@ -204,6 +206,11 @@ test.describe("GitHub portfolio states", () => {
       await new Promise((resolve) => setTimeout(resolve, 800));
       await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(livePayload) });
     });
+    await page.route("**/api/github/contributions/2024", (route) => route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ year: 2024, totalContributions: 3, weeks: [{ contributionDays: [{ contributionCount: 3, contributionLevel: "THIRD_QUARTILE", date: "2024-02-02", weekday: 5 }] }] }),
+    }));
 
     await page.goto("/");
     await page.keyboard.press("Space");
@@ -211,8 +218,11 @@ test.describe("GitHub portfolio states", () => {
     await expect(signals.getByRole("status", { name: "Loading GitHub repositories" })).toBeVisible();
     await expect(signals.getByText("verified-repository")).toBeVisible();
     await expect(signals.getByText("7★").first()).toBeVisible();
-    await expect(signals.getByText("14 GitHub contributions")).toBeVisible();
+    await expect(signals.getByText("14 contributions in 2026")).toBeVisible();
+    await expect(signals.getByRole("button", { name: "2 contributions on September 14, 2026" })).toBeVisible();
     await expect(signals.getByText("Verified Location")).toBeVisible();
+    await signals.getByRole("button", { name: "2024" }).click();
+    await expect(signals.getByText("3 contributions in 2024")).toBeVisible();
   });
 
   test("successful empty data is presented as an empty state", async ({ page }) => {
@@ -257,5 +267,28 @@ test.describe("GitHub portfolio states", () => {
     await expect(signals.getByText("LIVE GITHUB SIGNAL TEMPORARILY UNAVAILABLE")).toBeVisible({ timeout: 10000 });
     await expect(signals.getByLabel("total stars unavailable")).toHaveText("—");
     await expect(page.getByRole("heading", { name: /contact/i })).toBeAttached();
+  });
+
+  test("mobile capabilities keep chips readable and do not mount Nyx", async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 800 });
+    await page.route("**/api/github/graphql", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(livePayload) }));
+    await page.goto("/");
+    await page.keyboard.press("Space");
+    const matrix = page.locator('[data-capability-matrix="compact"]');
+    await expect(matrix.getByText("JavaScript", { exact: true })).toBeVisible();
+    await expect(matrix.getByText("Server Actions", { exact: true })).toBeVisible();
+    await expect(page.getByTestId("nyx-box")).toHaveCount(0);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBeTruthy();
+  });
+
+  test("the Contact debrief reserves its final area and remains reachable", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+    await page.keyboard.press("Space");
+    await page.keyboard.press("End");
+    const finalAction = page.getByRole("link", { name: /initiate contact/i });
+    await expect(finalAction).toBeVisible();
+    await expect(finalAction).toBeInViewport();
+    expect(await page.evaluate(() => document.body.style.overflow)).not.toBe("hidden");
   });
 });

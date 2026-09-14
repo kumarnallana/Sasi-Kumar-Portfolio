@@ -30,6 +30,12 @@ export type GitHubContributionWeek = {
   contributionDays: GitHubContributionDay[];
 };
 
+export type GitHubContributionYear = {
+  year: number;
+  totalContributions: number;
+  weeks: GitHubContributionWeek[];
+};
+
 export type GitHubPortfolioData = {
   publicReposCount: number;
   totalStars: number;
@@ -38,10 +44,8 @@ export type GitHubPortfolioData = {
   company: string | null;
   location: string | null;
   isHireable: boolean;
-  totalContributions: number;
-  totalCommitContributions: number;
-  totalPullRequestContributions: number;
-  contributionWeeks: GitHubContributionWeek[];
+  contributionYears: number[];
+  contributionHistory: GitHubContributionYear[];
   pinnedRepositories: GitHubRepository[];
   recentRepositories: GitHubRepository[];
 };

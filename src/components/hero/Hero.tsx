@@ -61,6 +61,15 @@ export default function Hero({ started }: { started: boolean }) {
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const items = gsap.utils.toArray<HTMLElement>(".hero-anim")
         .filter((node) => node.getClientRects().length > 0);
+      if (isMobile || reduce) {
+        gsap.set(items, { clearProps: "all" });
+        if (!isMobile) {
+          gsap.set(".hero-globe", { opacity: 1, scale: 1 });
+          power.current.v = STACK_MAX;
+          writePower();
+        }
+        return;
+      }
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
       tl.from(items, {
         y: reduce ? 0 : 26,
@@ -70,11 +79,6 @@ export default function Hero({ started }: { started: boolean }) {
         immediateRender: false,
       });
       if (!isMobile) {
-        if (reduce) {
-          gsap.set(".hero-globe", { opacity: 1, scale: 1 });
-          power.current.v = STACK_MAX;
-          writePower();
-        } else {
           tl.from(
             ".hero-globe",
             { opacity: 0, scale: 0.9, duration: 1.2, ease: "power2.out" },
@@ -87,7 +91,6 @@ export default function Hero({ started }: { started: boolean }) {
             delay: 0.35,
             onUpdate: writePower,
           });
-        }
       }
     }, root);
     return () => ctx.revert();

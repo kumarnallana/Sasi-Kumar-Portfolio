@@ -1,4 +1,4 @@
-import type { GitHubPortfolioData } from "./github.types";
+import type { GitHubContributionYear, GitHubPortfolioData } from "./github.types";
 
 export * from "./github.types";
 
@@ -24,5 +24,13 @@ export const githubClient = {
       throw new GitHubClientError("UNAVAILABLE");
     }
     return res.json() as Promise<GitHubPortfolioData>;
+  },
+  contributionYear: async (year: number): Promise<GitHubContributionYear> => {
+    const res = await fetch(`/api/github/contributions/${year}`, { cache: "no-store" });
+    if (!res.ok) {
+      if (res.status === 429) throw new GitHubClientError("RATE_LIMIT");
+      throw new GitHubClientError("UNAVAILABLE");
+    }
+    return res.json() as Promise<GitHubContributionYear>;
   },
 };

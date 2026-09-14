@@ -8,6 +8,7 @@ import { scrollToSection } from "@/lib/lenis";
 import { sendCat } from "@/lib/catSignals";
 import { sound } from "@/lib/sound";
 import { identity } from "@/data/profile/profile.data";
+import { useIsDesktop } from "@/hooks/useIsMobile";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -25,6 +26,7 @@ const CHAPTER: Record<string, string> = {
 const N = NAV_SECTIONS.length;
 
 export default function MissionDebrief() {
+  const isDesktop = useIsDesktop();
   const root = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLDivElement>(null);
   const pct = useRef<HTMLSpanElement>(null);
@@ -37,7 +39,7 @@ export default function MissionDebrief() {
     const el = root.current;
     if (!el) return;
 
-    const reduce = window.matchMedia(
+    const reduce = !isDesktop || window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
@@ -103,7 +105,7 @@ export default function MissionDebrief() {
     }, el);
 
     return () => ctx.revert();
-  }, []);
+  }, [isDesktop]);
 
   // Entrance animation for choice actions once compiled
   useEffect(() => {
@@ -213,8 +215,10 @@ export default function MissionDebrief() {
       </div>
 
       {/* final deviant choice */}
-      {compiled && (
-        <div className="debrief-choice mt-12">
+      <div
+        className={`debrief-choice mt-12 ${compiled ? "visible" : "invisible pointer-events-none"}`}
+        aria-hidden={!compiled}
+      >
           <div className="tech-label mb-4 text-amber glow-amber">
             {"// one decision remains"}
           </div>
@@ -224,6 +228,7 @@ export default function MissionDebrief() {
               href={`mailto:${identity.email}`}
               onClick={initiate}
               onMouseEnter={() => sound.play("hover")}
+              tabIndex={compiled ? 0 : -1}
               className="debrief-cta group relative flex flex-1 items-center justify-between border border-cyan bg-cyan/5 px-6 py-5 transition-colors hover:bg-cyan hover:text-ink-900"
             >
               <span className="absolute -left-1 -top-1 h-2 w-2 border-l border-t border-cyan" />
@@ -247,6 +252,7 @@ export default function MissionDebrief() {
             <button
               onClick={observe}
               onMouseEnter={() => sound.play("hover")}
+              disabled={!compiled}
               className="debrief-cta group relative flex flex-1 items-center justify-between border border-line-faint px-6 py-5 text-left transition-colors hover:border-paper-dim"
             >
               <span>
@@ -270,8 +276,7 @@ export default function MissionDebrief() {
                 : "> acknowledged. still watching."}
             </div>
           )}
-        </div>
-      )}
+      </div>
     </div>
   );
 }

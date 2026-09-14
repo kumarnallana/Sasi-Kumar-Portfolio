@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { identity } from "@/data/profile/profile.data";
 import SoundToggle from "@/components/audio/SoundToggle";
+import { useIsDesktop } from "@/hooks/useIsMobile";
 
 function Corner({ className }: { className: string }) {
   return (
@@ -17,12 +18,14 @@ function Corner({ className }: { className: string }) {
 }
 
 export default function HudFrame() {
+  const isDesktop = useIsDesktop();
   const [clock, setClock] = useState("--:--:--");
   const [fps, setFps] = useState(60);
   const [signal, setSignal] = useState(5);
   const [load, setLoad] = useState(34);
 
   useEffect(() => {
+    if (!isDesktop) return;
     // live clock - updates every second
     const tick = () => {
       const d = new Date();
@@ -45,11 +48,12 @@ export default function HudFrame() {
       clearInterval(clockId);
       clearInterval(teleId);
     };
-  }, []);
+  }, [isDesktop]);
 
   // FPS meter
   const raf = useRef(0);
   useEffect(() => {
+    if (!isDesktop) return;
     let frames = 0;
     let last = performance.now();
     const loop = () => {
@@ -64,7 +68,9 @@ export default function HudFrame() {
     };
     raf.current = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf.current);
-  }, []);
+  }, [isDesktop]);
+
+  if (!isDesktop) return null;
 
   return (
     <div className="pointer-events-none fixed inset-0 z-40 hidden md:block">

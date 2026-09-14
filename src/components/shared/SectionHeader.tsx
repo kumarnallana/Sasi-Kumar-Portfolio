@@ -20,6 +20,7 @@ export default function SectionHeader({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    if (!window.matchMedia("(min-width: 768px) and (prefers-reduced-motion: no-preference)").matches) return;
     const ctx = gsap.context(() => {
       gsap.from(".sh-line", {
         scrollTrigger: { trigger: el, start: "top 85%" },
