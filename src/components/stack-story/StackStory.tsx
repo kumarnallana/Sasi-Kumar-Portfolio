@@ -204,7 +204,7 @@ export default function StackStory({
   return (
     <div
       ref={dialog}
-      className={`fixed inset-0 z-[60] origin-center bg-ink-900/95 backdrop-blur-sm transition-all duration-500 ease-out ${
+      className={`fixed inset-0 z-[60] origin-center bg-ink-900 transition-all duration-500 ease-out ${
         mounted ? "opacity-100 scale-100" : "opacity-0 scale-95"
       }`}
       role="dialog"

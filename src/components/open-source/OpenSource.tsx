@@ -57,8 +57,12 @@ function SignalMetric({
           <AnimatedMetric value={`${value!.toLocaleString()}${suffix}`} />
         )}
       </div>
-      <div className="tech-label mt-2 flex items-center gap-2 leading-relaxed">
-        <Icon aria-hidden="true" className="h-3.5 w-3.5 shrink-0 opacity-70" strokeWidth={1.6} />
+      <div className="tech-label mt-2 flex min-h-5 items-center gap-1.5 leading-relaxed">
+        <Icon
+          aria-hidden="true"
+          className={`h-4 w-4 shrink-0 ${accent === "amber" ? "text-amber" : "text-cyan"}`}
+          strokeWidth={1.9}
+        />
         <span>{label}</span>
       </div>
       {displayUnavailable && <div className="mt-1 font-mono text-[0.58rem] uppercase tracking-wider text-paper-dim">{unavailableLabel}</div>}
@@ -85,11 +89,11 @@ function AppreciationMetric() {
       <div className="font-display text-2xl font-semibold text-amber glow-amber sm:text-3xl">
         {isPending || unavailable ? "—" : <AnimatedMetric value={data!.count.toLocaleString()} />}
       </div>
-      <div className="tech-label mt-2 flex items-center gap-2 leading-relaxed">
+      <div className="tech-label mt-2 flex min-h-5 items-center gap-1.5 leading-relaxed">
         <Heart
           aria-hidden="true"
-          className={`h-3.5 w-3.5 shrink-0 ${data?.appreciated ? "fill-current text-amber" : "opacity-70"}`}
-          strokeWidth={1.6}
+          className={`h-4 w-4 shrink-0 text-amber ${data?.appreciated ? "fill-current" : ""}`}
+          strokeWidth={1.9}
         />
         <span>APPRECIATION</span>
       </div>
