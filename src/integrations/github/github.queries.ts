@@ -24,8 +24,6 @@ export const PORTFOLIO_GRAPHQL_QUERY = `
       company
       location
       isHireable
-      followers { totalCount }
-      following { totalCount }
       repositories(first: 1) { totalCount }
       pinnedItems(first: 6, types: REPOSITORY) {
         nodes {

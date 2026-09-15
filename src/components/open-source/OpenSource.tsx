@@ -15,10 +15,10 @@ import { usePortfolioAppreciation } from "@/integrations/appreciation/use-portfo
 import {
   Activity,
   Eye,
+  Flame,
   FolderGit2,
   Heart,
   Star,
-  Users,
   type LucideIcon,
 } from "lucide-react";
 
@@ -129,6 +129,7 @@ export default function OpenSource() {
   );
   const currentContributions = data?.contributionHistory[0];
   const contributionYear = currentContributions?.year ?? "CURRENT-YEAR";
+  const contributionYears = data?.contributionYears.length;
 
   useEffect(() => {
     const el = ref.current;
@@ -188,13 +189,25 @@ export default function OpenSource() {
           <SignalMetric label={`${contributionYear} CONTRIBUTIONS`} value={currentContributions?.totalContributions} pending={isPending} unavailable={isError} icon={Activity} />
           <SignalMetric label="GITHUB STARS" value={data?.totalStars} pending={isPending} unavailable={isError} accent="amber" icon={Star} />
           <SignalMetric label="PUBLIC REPOS" value={data?.publicReposCount} pending={isPending} unavailable={isError} icon={FolderGit2} />
-          <SignalMetric label="FOLLOWERS" value={data?.followersCount} pending={isPending} unavailable={isError} icon={Users} />
+          <SignalMetric
+            label="CURRENT STREAK"
+            value={data?.currentStreak}
+            suffix={data?.currentStreak === 1 ? " DAY" : " DAYS"}
+            pending={isPending}
+            unavailable={isError}
+            icon={Flame}
+          />
         </div>
 
         {!isPending && (
           <div className="grid gap-px border-x border-b border-line-faint bg-line-faint sm:grid-cols-2 lg:grid-cols-4">
             <ProfileSignal label="AVAILABLE FOR WORK" value={data ? (data.isHireable ? "I AM AVAILABLE TO WORK" : "NOT MARKED AVAILABLE") : "—"} active={Boolean(data?.isHireable)} />
-            <ProfileSignal label="FOLLOWING" value={data ? data.followingCount.toLocaleString() : "—"} />
+            <ProfileSignal
+              label="CONTRIBUTION YEARS"
+              value={data && typeof contributionYears === "number"
+                ? `${contributionYears.toLocaleString()} ${contributionYears === 1 ? "YEAR" : "YEARS"} ACTIVE`
+                : "—"}
+            />
             <ProfileSignal label="GITHUB LOCATION" value={data?.location ?? (isError ? "—" : "NOT LISTED")} />
             <ProfileSignal label="GITHUB COMPANY" value={data?.company ?? (isError ? "—" : "NOT LISTED")} />
           </div>

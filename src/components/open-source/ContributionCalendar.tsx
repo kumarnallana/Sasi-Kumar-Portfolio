@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { GitHubContributionDay, GitHubContributionYear } from "@/integrations/github/github.types";
 import { useGitHubContributionYear } from "@/integrations/github/use-github-contribution-year";
+import { sound } from "@/lib/sound";
 
 const levelClass = {
   NONE: "after:bg-ink-700/70", FIRST_QUARTILE: "after:bg-cyan/25", SECOND_QUARTILE: "after:bg-cyan/45",
@@ -38,7 +39,13 @@ function CalendarYear({ calendar, isCurrent }: { calendar: GitHubContributionYea
       <div className="grid min-w-max grid-flow-col grid-rows-7 gap-[0.2rem]">
         {days.map(({ day, future }, index) => <button key={day.date} type="button" aria-label={future ? `Future date ${day.date}` : describe(day)} title={future ? undefined : describe(day)} disabled={future}
           style={index === 0 ? { gridRow: day.weekday + 1 } : undefined}
-          onFocus={() => !future && setActive(day)} onMouseEnter={() => !future && setActive(day)} onClick={() => !future && setActive(day)}
+          onFocus={() => !future && setActive(day)}
+          onMouseEnter={() => {
+            if (future) return;
+            setActive(day);
+            if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) sound.play("hover");
+          }}
+          onClick={() => !future && setActive(day)}
           className={`relative h-6 w-6 after:absolute after:left-1/2 after:top-1/2 after:h-[0.7rem] after:w-[0.7rem] after:-translate-x-1/2 after:-translate-y-1/2 after:border after:border-line-faint/70 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-cyan disabled:cursor-default disabled:opacity-35 disabled:after:bg-transparent sm:h-[0.7rem] sm:w-[0.7rem] ${levelClass[day.contributionLevel]}`} />)}
       </div>
     </div>

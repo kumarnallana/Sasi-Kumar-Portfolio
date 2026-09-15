@@ -39,8 +39,7 @@ export type GitHubContributionYear = {
 export type GitHubPortfolioData = {
   publicReposCount: number;
   totalStars: number;
-  followersCount: number;
-  followingCount: number;
+  currentStreak: number;
   company: string | null;
   location: string | null;
   isHireable: boolean;
