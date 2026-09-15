@@ -23,7 +23,7 @@
     "postprocessing": "^6.39.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "three": "^0.184.0"
+    "three": "0.182.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
@@ -31,7 +31,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/three": "^0.184.1",
+    "@types/three": "0.182.0",
     "eslint": "^9",
     "eslint-config-next": "^16.3.4",
     "tailwindcss": "^4",
