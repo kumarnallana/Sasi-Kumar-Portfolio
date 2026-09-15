@@ -1,156 +1,30 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
-import { gsap } from "gsap";
 import { systemStats } from "@/data/hero/system-stats.data";
-import { stackStory } from "@/data/stack-story/stack-story.data";
 import { identity } from "@/data/profile/profile.data";
 import Typewriter from "@/components/shared/Typewriter";
-import AnimatedMetric from "@/components/shared/AnimatedMetric";
 import CapabilityMatrix from "@/components/about/CapabilityMatrix";
-import { useIsDesktop } from "@/hooks/useIsMobile";
-import { useGithubPortfolio } from "@/integrations/github/use-github-portfolio";
-import { scrollToSection } from "@/lib/lenis";
+import HeroDesktopSystem from "@/components/hero/HeroDesktopSystem";
 
-const HeroStackGlobe = dynamic(
-  () => import("@/components/stack-story/three/HeroStackGlobe"),
-  { ssr: false },
-);
-const StackStory = dynamic(() => import("@/components/stack-story/StackStory"), {
-  ssr: false,
-});
-
-const STACK_LEN = stackStory.layers.length;
-const STACK_MAX = STACK_LEN - 1;
-
-export default function Hero({ started }: { started: boolean }) {
-  const root = useRef<HTMLDivElement>(null);
-  const textCol = useRef<HTMLDivElement>(null);
-  const [storyOpen, setStoryOpen] = useState(false);
-  const isDesktop = useIsDesktop();
-  const githubQuery = useGithubPortfolio();
-  const currentContributions = githubQuery.data?.contributionHistory[0];
-
+export default function Hero() {
   const proofStats = [
     ...systemStats,
     {
-      label: `${currentContributions?.year ?? "CURRENT-YEAR"} CONTRIBUTIONS`,
-      value: currentContributions ? String(currentContributions.totalContributions) : "—",
-      pending: githubQuery.isPending,
+      label: "DEPLOYED SYSTEMS",
+      value: "03",
     },
     {
-      label: "PUBLIC REPOS",
-      value: githubQuery.data ? String(githubQuery.data.publicReposCount) : "—",
-      pending: githubQuery.isPending,
+      label: "CORE RUNTIME",
+      value: "TS / PY",
     },
   ];
 
-  // activeRef is an animated power level for the globe. It starts OFF (dark) and
-  // energizes layer-by-layer the moment the boot sequence hands off - the globe's
-  // "coming online". It powers DOWN again when the story opens and back UP on
-  // close. No persistence - purely presentational.
-  const activeRef = useRef(-1.2);
-  const power = useRef({ v: -1.2 });
-  const writePower = () => {
-    activeRef.current = power.current.v;
-  };
-
-  useEffect(() => {
-    if (!started) return;
-    const ctx = gsap.context(() => {
-      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const items = gsap.utils.toArray<HTMLElement>(".hero-anim")
-        .filter((node) => node.getClientRects().length > 0);
-      if (!isDesktop || reduce) {
-        gsap.set(items, { clearProps: "all" });
-        if (isDesktop) {
-          gsap.set(".hero-globe", { opacity: 1, scale: 1 });
-          power.current.v = STACK_MAX;
-          writePower();
-        }
-        return;
-      }
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-      tl.from(items, {
-        y: reduce ? 0 : 26,
-        opacity: reduce ? 1 : 0,
-        duration: reduce ? 0 : 0.9,
-        stagger: reduce ? 0 : 0.12,
-        immediateRender: false,
-      });
-      if (isDesktop) {
-          tl.from(
-            ".hero-globe",
-            { opacity: 0, scale: 0.9, duration: 1.2, ease: "power2.out" },
-            0.2,
-          );
-          gsap.to(power.current, {
-            v: STACK_MAX,
-            duration: 1.6,
-            ease: "power2.out",
-            delay: 0.35,
-            onUpdate: writePower,
-          });
-      }
-    }, root);
-    return () => ctx.revert();
-  }, [isDesktop, started]);
-
-  // double-tap transition: fade the hero text out and power the globe DOWN so
-  // every node and layer visibly switches off before the story takes over;
-  // on close, power it back UP to full so it "accepts its position" on the hero.
-  const firstRun = useRef(true);
-  useEffect(() => {
-    if (firstRun.current) {
-      firstRun.current = false;
-      return;
-    }
-    const tc = textCol.current;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (storyOpen) {
-      gsap.to(tc, {
-        opacity: 0,
-        y: reduce ? 0 : -12,
-        duration: reduce ? 0 : 0.4,
-        ease: "power2.in",
-        overwrite: "auto",
-      });
-      gsap.to(power.current, {
-        v: -1.2,
-        duration: reduce ? 0 : 0.75,
-        ease: "power2.inOut",
-        overwrite: "auto",
-        onUpdate: writePower,
-      });
-    } else {
-      gsap.to(tc, {
-        opacity: 1,
-        y: 0,
-        duration: reduce ? 0 : 0.6,
-        ease: "power3.out",
-        delay: reduce ? 0 : 0.15,
-        overwrite: "auto",
-        clearProps: "opacity,transform",
-      });
-      gsap.to(power.current, {
-        v: STACK_MAX,
-        duration: reduce ? 0 : 1.0,
-        ease: "power2.out",
-        overwrite: "auto",
-        onUpdate: writePower,
-      });
-    }
-  }, [storyOpen]);
-
   return (
     <section
-      ref={root}
+      id="top"
       className="relative flex min-h-[100svh] items-center overflow-hidden"
     >
       <div className="mx-auto grid w-full max-w-7xl items-center gap-8 px-6 py-16 md:px-10 md:py-24 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-6 lg:py-16 xl:py-24">
         {/* ---- LEFT: text column ---- */}
-        <div ref={textCol} className="relative z-10">
+        <div className="relative z-10">
           <div className="hero-anim tech-label mb-6 flex items-center gap-3 text-cyan">
             <span className="h-px w-10 bg-cyan" />
             DRAWING NO. NSK-2026 · MASTER SCHEMATIC
@@ -180,10 +54,6 @@ export default function Hero({ started }: { started: boolean }) {
           <nav aria-label="Recruiter actions" className="hero-anim mt-6 grid max-w-xl grid-cols-2 gap-2 sm:flex sm:flex-wrap">
             <a
               href="#systems"
-              onClick={(event) => {
-                event.preventDefault();
-                scrollToSection("systems");
-              }}
               className="col-span-2 flex min-h-11 items-center justify-center border border-cyan bg-cyan/10 px-5 font-mono text-xs font-semibold tracking-[0.12em] text-cyan transition-colors hover:bg-cyan/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900 sm:col-auto"
             >
               VIEW PROJECTS
@@ -198,10 +68,6 @@ export default function Hero({ started }: { started: boolean }) {
             </a>
             <a
               href="#comms"
-              onClick={(event) => {
-                event.preventDefault();
-                scrollToSection("comms");
-              }}
               className="flex min-h-11 items-center justify-center border border-line-faint bg-ink-900/70 px-5 font-mono text-xs font-semibold tracking-[0.12em] text-paper transition-colors hover:border-cyan/70 hover:text-cyan focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900"
             >
               CONTACT
@@ -215,8 +81,8 @@ export default function Hero({ started }: { started: boolean }) {
                 key={s.label}
                 className="bg-ink-900/80 px-4 py-3 backdrop-blur"
               >
-                <div className={`min-h-8 font-display text-2xl font-semibold text-cyan glow-cyan ${"pending" in s && s.pending ? "animate-pulse" : ""}`}>
-                  <AnimatedMetric value={s.value} />
+                <div className="min-h-8 font-display text-2xl font-semibold text-cyan glow-cyan">
+                  {s.value}
                 </div>
                 <div className="tech-label mt-1">{s.label}</div>
               </div>
@@ -228,34 +94,8 @@ export default function Hero({ started }: { started: boolean }) {
         <div className="hero-anim w-full md:hidden">
           <CapabilityMatrix compact />
         </div>
-        {isDesktop && (
-          <div className="hero-globe group relative hidden h-[42vh] min-h-[320px] w-full md:block lg:h-[78vh]">
-            <HeroStackGlobe
-              activeRef={activeRef}
-              onOpen={() => setStoryOpen(true)}
-            />
-            <div className="pointer-events-none absolute inset-0 grid-vignette" />
-            <div className="pointer-events-none absolute left-3 top-3 tech-label text-cyan/70">
-              STACK GRAPH · ONLINE
-            </div>
-            <div className="pointer-events-none absolute right-3 top-3 tech-label text-paper-dim">
-              {String(STACK_LEN).padStart(2, "0")} LAYERS · LIVE
-            </div>
-            <button
-              onClick={() => setStoryOpen(true)}
-              className="pointer-events-auto absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap border border-cyan/40 bg-ink-900/80 px-3 py-1.5 backdrop-blur transition-all duration-300 hover:border-cyan hover:bg-cyan/10 hover:shadow-[0_0_12px_rgba(67,201,255,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900"
-              aria-label="Explore the stack story"
-            >
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan shadow-[0_0_8px_var(--cyan)]" />
-              <span className="tech-label text-[0.55rem] text-cyan">
-                DOUBLE-TAP GLOBE OR CLICK TO EXPLORE STACK
-              </span>
-            </button>
-          </div>
-        )}
+        <HeroDesktopSystem />
       </div>
-
-      {isDesktop && <StackStory open={storyOpen} onClose={() => setStoryOpen(false)} />}
 
       {/* scroll cue */}
       <div className="hero-anim absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 md:flex [@media(max-height:700px)]:hidden">

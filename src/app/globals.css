@@ -140,6 +140,18 @@ body {
 
 /* Persistent phone status markers share a steady, restrained signal. */
 @media (width < 48rem) {
+  /* Avoid two render-path font downloads on constrained phones. The system
+     stacks closely match the display/mono roles and are available instantly. */
+  body,
+  .font-mono,
+  .tech-label {
+    font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  }
+
+  .font-display {
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+
   .mobile-signal-dot {
     --mobile-signal-glow: 6px;
     width: 0.375rem;

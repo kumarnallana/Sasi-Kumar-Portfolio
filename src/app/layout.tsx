@@ -10,7 +10,6 @@ import {
   personJsonLd,
   websiteJsonLd,
 } from "@/lib/seo";
-import QueryProvider from "@/providers/query-provider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -18,12 +17,16 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-space",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "optional",
+  preload: false,
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains",
   subsets: ["latin"],
   weight: ["400", "500", "700"],
+  display: "optional",
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -97,9 +100,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }}
         />
-        <QueryProvider>
-          {children}
-        </QueryProvider>
+        {children}
         <Analytics />
         <SpeedInsights />
       </body>

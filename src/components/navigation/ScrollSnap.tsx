@@ -13,6 +13,7 @@ const MIN_DELTA = 4; // ignore if we're already basically on the point
 
 export default function ScrollSnap() {
   useEffect(() => {
+    if (!window.matchMedia("(min-width: 768px)").matches) return;
     const reduce = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;

@@ -1,56 +1,51 @@
 "use client";
 
 import { useEffect } from "react";
-import Lenis from "lenis";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { setLenis } from "@/lib/lenis";
-
-gsap.registerPlugin(ScrollTrigger);
-
-// Suppress known upstream library deprecation warnings outside user control (e.g. R3F's THREE.Clock deprecation)
-if (typeof window !== "undefined") {
-  const originalWarn = console.warn;
-  console.warn = (...args: unknown[]) => {
-    if (
-      typeof args[0] === "string" &&
-      args[0].includes("THREE.Clock: This module has been deprecated")
-    ) {
-      return;
-    }
-    originalWarn(...args);
-  };
-}
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return;
+    const desktop = window.matchMedia("(min-width: 768px)").matches;
+    if (reduce || !desktop) return;
 
     // Clean up legacy #architect anchor if present in URL bar
     if (typeof window !== "undefined" && window.location.hash === "#architect") {
       window.history.replaceState(null, "", "#profile");
     }
 
-    const lenis = new Lenis({
-      duration: 1.15,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
+    let cancelled = false;
+    let cleanup: (() => void) | undefined;
+
+    void Promise.all([
+      import("lenis"),
+      import("gsap"),
+      import("gsap/ScrollTrigger"),
+    ]).then(([{ default: Lenis }, { gsap }, { ScrollTrigger }]) => {
+      if (cancelled) return;
+      gsap.registerPlugin(ScrollTrigger);
+      const lenis = new Lenis({
+        duration: 1.15,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+      });
+
+      lenis.on("scroll", ScrollTrigger.update);
+      setLenis(lenis);
+
+      const raf = (time: number) => lenis.raf(time * 1000);
+      gsap.ticker.add(raf);
+      gsap.ticker.lagSmoothing(0);
+      cleanup = () => {
+        gsap.ticker.remove(raf);
+        lenis.destroy();
+        setLenis(null);
+      };
     });
 
-    lenis.on("scroll", ScrollTrigger.update);
-    setLenis(lenis);
-
-    const raf = (time: number) => {
-      lenis.raf(time * 1000);
-    };
-    gsap.ticker.add(raf);
-    gsap.ticker.lagSmoothing(0);
-
     return () => {
-      gsap.ticker.remove(raf);
-      lenis.destroy();
-      setLenis(null);
+      cancelled = true;
+      cleanup?.();
     };
   }, []);
 

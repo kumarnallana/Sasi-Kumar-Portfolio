@@ -19,7 +19,8 @@ test.describe.configure({ timeout: 60_000 });
 async function openPortfolio(page: Page) {
   await page.goto("/");
   // The server-rendered prompt can precede hydration; reduced motion skips it.
-  await page.waitForFunction(() => document.documentElement.classList.contains("lenis")
+  await page.waitForFunction(() => matchMedia("(max-width: 767px)").matches
+    || document.documentElement.classList.contains("lenis")
     || (matchMedia("(prefers-reduced-motion: reduce)").matches
       && !document.body.innerText.includes("TAP / PRESS ANY KEY TO SKIP")));
   await page.keyboard.press("Enter");

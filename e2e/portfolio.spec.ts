@@ -324,7 +324,10 @@ test.describe("GitHub portfolio states", () => {
     await page.keyboard.press("Space");
 
     const signals = page.locator("#signals");
-    await signals.scrollIntoViewIfNeeded();
+    // The section placeholder is intentionally replaced by the live island as
+    // it enters the viewport, so do not retain an element handle across that
+    // replacement.
+    await signals.evaluate((element) => element.scrollIntoView());
     await expect(signals.getByText("PORTFOLIO VIEWS")).toBeVisible();
     await expect(signals.getByTestId("signal-grid").getByText("93", { exact: true })).toBeVisible();
     await expect(signals.getByText("UNIQUE VISITORS")).toHaveCount(0);

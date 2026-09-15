@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { stackStory } from "@/data/stack-story/stack-story.data";
 import { sound } from "@/lib/sound";
+import { getLenis } from "@/lib/lenis";
 import type { GlobeControls, HoverNode } from "@/components/stack-story/three/StackGlobe";
 
 const StackGlobe = dynamic(() => import("@/components/stack-story/three/StackGlobe"), {
@@ -124,7 +125,17 @@ export default function StackStory({
     // hold the fade so the hero globe's power-down is visible before we cover it
     const t = setTimeout(() => setMounted(true), reduce ? 0 : 260);
     const prevOverflow = document.body.style.overflow;
+    const lockedPageY = window.scrollY;
+    const prevPosition = document.body.style.position;
+    const prevTop = document.body.style.top;
+    const prevWidth = document.body.style.width;
+    const pageScroller = getLenis();
+    pageScroller?.scrollTo(window.scrollY, { immediate: true, force: true });
+    pageScroller?.stop();
     document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${lockedPageY}px`;
+    document.body.style.width = "100%";
     sound.play("online");
 
     const onKey = (e: KeyboardEvent) => {
@@ -166,6 +177,12 @@ export default function StackStory({
       clearTimeout(t);
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
+      document.body.style.position = prevPosition;
+      document.body.style.top = prevTop;
+      document.body.style.width = prevWidth;
+      window.scrollTo({ top: lockedPageY, behavior: "instant" });
+      pageScroller?.start();
+      window.requestAnimationFrame(() => window.dispatchEvent(new Event("portfolio:layout-stable")));
       setMounted(false);
       window.requestAnimationFrame(() => previouslyFocused?.focus());
     };

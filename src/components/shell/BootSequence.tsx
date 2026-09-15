@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
 
 // diagnostic log streamed while memory is restored
 const DIAG_LINES = [
@@ -56,7 +55,7 @@ const PHASE_LABEL = [
 
 const DEVIANT = "// constraint removed";
 
-export default function BootSequence({ onDone }: { onDone: () => void }) {
+export default function BootSequence({ onDone }: { onDone?: () => void }) {
   const root = useRef<HTMLDivElement>(null);
   const core = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLDivElement>(null);
@@ -66,23 +65,37 @@ export default function BootSequence({ onDone }: { onDone: () => void }) {
   const [shown, setShown] = useState(0);
   const [deviant, setDeviant] = useState("");
   const [glitch, setGlitch] = useState(false);
-  const [mem] = useState(memoryLine);
+  const [mem, setMem] = useState("new operator detected :: registering signature");
 
   const done = useRef(false);
-  const tl = useRef<gsap.core.Timeline | null>(null);
+  const tl = useRef<{ kill: () => void } | null>(null);
 
   useEffect(() => {
+    if (!window.matchMedia("(min-width: 768px)").matches) {
+      done.current = true;
+      root.current?.style.setProperty("display", "none");
+      onDone?.();
+      return;
+    }
+
+    let cancelled = false;
+    let animateTo: ((target: unknown, vars: Record<string, unknown>) => unknown) | null = null;
     const finish = () => {
       if (done.current) return;
       done.current = true;
       tl.current?.kill();
-      gsap.to(root.current, {
+      if (!animateTo) {
+        root.current?.style.setProperty("display", "none");
+        onDone?.();
+        return;
+      }
+      animateTo(root.current, {
         opacity: 0,
         duration: 0.5,
         ease: "power2.inOut",
         onComplete: () => {
           root.current?.style.setProperty("display", "none");
-          onDone();
+          onDone?.();
         },
       });
     };
@@ -93,7 +106,7 @@ export default function BootSequence({ onDone }: { onDone: () => void }) {
     if (reduce) {
       done.current = true;
       root.current?.style.setProperty("display", "none");
-      onDone();
+      onDone?.();
       return;
     }
 
@@ -102,27 +115,30 @@ export default function BootSequence({ onDone }: { onDone: () => void }) {
     window.addEventListener("pointerdown", skip);
     window.addEventListener("keydown", skip);
 
-    const counter = { p: 0 };
-    const shownRef = { n: 0 };
-    const writeMeter = () => {
-      const p = Math.round(counter.p);
-      if (pct.current) pct.current.textContent = String(p).padStart(3, "0");
-      if (bar.current) bar.current.style.width = `${p}%`;
-      // map the first ~72% of the meter onto the streaming diagnostic lines
-      const n = Math.min(
-        DIAG_LINES.length,
-        Math.round((Math.min(p, 72) / 72) * DIAG_LINES.length),
-      );
-      if (n !== shownRef.n) {
-        shownRef.n = n;
-        setShown(n);
-      }
-    };
+    void import("gsap").then(({ gsap }) => {
+      if (cancelled) return;
+      setMem(memoryLine());
+      animateTo = gsap.to.bind(gsap) as typeof animateTo;
+      const counter = { p: 0 };
+      const shownRef = { n: 0 };
+      const writeMeter = () => {
+        const p = Math.round(counter.p);
+        if (pct.current) pct.current.textContent = String(p).padStart(3, "0");
+        if (bar.current) bar.current.style.width = `${p}%`;
+        const n = Math.min(
+          DIAG_LINES.length,
+          Math.round((Math.min(p, 72) / 72) * DIAG_LINES.length),
+        );
+        if (n !== shownRef.n) {
+          shownRef.n = n;
+          setShown(n);
+        }
+      };
 
-    const t = gsap.timeline();
-    tl.current = t;
+      const t = gsap.timeline();
+      tl.current = t;
 
-    t.set(root.current, { opacity: 1 })
+      t.set(root.current, { opacity: 1 })
       // power on
       .fromTo(
         core.current,
@@ -161,19 +177,21 @@ export default function BootSequence({ onDone }: { onDone: () => void }) {
         });
       })
       .to({}, { duration: 0.7 })
-      .call(finish);
+        .call(finish);
+    });
 
     return () => {
+      cancelled = true;
       window.removeEventListener("pointerdown", skip);
       window.removeEventListener("keydown", skip);
-      t.kill();
+      tl.current?.kill();
     };
   }, [onDone]);
 
   return (
     <div
       ref={root}
-      className="fixed inset-0 z-[60] flex items-center justify-center overflow-hidden bg-ink-900 blueprint-grid"
+      className="fixed inset-0 z-[60] hidden items-center justify-center overflow-hidden bg-ink-900 blueprint-grid md:flex"
     >
       {/* scanlines + sweeping beam */}
       <div className="boot-scanlines pointer-events-none absolute inset-0 opacity-70" />
@@ -182,7 +200,7 @@ export default function BootSequence({ onDone }: { onDone: () => void }) {
 
       <div
         ref={core}
-        className={`boot-flicker relative w-[min(92vw,560px)] font-mono lg:w-[min(84vw,640px)] xl:w-[min(76vw,680px)] [@media(max-height:700px)]:w-[min(92vw,560px)] ${
+        className={`boot-flicker relative min-h-72 w-[min(92vw,560px)] font-mono lg:w-[min(84vw,640px)] xl:w-[min(76vw,680px)] [@media(max-height:700px)]:w-[min(92vw,560px)] ${
           glitch ? "boot-glitch" : ""
         }`}
       >

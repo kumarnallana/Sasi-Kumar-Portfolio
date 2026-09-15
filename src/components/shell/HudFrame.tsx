@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { identity } from "@/data/profile/profile.data";
 import SoundToggle from "@/components/audio/SoundToggle";
 import { useIsDesktop } from "@/hooks/useIsMobile";
@@ -20,7 +20,7 @@ function Corner({ className }: { className: string }) {
 export default function HudFrame() {
   const isDesktop = useIsDesktop();
   const [clock, setClock] = useState("--:--:--");
-  const [fps, setFps] = useState(60);
+  const fps = 60;
   const [signal, setSignal] = useState(5);
   const [load, setLoad] = useState(34);
 
@@ -48,26 +48,6 @@ export default function HudFrame() {
       clearInterval(clockId);
       clearInterval(teleId);
     };
-  }, [isDesktop]);
-
-  // FPS meter
-  const raf = useRef(0);
-  useEffect(() => {
-    if (!isDesktop) return;
-    let frames = 0;
-    let last = performance.now();
-    const loop = () => {
-      frames++;
-      const now = performance.now();
-      if (now - last >= 1000) {
-        setFps(frames);
-        frames = 0;
-        last = now;
-      }
-      raf.current = requestAnimationFrame(loop);
-    };
-    raf.current = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf.current);
   }, [isDesktop]);
 
   if (!isDesktop) return null;

@@ -7,14 +7,12 @@ interface ProjectVisualProps {
   name: string;
   image?: string;
   liveUrl?: string;
-  eager?: boolean;
 }
 
 export default function ProjectVisual({
   name,
   image,
   liveUrl,
-  eager = false,
 }: ProjectVisualProps) {
   return (
     <div className="relative flex w-full flex-col overflow-hidden border border-line-faint bg-ink-900/60">
@@ -29,8 +27,8 @@ export default function ProjectVisual({
                 src={image}
                 alt={`${name} preview`}
                 fill
-                loading={eager ? "eager" : "lazy"}
-                sizes="(max-width: 1024px) 100vw, 50vw"
+                loading="lazy"
+                sizes="(max-width: 767px) calc(100vw - 3rem), (max-width: 1279px) calc(100vw - 5rem), 34rem"
                 className="object-cover object-top opacity-90 transition-all duration-300 ease-out group-hover/preview:scale-[1.01] group-hover/preview:opacity-100"
               />
               {liveUrl && (

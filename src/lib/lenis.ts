@@ -36,6 +36,8 @@ function scrollWithOwner(target: HTMLElement | number, nextOwner: "navigation" |
   const lenis = instance;
   if (!lenis || lenis.isStopped || document.body.style.overflow === "hidden") return;
 
+  lenis.resize();
+
   // Cancel a previous animation even if the new target is the current position.
   // Lenis otherwise treats an equal target as a no-op and leaves it running.
   if (lenis.isScrolling) {
@@ -72,6 +74,11 @@ export function scrollToSection(id: string) {
   const sel = target.startsWith("#") ? target : `#${target}`;
   const el = isTop ? null : document.querySelector<HTMLElement>(sel);
   if (!isTop && !el) return;
+
+  const isDeferred = el?.dataset.deferredPlaceholder === "true";
+  if (isDeferred) {
+    window.dispatchEvent(new CustomEvent("portfolio:section-request", { detail: target.replace(/^#/, "") }));
+  }
   const destination = isTop ? 0 : el!;
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (instance && !reduce) {
@@ -86,5 +93,61 @@ export function scrollToSection(id: string) {
     if (instance) instance.scrollTo(destination, { immediate: true });
     else if (isTop) window.scrollTo({ top: 0, behavior: "instant" });
     else el!.scrollIntoView({ behavior: "instant", block: "start" });
+  }
+
+  // A deferred section replaces its placeholder after the chunk mounts. The
+  // original element can disappear while Lenis still holds it as the target,
+  // so settle once more against the live section element.
+  if (isDeferred) {
+    let attempts = 0;
+    const settleOnMountedSection = () => {
+      const mounted = document.querySelector<HTMLElement>(sel);
+      if (mounted && mounted.dataset.deferredPlaceholder !== "true") {
+        const request = ++requestId;
+        owner = null;
+        const pageScroller = instance;
+        pageScroller?.stop();
+        const started = performance.now();
+        const cancelPin = () => {
+          const ownsScroller = request === requestId;
+          if (ownsScroller) {
+            requestId += 1;
+            pageScroller?.start();
+          }
+          window.removeEventListener("wheel", cancelPin);
+          window.removeEventListener("touchstart", cancelPin);
+          window.removeEventListener("pointerdown", cancelPin);
+        };
+        window.addEventListener("wheel", cancelPin, { passive: true });
+        window.addEventListener("touchstart", cancelPin, { passive: true });
+        window.addEventListener("pointerdown", cancelPin, { passive: true });
+        const pinToLiveTarget = () => {
+          if (request !== requestId) {
+            cancelPin();
+            return;
+          }
+          const live = document.querySelector<HTMLElement>(sel);
+          if (!live) return;
+          const top = live.getBoundingClientRect().top + window.scrollY;
+          const max = document.documentElement.scrollHeight - window.innerHeight;
+          window.scrollTo({ top: Math.min(top, max), behavior: "instant" });
+          if (performance.now() - started < 1200) {
+            requestAnimationFrame(pinToLiveTarget);
+          } else {
+            pageScroller?.resize();
+            pageScroller?.scrollTo(window.scrollY, { immediate: true, force: true });
+            pageScroller?.start();
+            window.removeEventListener("wheel", cancelPin);
+            window.removeEventListener("touchstart", cancelPin);
+            window.removeEventListener("pointerdown", cancelPin);
+            settledUntil = performance.now() + COMPLETION_GUARD_MS;
+          }
+        };
+        pinToLiveTarget();
+        return;
+      }
+      if (attempts++ < 600) requestAnimationFrame(settleOnMountedSection);
+    };
+    requestAnimationFrame(settleOnMountedSection);
   }
 }

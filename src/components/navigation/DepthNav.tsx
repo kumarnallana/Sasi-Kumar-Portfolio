@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { sound } from "@/lib/sound";
 import { scrollToSection } from "@/lib/lenis";
 import { NAV_SECTIONS as SECTIONS } from "@/lib/sections";
+import { useIsDesktop } from "@/hooks/useIsMobile";
 
 // the navigation IS the depth axis - each section is a station at its true
 // scroll depth, so spacing itself reads as a schematic of the descent.
@@ -20,6 +21,7 @@ const MOBILE_LABELS: Record<SectionId, string> = {
 };
 
 export default function DepthNav() {
+  const isDesktop = useIsDesktop();
   const [progress, setProgress] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [pts, setPts] = useState<Pt[]>(() =>
@@ -27,7 +29,9 @@ export default function DepthNav() {
   );
 
   useEffect(() => {
+    if (!isDesktop) return;
     const measure = () => {
+      if (document.body.style.position === "fixed") return;
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const denom = max > 0 ? max : 1;
       setPts(
@@ -48,15 +52,41 @@ export default function DepthNav() {
     // re-measure after late layout shifts (fonts, the 3D canvas, images)
     const t1 = setTimeout(measure, 400);
     const t2 = setTimeout(measure, 1400);
+    const layoutObserver = new ResizeObserver(measure);
+    layoutObserver.observe(document.body);
     window.addEventListener("resize", measure);
+    window.addEventListener("portfolio:layout-stable", measure);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
+      layoutObserver.disconnect();
       window.removeEventListener("resize", measure);
+      window.removeEventListener("portfolio:layout-stable", measure);
       window.removeEventListener("scroll", onScroll);
     };
-  }, []);
+  }, [isDesktop]);
+
+  useEffect(() => {
+    if (isDesktop) return;
+    const nodes = SECTIONS.map((section) => document.getElementById(section.id)).filter(
+      (node): node is HTMLElement => Boolean(node),
+    );
+    if (nodes.length === 0) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visible) return;
+        const index = SECTIONS.findIndex((section) => section.id === visible.target.id);
+        if (index >= 0) setProgress((index + 1) / (SECTIONS.length + 1));
+      },
+      { rootMargin: "-30% 0px -55% 0px", threshold: [0, 0.01] },
+    );
+    nodes.forEach((node) => observer.observe(node));
+    return () => observer.disconnect();
+  }, [isDesktop]);
 
   useEffect(() => {
     if (!mobileOpen) return;
