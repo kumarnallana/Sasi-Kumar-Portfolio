@@ -11,6 +11,16 @@ import AnimatedMetric from "@/components/shared/AnimatedMetric";
 import { revealContent } from "@/lib/contentReveal";
 import ContributionCalendar from "./ContributionCalendar";
 import { usePortfolioAnalytics } from "@/integrations/analytics/use-portfolio-analytics";
+import { usePortfolioAppreciation } from "@/integrations/appreciation/use-portfolio-appreciation";
+import {
+  Activity,
+  Eye,
+  FolderGit2,
+  Heart,
+  Star,
+  Users,
+  type LucideIcon,
+} from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -22,6 +32,7 @@ function SignalMetric({
   unavailable = false,
   unavailableLabel = "Temporarily unavailable",
   accent = "cyan",
+  icon: Icon,
 }: {
   label: string;
   value?: number;
@@ -30,6 +41,7 @@ function SignalMetric({
   unavailable?: boolean;
   unavailableLabel?: string;
   accent?: "cyan" | "amber";
+  icon: LucideIcon;
 }) {
   const hasValue = typeof value === "number" && Number.isFinite(value);
   const displayUnavailable = unavailable || (!pending && !hasValue);
@@ -45,9 +57,52 @@ function SignalMetric({
           <AnimatedMetric value={`${value!.toLocaleString()}${suffix}`} />
         )}
       </div>
-      <div className="tech-label mt-2 leading-relaxed">{label}</div>
+      <div className="tech-label mt-2 flex items-center gap-2 leading-relaxed">
+        <Icon aria-hidden="true" className="h-3.5 w-3.5 shrink-0 opacity-70" strokeWidth={1.6} />
+        <span>{label}</span>
+      </div>
       {displayUnavailable && <div className="mt-1 font-mono text-[0.58rem] uppercase tracking-wider text-paper-dim">{unavailableLabel}</div>}
     </div>
+  );
+}
+
+function AppreciationMetric() {
+  const { data, isPending, toggle, isUpdating } = usePortfolioAppreciation();
+  const unavailable = !isPending && !data;
+
+  return (
+    <button
+      type="button"
+      className="os-card min-h-28 bg-ink-900 px-4 py-4 text-left transition-colors hover:bg-ink-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-cyan disabled:cursor-not-allowed disabled:hover:bg-ink-900 sm:min-h-32 sm:px-5 sm:py-5"
+      disabled={isPending || unavailable || isUpdating}
+      aria-pressed={data?.appreciated ?? false}
+      aria-label={data?.appreciated ? "Undo appreciation for this portfolio" : "Appreciate this portfolio"}
+      onClick={() => {
+        sound.play("blip");
+        toggle(!data!.appreciated);
+      }}
+    >
+      <div className="font-display text-2xl font-semibold text-amber glow-amber sm:text-3xl">
+        {isPending || unavailable ? "—" : <AnimatedMetric value={data!.count.toLocaleString()} />}
+      </div>
+      <div className="tech-label mt-2 flex items-center gap-2 leading-relaxed">
+        <Heart
+          aria-hidden="true"
+          className={`h-3.5 w-3.5 shrink-0 ${data?.appreciated ? "fill-current text-amber" : "opacity-70"}`}
+          strokeWidth={1.6}
+        />
+        <span>APPRECIATION</span>
+      </div>
+      <div className="mt-1 font-mono text-[0.58rem] uppercase tracking-wider text-paper-dim">
+        {isPending
+          ? "Loading stored count"
+          : unavailable
+            ? "Storage unavailable"
+            : data?.appreciated
+              ? "Appreciated · tap to undo"
+              : "Appreciate this portfolio"}
+      </div>
+    </button>
   );
 }
 
@@ -72,8 +127,8 @@ export default function OpenSource() {
   const hasRepositories = Boolean(
     data && (data.pinnedRepositories.length > 0 || data.recentRepositories.length > 0),
   );
-  const currentContributions = Array.isArray(data?.contributionHistory) ? data.contributionHistory[0] : undefined;
-  const currentYearLabel = currentContributions?.year ?? "CURRENT";
+  const currentContributions = data?.contributionHistory[0];
+  const contributionYear = currentContributions?.year ?? "CURRENT-YEAR";
 
   useEffect(() => {
     const el = ref.current;
@@ -95,7 +150,7 @@ export default function OpenSource() {
     <section
       id="signals"
       ref={ref}
-      className="relative mx-auto max-w-6xl px-6 py-16 md:px-10 md:py-24"
+      className="relative mx-auto max-w-6xl px-6 pt-8 pb-16 md:px-10 md:pt-12 md:pb-24"
     >
       <SectionHeader
         index="03"
@@ -120,25 +175,20 @@ export default function OpenSource() {
           </a>
         </div>
 
-        <div className="grid grid-cols-2 gap-px border border-line-faint bg-line-faint sm:grid-cols-3 lg:grid-cols-6">
+        <div data-testid="signal-grid" className="grid grid-cols-2 gap-px border border-line-faint bg-line-faint sm:grid-cols-3 lg:grid-cols-6">
           <SignalMetric
             label="PORTFOLIO VIEWS"
             value={analytics?.pageviews}
             pending={isAnalyticsPending}
-            unavailableLabel="Live when authorized"
+            unavailableLabel="Analytics unavailable"
             accent="amber"
+            icon={Eye}
           />
-          <SignalMetric
-            label="UNIQUE VISITORS"
-            value={analytics?.visitors}
-            pending={isAnalyticsPending}
-            unavailableLabel="Live when authorized"
-            accent="amber"
-          />
-          <SignalMetric label={`${currentYearLabel} CONTRIBUTIONS`} value={currentContributions?.totalContributions} pending={isPending} unavailable={isError} />
-          <SignalMetric label="TOTAL STARS" value={data?.totalStars} suffix="★" pending={isPending} unavailable={isError} accent="amber" />
-          <SignalMetric label="PUBLIC REPOS" value={data?.publicReposCount} pending={isPending} unavailable={isError} />
-          <SignalMetric label="FOLLOWERS" value={data?.followersCount} pending={isPending} unavailable={isError} />
+          <AppreciationMetric />
+          <SignalMetric label={`${contributionYear} CONTRIBUTIONS`} value={currentContributions?.totalContributions} pending={isPending} unavailable={isError} icon={Activity} />
+          <SignalMetric label="GITHUB STARS" value={data?.totalStars} pending={isPending} unavailable={isError} accent="amber" icon={Star} />
+          <SignalMetric label="PUBLIC REPOS" value={data?.publicReposCount} pending={isPending} unavailable={isError} icon={FolderGit2} />
+          <SignalMetric label="FOLLOWERS" value={data?.followersCount} pending={isPending} unavailable={isError} icon={Users} />
         </div>
 
         {!isPending && (

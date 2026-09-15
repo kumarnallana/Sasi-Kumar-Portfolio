@@ -155,7 +155,7 @@ export default function Projects() {
   return (
     <section
       id="systems"
-      className="relative mx-auto max-w-6xl px-6 py-16 md:px-10 md:py-24"
+      className="relative mx-auto max-w-6xl px-6 pt-16 pb-0 md:px-10 md:pt-24 md:pb-0"
     >
       <SectionHeader
         index="02"

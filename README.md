@@ -44,6 +44,13 @@ The GitHub telemetry requires `GITHUB_TOKEN`. To show the optional lifetime prod
 
 Without the Vercel credentials, the portfolio keeps the analytics slot stable and reports the view metric as unavailable. Tokens are never sent to the browser.
 
+The global appreciation counter uses an Upstash Redis database connected to the Vercel project. The integration supplies these server-only variables:
+
+- `UPSTASH_REDIS_REST_URL`
+- `UPSTASH_REDIS_REST_TOKEN`
+
+Legacy `KV_REST_API_URL` and `KV_REST_API_TOKEN` names are also accepted. Without storage credentials, the portfolio reports the appreciation metric as unavailable rather than displaying a seeded count.
+
 ## 💼 Featured Work
 
 ### Zylxy Technologies — Corporate Website & CRM Consulting Platform

@@ -217,7 +217,8 @@ test.describe("GitHub portfolio states", () => {
     const signals = page.locator("#signals");
     await expect(signals.getByRole("status", { name: "Loading GitHub repositories" })).toBeVisible();
     await expect(signals.getByText("verified-repository")).toBeVisible();
-    await expect(signals.getByText("7★").first()).toBeVisible();
+    await expect(signals.getByText("GITHUB STARS")).toBeVisible();
+    await expect(signals.getByTestId("signal-grid").getByText("7", { exact: true })).toBeVisible();
     await expect(signals.getByText("14 contributions in 2026")).toBeVisible();
     await expect(signals.getByRole("button", { name: "2 contributions on September 14, 2026" })).toBeVisible();
     await expect(signals.getByText("Verified Location")).toBeVisible();
@@ -265,7 +266,7 @@ test.describe("GitHub portfolio states", () => {
     await page.keyboard.press("Space");
     const signals = page.locator("#signals");
     await expect(signals.getByText("LIVE GITHUB SIGNAL TEMPORARILY UNAVAILABLE")).toBeVisible({ timeout: 10000 });
-    await expect(signals.getByLabel("total stars unavailable")).toHaveText("—");
+    await expect(signals.getByLabel("github stars unavailable")).toHaveText("—");
     await expect(page.getByRole("heading", { name: /contact/i })).toBeAttached();
   });
 
@@ -290,5 +291,70 @@ test.describe("GitHub portfolio states", () => {
     await expect(finalAction).toBeVisible();
     await expect(finalAction).toBeInViewport();
     expect(await page.evaluate(() => document.body.style.overflow)).not.toBe("hidden");
+  });
+
+  test("signal metrics use live responses, toggle appreciation, and fit target viewports", async ({ page }) => {
+    let appreciated = false;
+    let count = 0;
+
+    await page.route("**/api/github/graphql", (route) => route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(livePayload),
+    }));
+    await page.route("**/api/portfolio-analytics", (route) => route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ pageviews: 93, visitors: 28 }),
+    }));
+    await page.route("**/api/appreciation", async (route) => {
+      if (route.request().method() === "POST") {
+        const next = (await route.request().postDataJSON()) as { appreciated: boolean };
+        if (next.appreciated !== appreciated) count += next.appreciated ? 1 : -1;
+        appreciated = next.appreciated;
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ available: true, count, appreciated }),
+      });
+    });
+
+    await page.goto("/");
+    await page.keyboard.press("Space");
+
+    const signals = page.locator("#signals");
+    await signals.scrollIntoViewIfNeeded();
+    await expect(signals.getByText("PORTFOLIO VIEWS")).toBeVisible();
+    await expect(signals.getByTestId("signal-grid").getByText("93", { exact: true })).toBeVisible();
+    await expect(signals.getByText("UNIQUE VISITORS")).toHaveCount(0);
+    await expect(signals.getByText("2026 CONTRIBUTIONS")).toBeVisible();
+    await expect(signals.getByTestId("signal-grid").locator("svg.lucide")).toHaveCount(6);
+
+    const appreciation = signals.getByRole("button", { name: "Appreciate this portfolio" });
+    await expect(appreciation.getByText("0", { exact: true })).toBeVisible();
+    await appreciation.click();
+    const undo = signals.getByRole("button", { name: "Undo appreciation for this portfolio" });
+    await expect(undo.getByText("1", { exact: true })).toBeVisible();
+    await undo.click();
+    await expect(appreciation.getByText("0", { exact: true })).toBeVisible();
+
+    const spacing = await page.evaluate(() => {
+      const systemsElement = document.querySelector("#systems")!;
+      const signalsHeading = Array.from(document.querySelectorAll("h2")).find((heading) =>
+        heading.textContent?.includes("OPEN-SOURCE SIGNALS"),
+      )!;
+      return signalsHeading.getBoundingClientRect().top - systemsElement.getBoundingClientRect().bottom;
+    });
+    expect(spacing).toBeLessThan(80);
+
+    for (const width of [360, 375, 390, 430, 1280, 1366, 1440, 1536]) {
+      await page.setViewportSize({ width, height: 900 });
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth),
+        `horizontal overflow at ${width}px`,
+      ).toBeTruthy();
+      await expect(signals.getByTestId("signal-grid")).toBeVisible();
+    }
   });
 });

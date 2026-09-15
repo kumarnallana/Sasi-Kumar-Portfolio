@@ -30,12 +30,13 @@ export default function Hero({ started }: { started: boolean }) {
   const [storyOpen, setStoryOpen] = useState(false);
   const isDesktop = useIsDesktop();
   const githubQuery = useGithubPortfolio();
+  const currentContributions = githubQuery.data?.contributionHistory[0];
 
   const proofStats = [
     ...systemStats,
     {
-      label: "GITHUB STARS",
-      value: githubQuery.data ? `${githubQuery.data.totalStars}★` : "—",
+      label: `${currentContributions?.year ?? "CURRENT-YEAR"} CONTRIBUTIONS`,
+      value: currentContributions ? String(currentContributions.totalContributions) : "—",
       pending: githubQuery.isPending,
     },
     {
