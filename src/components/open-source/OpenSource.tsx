@@ -187,7 +187,7 @@ export default function OpenSource() {
           />
           <AppreciationMetric />
           <SignalMetric label={`${contributionYear} CONTRIBUTIONS`} value={currentContributions?.totalContributions} pending={isPending} unavailable={isError} icon={Activity} />
-          <SignalMetric label="GITHUB STARS" value={data?.totalStars} pending={isPending} unavailable={isError} accent="amber" icon={Star} />
+          <SignalMetric label="TOTAL STARS" value={data?.totalStars} pending={isPending} unavailable={isError} accent="amber" icon={Star} />
           <SignalMetric label="PUBLIC REPOS" value={data?.publicReposCount} pending={isPending} unavailable={isError} icon={FolderGit2} />
           <SignalMetric
             label="CURRENT STREAK"

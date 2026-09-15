@@ -170,8 +170,7 @@ test.describe("GitHub portfolio states", () => {
   const livePayload = {
     publicReposCount: 1,
     totalStars: 7,
-    followersCount: 9,
-    followingCount: 4,
+    currentStreak: 1,
     company: "Verified Company",
     location: "Verified Location",
     isHireable: true,
@@ -217,10 +216,18 @@ test.describe("GitHub portfolio states", () => {
     const signals = page.locator("#signals");
     await expect(signals.getByRole("status", { name: "Loading GitHub repositories" })).toBeVisible();
     await expect(signals.getByText("verified-repository")).toBeVisible();
-    await expect(signals.getByText("GITHUB STARS")).toBeVisible();
+    await expect(signals.getByText("TOTAL STARS")).toBeVisible();
     await expect(signals.getByTestId("signal-grid").getByText("7", { exact: true })).toBeVisible();
     await expect(signals.getByText("14 contributions in 2026")).toBeVisible();
     await expect(signals.getByRole("button", { name: "2 contributions on September 14, 2026" })).toBeVisible();
+    await expect(signals.getByText("CURRENT STREAK")).toBeVisible();
+    await expect(signals.getByText("1 DAY", { exact: true })).toBeVisible();
+    await expect(signals.getByText("CONTRIBUTION YEARS")).toBeVisible();
+    await expect(signals.getByText("3 YEARS ACTIVE", { exact: true })).toBeVisible();
+    await expect(signals.getByText("FOLLOWERS", { exact: true })).toHaveCount(0);
+    await expect(signals.getByText("FOLLOWING", { exact: true })).toHaveCount(0);
+    await signals.getByRole("button", { name: "2 contributions on September 14, 2026" }).hover();
+    await expect(signals.getByText("2 contributions on September 14, 2026", { exact: true })).toBeVisible();
     await expect(signals.getByText("Verified Location")).toBeVisible();
     await signals.getByRole("button", { name: "2024" }).click();
     await expect(signals.getByText("3 contributions in 2024")).toBeVisible();
@@ -266,7 +273,7 @@ test.describe("GitHub portfolio states", () => {
     await page.keyboard.press("Space");
     const signals = page.locator("#signals");
     await expect(signals.getByText("LIVE GITHUB SIGNAL TEMPORARILY UNAVAILABLE")).toBeVisible({ timeout: 10000 });
-    await expect(signals.getByLabel("github stars unavailable")).toHaveText("—");
+    await expect(signals.getByLabel("total stars unavailable")).toHaveText("—");
     await expect(page.getByRole("heading", { name: /contact/i })).toBeAttached();
   });
 

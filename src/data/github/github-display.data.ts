@@ -3,7 +3,6 @@ export const github = {
   url: "https://github.com/kumarnallana",
   totalStars: 0, // Hydrated by query
   publicRepos: 0, // Hydrated by query
-  followers: 0, // Hydrated by query
 };
 
 import type { Repo } from "@/types/github/github.types";
