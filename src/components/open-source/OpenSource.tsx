@@ -60,8 +60,9 @@ function SignalMetric({
       <div className="tech-label mt-2 flex min-h-5 items-center gap-1.5 leading-relaxed">
         <Icon
           aria-hidden="true"
-          className={`h-4 w-4 shrink-0 ${accent === "amber" ? "text-amber" : "text-cyan"}`}
-          strokeWidth={1.9}
+          className="h-[1.125rem] w-[1.125rem] shrink-0"
+          color={accent === "amber" ? "var(--amber)" : "var(--cyan)"}
+          strokeWidth={2}
         />
         <span>{label}</span>
       </div>
@@ -92,8 +93,9 @@ function AppreciationMetric() {
       <div className="tech-label mt-2 flex min-h-5 items-center gap-1.5 leading-relaxed">
         <Heart
           aria-hidden="true"
-          className={`h-4 w-4 shrink-0 text-amber ${data?.appreciated ? "fill-current" : ""}`}
-          strokeWidth={1.9}
+          className={`h-[1.125rem] w-[1.125rem] shrink-0 ${data?.appreciated ? "fill-current" : ""}`}
+          color="var(--amber)"
+          strokeWidth={2}
         />
         <span>APPRECIATION</span>
       </div>

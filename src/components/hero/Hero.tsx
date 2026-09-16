@@ -30,10 +30,10 @@ export default function Hero() {
             DRAWING NO. NSK-2026 · MASTER SCHEMATIC
           </div>
 
-          <h1 className="hero-anim font-display text-[14vw] font-bold leading-[0.92] tracking-tight sm:text-[10vw] lg:text-[6.25vw] xl:text-[6.2rem]">
+          <h1 className="hero-anim font-display text-[14vw] font-bold leading-[0.92] tracking-tight sm:text-[10vw] lg:text-[clamp(3.75rem,5.2vw,5.5rem)]">
             NALLANA
             <br />
-            <span className="text-line">SASI KUMAR</span>
+            <span className="whitespace-nowrap text-line">SASI KUMAR</span>
           </h1>
 
           <div className="hero-anim mt-5 max-w-xl">

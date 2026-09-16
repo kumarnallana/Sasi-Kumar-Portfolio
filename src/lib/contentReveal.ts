@@ -4,8 +4,11 @@ import { gsap } from "gsap";
 export function revealContent(targets: gsap.TweenTarget, vars: gsap.TweenVars) {
   const media = gsap.matchMedia();
   media.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
-    // Keep the rendered content readable while waiting for a scroll trigger.
-    // A missed/stale trigger must never leave an eagerly applied opacity: 0.
-    gsap.from(targets, { ...vars, immediateRender: false });
+    const motionVars = { ...vars };
+    delete motionVars.opacity;
+    if (motionVars.scrollTrigger && typeof motionVars.scrollTrigger === "object") {
+      motionVars.scrollTrigger = { ...motionVars.scrollTrigger, once: true };
+    }
+    gsap.from(targets, { ...motionVars, immediateRender: false });
   });
 }

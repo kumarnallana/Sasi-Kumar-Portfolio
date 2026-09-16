@@ -21,6 +21,6 @@ export const identity: ProfileIdentity = {
   links: {
     github: "https://github.com/kumarnallana",
     linkedin: "https://linkedin.com/in/sasi-kumar-nallana",
-    resume: "/resume/Nallana_SasiKumar_FullStack_Resume.pdf",
+    resume: "/resume/Nallana_SasiKumar_FullStack_Resume_2026.pdf",
   },
 };

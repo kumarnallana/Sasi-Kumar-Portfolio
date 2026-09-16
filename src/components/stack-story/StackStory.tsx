@@ -23,7 +23,6 @@ export default function StackStory({
   onClose: () => void;
 }) {
   const [active, setActive] = useState(0);
-  const [mounted, setMounted] = useState(false);
   const dialog = useRef<HTMLDivElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
   const scroller = useRef<HTMLDivElement>(null);
@@ -114,7 +113,6 @@ export default function StackStory({
       document.activeElement instanceof HTMLElement
         ? document.activeElement
         : null;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const resetFrame = window.requestAnimationFrame(() => {
       setActive(0);
       activeRef.current = 0;
@@ -122,8 +120,6 @@ export default function StackStory({
       closeButton.current?.focus({ preventScroll: true });
     });
 
-    // hold the fade so the hero globe's power-down is visible before we cover it
-    const t = setTimeout(() => setMounted(true), reduce ? 0 : 260);
     const prevOverflow = document.body.style.overflow;
     const lockedPageY = window.scrollY;
     const prevPosition = document.body.style.position;
@@ -174,7 +170,6 @@ export default function StackStory({
 
     return () => {
       window.cancelAnimationFrame(resetFrame);
-      clearTimeout(t);
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
       document.body.style.position = prevPosition;
@@ -183,7 +178,6 @@ export default function StackStory({
       window.scrollTo({ top: lockedPageY, behavior: "instant" });
       pageScroller?.start();
       window.requestAnimationFrame(() => window.dispatchEvent(new Event("portfolio:layout-stable")));
-      setMounted(false);
       window.requestAnimationFrame(() => previouslyFocused?.focus());
     };
   }, [open, onClose, scrollToChapter]);
@@ -204,9 +198,7 @@ export default function StackStory({
   return (
     <div
       ref={dialog}
-      className={`fixed inset-0 z-[60] origin-center bg-ink-900 transition-all duration-500 ease-out ${
-        mounted ? "opacity-100 scale-100" : "opacity-0 scale-95"
-      }`}
+      className="fixed inset-0 z-[60] bg-ink-900"
       role="dialog"
       aria-modal="true"
       aria-label="The Stack — system layers"
@@ -353,7 +345,7 @@ export default function StackStory({
 
                 <h2
                   id={`stack-layer-title-${i}`}
-                  className={`mt-4 font-display text-[2.75rem] font-bold leading-[0.95] sm:text-[3.4rem] lg:text-[4.25rem] [@media(max-height:650px)]:text-5xl ${
+                  className={`mt-4 font-display text-[2.5rem] font-bold leading-[0.95] sm:text-[3.15rem] lg:text-[3.5rem] [@media(max-height:650px)]:text-5xl ${
                     amber ? "text-amber glow-amber" : "text-paper"
                   }`}
                 >
