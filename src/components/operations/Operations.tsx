@@ -50,7 +50,7 @@ export default function Operations() {
       className="relative mx-auto max-w-6xl px-6 py-16 md:px-10 md:py-24 md:max-lg:pr-16"
     >
       {/* operating philosophy - the myth */}
-      <div className="max-w-4xl">
+      <div className="max-w-5xl">
         <div className="tech-label mb-7 flex items-center gap-3 text-cyan">
           <span className="h-px w-8 bg-cyan" />
           OPERATING PHILOSOPHY
@@ -58,7 +58,7 @@ export default function Operations() {
         {manifesto.map((line, i) => (
           <p
             key={line}
-            className={`manifesto-line font-display text-2xl font-semibold leading-[1.2] md:text-3xl lg:text-[2rem] ${
+            className={`manifesto-line text-pretty font-display text-2xl font-semibold leading-[1.2] md:text-3xl lg:text-[2rem] ${
               i === manifesto.length - 1
                 ? "text-cyan glow-cyan"
                 : "text-paper/90"
