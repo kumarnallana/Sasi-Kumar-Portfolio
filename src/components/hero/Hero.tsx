@@ -12,8 +12,8 @@ export default function Hero() {
       value: "03",
     },
     {
-      label: "CORE RUNTIME",
-      value: "TS / PY",
+      label: "LANGUAGES",
+      value: "TS + PY",
     },
   ];
 

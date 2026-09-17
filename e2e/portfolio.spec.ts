@@ -331,10 +331,7 @@ test.describe("GitHub portfolio states", () => {
     await page.keyboard.press("Space");
 
     const signals = page.locator("#signals");
-    // The section placeholder is intentionally replaced by the live island as
-    // it enters the viewport, so do not retain an element handle across that
-    // replacement.
-    await signals.evaluate((element) => element.scrollIntoView());
+    await page.getByRole("button", { name: "SIGNALS", exact: true }).click();
     await expect(signals.getByText("PORTFOLIO VIEWS")).toBeVisible();
     await expect(signals.getByTestId("signal-grid").getByText("93", { exact: true })).toBeVisible();
     await expect(signals.getByText("UNIQUE VISITORS")).toHaveCount(0);
@@ -344,10 +341,15 @@ test.describe("GitHub portfolio states", () => {
     const appreciation = signals.getByRole("button", { name: "Appreciate this portfolio" });
     await expect(appreciation.getByText("0", { exact: true })).toBeVisible();
     await appreciation.click();
-    const undo = signals.getByRole("button", { name: "Undo appreciation for this portfolio" });
+    let undo = signals.getByRole("button", { name: "Undo appreciation for this portfolio" });
+    await expect(undo.getByText("1", { exact: true })).toBeVisible();
+    await page.reload();
+    await page.keyboard.press("Space");
+    await page.getByRole("button", { name: "SIGNALS", exact: true }).click();
+    undo = page.locator("#signals").getByRole("button", { name: "Undo appreciation for this portfolio" });
     await expect(undo.getByText("1", { exact: true })).toBeVisible();
     await undo.click();
-    await expect(appreciation.getByText("0", { exact: true })).toBeVisible();
+    await expect(page.locator("#signals").getByRole("button", { name: "Appreciate this portfolio" }).getByText("0", { exact: true })).toBeVisible();
 
     const spacing = await page.evaluate(() => {
       const systemsElement = document.querySelector("#systems")!;

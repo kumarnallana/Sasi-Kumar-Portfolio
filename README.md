@@ -44,12 +44,17 @@ The GitHub telemetry requires `GITHUB_TOKEN`. To show the optional lifetime prod
 
 Without the Vercel credentials, the portfolio keeps the analytics slot stable and reports the view metric as unavailable. Tokens are never sent to the browser.
 
-The global appreciation counter uses an Upstash Redis database connected to the Vercel project. The integration supplies these server-only variables:
+The global appreciation counter uses the Supabase/Postgres migration in
+`supabase/migrations/20260915090000_portfolio_appreciations.sql`. Apply that
+migration to the approved Supabase project, then configure these server-side
+deployment variables:
 
-- `UPSTASH_REDIS_REST_URL`
-- `UPSTASH_REDIS_REST_TOKEN`
+- `SUPABASE_URL` (or `NEXT_PUBLIC_SUPABASE_URL` when that project URL already exists)
+- `SUPABASE_SERVICE_ROLE_KEY`
 
-Legacy `KV_REST_API_URL` and `KV_REST_API_TOKEN` names are also accepted. Without storage credentials, the portfolio reports the appreciation metric as unavailable rather than displaying a seeded count.
+The service-role key stays on the server and is used only by the appreciation
+Route Handler. Without these credentials, the portfolio reports the metric as
+unavailable rather than displaying a seeded count.
 
 ## 💼 Featured Work
 
