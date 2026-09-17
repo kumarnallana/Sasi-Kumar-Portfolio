@@ -8,15 +8,17 @@ export default function HeroPublicReposMetric() {
   return (
     <div
       data-testid="hero-public-repos"
-      className="bg-ink-900/80 px-4 py-3 backdrop-blur"
+      className="bg-ink-900/80 px-3 py-2.5 backdrop-blur sm:px-3.5"
     >
       <div
         aria-live="polite"
-        className="min-h-8 font-display text-2xl font-semibold text-cyan glow-cyan"
+        className="min-h-6 font-display text-xl font-semibold leading-6 text-cyan glow-cyan"
       >
         {data ? data.publicReposCount.toLocaleString() : "—"}
       </div>
-      <div className="tech-label mt-1">PUBLIC REPOS</div>
+      <div className="tech-label mt-0.5 text-[0.58rem] leading-[1.25]">
+        PUBLIC REPOS
+      </div>
     </div>
   );
 }

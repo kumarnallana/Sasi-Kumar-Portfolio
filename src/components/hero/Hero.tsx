@@ -76,12 +76,14 @@ export default function Hero() {
             {proofStats.map((s) => (
               <div
                 key={s.label}
-                className="bg-ink-900/80 px-4 py-3 backdrop-blur"
+                className="bg-ink-900/80 px-3 py-2.5 backdrop-blur sm:px-3.5"
               >
-                <div className="min-h-8 font-display text-2xl font-semibold text-cyan glow-cyan">
+                <div className="min-h-6 font-display text-xl font-semibold leading-6 text-cyan glow-cyan">
                   {s.value}
                 </div>
-                <div className="tech-label mt-1">{s.label}</div>
+                <div className="tech-label mt-0.5 text-[0.58rem] leading-[1.25]">
+                  {s.label}
+                </div>
               </div>
             ))}
             <HeroPublicReposMetric />
