@@ -5,6 +5,7 @@ import DepthNav from "@/components/navigation/DepthNav";
 import ScrollSnap from "@/components/navigation/ScrollSnap";
 import Hero from "@/components/hero/Hero";
 import DeferredSections from "@/components/shell/DeferredSections";
+import QueryProvider from "@/providers/query-provider";
 
 export default function Home() {
   return (
@@ -18,10 +19,12 @@ export default function Home() {
       <DepthNav />
       <ScrollSnap />
 
-      <main className="relative">
-        <Hero />
-        <DeferredSections />
-      </main>
+      <QueryProvider>
+        <main className="relative">
+          <Hero />
+          <DeferredSections />
+        </main>
+      </QueryProvider>
     </SmoothScroll>
   );
 }

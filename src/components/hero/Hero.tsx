@@ -3,6 +3,7 @@ import { identity } from "@/data/profile/profile.data";
 import Typewriter from "@/components/shared/Typewriter";
 import CapabilityMatrix from "@/components/about/CapabilityMatrix";
 import HeroDesktopSystem from "@/components/hero/HeroDesktopSystem";
+import HeroPublicReposMetric from "@/components/hero/HeroPublicReposMetric";
 
 export default function Hero() {
   const proofStats = [
@@ -10,10 +11,6 @@ export default function Hero() {
     {
       label: "DEPLOYED SYSTEMS",
       value: "03",
-    },
-    {
-      label: "LANGUAGES",
-      value: "TS + PY",
     },
   ];
 
@@ -87,6 +84,7 @@ export default function Hero() {
                 <div className="tech-label mt-1">{s.label}</div>
               </div>
             ))}
+            <HeroPublicReposMetric />
           </div>
         </div>
 

@@ -58,7 +58,7 @@ export default function Operations() {
         {manifesto.map((line, i) => (
           <p
             key={line}
-            className={`manifesto-line text-pretty font-display text-2xl font-semibold leading-[1.2] md:text-4xl ${
+            className={`manifesto-line text-pretty font-display text-2xl font-semibold leading-[1.2] md:text-3xl lg:text-[2rem] ${
               i === manifesto.length - 1
                 ? "text-cyan glow-cyan"
                 : "text-paper/90"
