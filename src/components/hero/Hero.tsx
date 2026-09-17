@@ -34,16 +34,13 @@ export default function Hero() {
           </h1>
 
           <div className="hero-anim mt-5 max-w-xl">
-            <p className="font-display text-xl font-medium text-paper md:text-2xl">
-              {identity.role}
-            </p>
-            <p className="mt-1 min-h-5 font-mono text-sm text-cyan glow-cyan md:text-base">
+            <p className="min-h-7 font-mono text-base font-medium text-cyan glow-cyan md:min-h-8 md:text-xl">
               <Typewriter
-                words={identity.roleFramings.slice(1)}
+                words={identity.roleFramings}
                 className="text-cyan"
               />
             </p>
-            <p className="mt-2 text-sm leading-relaxed text-paper-dim md:text-base">
+            <p className="mt-3 text-sm leading-relaxed text-paper-dim md:text-base">
               {identity.tagline}
             </p>
           </div>

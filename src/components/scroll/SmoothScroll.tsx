@@ -25,11 +25,10 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       if (cancelled) return;
       gsap.registerPlugin(ScrollTrigger);
       const lenis = new Lenis({
-        duration: 1.15,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        autoRaf: false,
+        lerp: 0.1,
         smoothWheel: true,
       });
-
       lenis.on("scroll", ScrollTrigger.update);
       setLenis(lenis);
 

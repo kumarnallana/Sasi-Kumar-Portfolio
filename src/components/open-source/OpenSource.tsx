@@ -47,7 +47,7 @@ function SignalMetric({
   const displayUnavailable = unavailable || (!pending && !hasValue);
 
   return (
-    <div className="os-card min-h-28 bg-ink-900 px-4 py-4 sm:min-h-32 sm:px-5 sm:py-5">
+    <div className="os-card min-h-28 min-w-0 bg-ink-900 px-4 py-4 sm:min-h-32 sm:px-5 sm:py-5">
       <div className={`font-display text-2xl font-semibold sm:text-3xl ${accent === "amber" ? "text-amber glow-amber" : "text-cyan glow-cyan"}`}>
         {pending ? (
           <span className="animate-pulse" aria-label={`Loading ${label.toLowerCase()}`}>—</span>
@@ -57,14 +57,14 @@ function SignalMetric({
           <AnimatedMetric value={`${value!.toLocaleString()}${suffix}`} />
         )}
       </div>
-      <div className="tech-label mt-2 flex min-h-5 items-center gap-1.5 leading-relaxed">
+      <div className="tech-label mt-2 grid min-h-9 grid-cols-[1rem_minmax(0,1fr)] items-start gap-x-1.5 text-[0.6rem] leading-relaxed tracking-[0.18em]">
         <Icon
           aria-hidden="true"
-          className="h-[1.125rem] w-[1.125rem] shrink-0"
+          className="mt-0.5 h-4 w-4"
           color={accent === "amber" ? "var(--amber)" : "var(--cyan)"}
           strokeWidth={2}
         />
-        <span>{label}</span>
+        <span className="min-w-0">{label}</span>
       </div>
       {displayUnavailable && <div className="mt-1 font-mono text-[0.58rem] uppercase tracking-wider text-paper-dim">{unavailableLabel}</div>}
     </div>
@@ -78,7 +78,7 @@ function AppreciationMetric() {
   return (
     <button
       type="button"
-      className="os-card min-h-28 bg-ink-900 px-4 py-4 text-left transition-colors hover:bg-ink-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-cyan disabled:cursor-not-allowed disabled:hover:bg-ink-900 sm:min-h-32 sm:px-5 sm:py-5"
+      className="os-card min-h-28 min-w-0 bg-ink-900 px-4 py-4 text-left transition-colors hover:bg-ink-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-cyan disabled:cursor-not-allowed disabled:hover:bg-ink-900 sm:min-h-32 sm:px-5 sm:py-5"
       disabled={isPending || unavailable || isUpdating}
       aria-pressed={data?.appreciated ?? false}
       aria-label={data?.appreciated ? "Undo appreciation for this portfolio" : "Appreciate this portfolio"}
@@ -90,14 +90,14 @@ function AppreciationMetric() {
       <div className="font-display text-2xl font-semibold text-amber glow-amber sm:text-3xl">
         {isPending || unavailable ? "—" : <AnimatedMetric value={data!.count.toLocaleString()} />}
       </div>
-      <div className="tech-label mt-2 flex min-h-5 items-center gap-1.5 leading-relaxed">
+      <div className="tech-label mt-2 grid min-h-9 grid-cols-[1rem_minmax(0,1fr)] items-start gap-x-1.5 text-[0.6rem] leading-relaxed tracking-[0.18em]">
         <Heart
           aria-hidden="true"
-          className={`h-[1.125rem] w-[1.125rem] shrink-0 ${data?.appreciated ? "fill-current" : ""}`}
+          className={`mt-0.5 h-4 w-4 ${data?.appreciated ? "fill-current" : ""}`}
           color="var(--amber)"
           strokeWidth={2}
         />
-        <span>APPRECIATION</span>
+        <span className="min-w-0">APPRECIATION</span>
       </div>
       <div className="mt-1 font-mono text-[0.58rem] uppercase tracking-wider text-paper-dim">
         {isPending

@@ -1,11 +1,11 @@
-import { randomUUID } from "node:crypto";
-import { cookies } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
 import {
   getPortfolioAppreciation,
   isAppreciationStorageConfigured,
   setPortfolioAppreciation,
 } from "@/integrations/appreciation/portfolio-appreciation.server";
+import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
+import { randomUUID } from "node:crypto";
 
 const VISITOR_COOKIE = "nsk_appreciation_visitor";
 const ONE_YEAR = 60 * 60 * 24 * 365;
@@ -29,7 +29,10 @@ function withVisitorCookie(response: NextResponse, visitorId: string) {
 
 export async function GET() {
   if (!isAppreciationStorageConfigured()) {
-    return NextResponse.json({ available: false }, { headers: { "Cache-Control": "no-store" } });
+    return NextResponse.json(
+      { available: false },
+      { headers: { "Cache-Control": "no-store" } },
+    );
   }
 
   const visitorId = await getVisitor();

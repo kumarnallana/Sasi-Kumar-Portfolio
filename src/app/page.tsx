@@ -2,7 +2,6 @@ import SmoothScroll from "@/components/scroll/SmoothScroll";
 import BootSequence from "@/components/shell/BootSequence";
 import HudFrame from "@/components/shell/HudFrame";
 import DepthNav from "@/components/navigation/DepthNav";
-import ScrollSnap from "@/components/navigation/ScrollSnap";
 import Hero from "@/components/hero/Hero";
 import DeferredSections from "@/components/shell/DeferredSections";
 import QueryProvider from "@/providers/query-provider";
@@ -17,7 +16,6 @@ export default function Home() {
       <BootSequence />
       <HudFrame />
       <DepthNav />
-      <ScrollSnap />
 
       <QueryProvider>
         <main className="relative">

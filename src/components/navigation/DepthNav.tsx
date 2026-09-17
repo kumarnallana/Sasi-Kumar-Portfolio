@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { sound } from "@/lib/sound";
 import { scrollToSection } from "@/lib/lenis";
 import { NAV_SECTIONS as SECTIONS } from "@/lib/sections";
@@ -22,11 +22,28 @@ const MOBILE_LABELS: Record<SectionId, string> = {
 
 export default function DepthNav() {
   const isDesktop = useIsDesktop();
-  const [progress, setProgress] = useState(0);
+  const [active, setActive] = useState(-1);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [pts, setPts] = useState<Pt[]>(() =>
     SECTIONS.map((s, i) => ({ ...s, frac: (i + 1) / (SECTIONS.length + 1) })),
   );
+
+  const progressFillRef = useRef<HTMLDivElement>(null);
+  const markerRef = useRef<HTMLDivElement>(null);
+  const percentRef = useRef<HTMLSpanElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const containerHeightRef = useRef(0);
+
+  // Sync pts to ref to use in rAF loop without causing dependency re-binds
+  const ptsRef = useRef(pts);
+  useEffect(() => {
+    ptsRef.current = pts;
+  }, [pts]);
+
+  const activeRef = useRef(active);
+  useEffect(() => {
+    activeRef.current = active;
+  }, [active]);
 
   useEffect(() => {
     if (!isDesktop) return;
@@ -41,26 +58,66 @@ export default function DepthNav() {
           return { ...s, frac: Math.max(0, Math.min(1, top / denom)) };
         }),
       );
+      if (containerRef.current) {
+        containerHeightRef.current = containerRef.current.clientHeight;
+      }
     };
-    const onScroll = () => {
+
+    let rafId = 0;
+    const update = () => {
+      rafId = 0;
       const max = document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(max > 0 ? Math.max(0, Math.min(1, window.scrollY / max)) : 0);
+      const progress = max > 0 ? Math.max(0, Math.min(1, window.scrollY / max)) : 0;
+
+      // Direct DOM updates via transforms
+      if (progressFillRef.current) {
+        progressFillRef.current.style.transform = `scaleY(${progress})`;
+      }
+      if (markerRef.current) {
+        const yPos = progress * containerHeightRef.current;
+        markerRef.current.style.transform = `translateY(${yPos - 4}px)`;
+      }
+      if (percentRef.current) {
+        percentRef.current.textContent = String(Math.round(progress * 100)).padStart(3, "0");
+      }
+
+      // Calculate active section
+      const currentPts = ptsRef.current;
+      let nextActive = -1;
+      for (let i = 0; i < currentPts.length; i++) {
+        if (progress + 0.02 >= currentPts[i].frac) nextActive = i;
+      }
+
+      if (nextActive !== activeRef.current) {
+        setActive(nextActive);
+      }
+    };
+
+    const onScroll = () => {
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(update);
     };
 
     measure();
     onScroll();
+
     // re-measure after late layout shifts (fonts, the 3D canvas, images)
     const t1 = setTimeout(measure, 400);
     const t2 = setTimeout(measure, 1400);
-    const layoutObserver = new ResizeObserver(measure);
+    const layoutObserver = new ResizeObserver(() => {
+      measure();
+    });
     layoutObserver.observe(document.body);
-    window.addEventListener("resize", measure);
+    
+    window.addEventListener("resize", measure, { passive: true });
     window.addEventListener("portfolio:layout-stable", measure);
     window.addEventListener("scroll", onScroll, { passive: true });
+
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
       layoutObserver.disconnect();
+      if (rafId) cancelAnimationFrame(rafId);
       window.removeEventListener("resize", measure);
       window.removeEventListener("portfolio:layout-stable", measure);
       window.removeEventListener("scroll", onScroll);
@@ -80,7 +137,9 @@ export default function DepthNav() {
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
         if (!visible) return;
         const index = SECTIONS.findIndex((section) => section.id === visible.target.id);
-        if (index >= 0) setProgress((index + 1) / (SECTIONS.length + 1));
+        if (index !== activeRef.current) {
+          setActive(index);
+        }
       },
       { rootMargin: "-30% 0px -55% 0px", threshold: [0, 0.01] },
     );
@@ -96,12 +155,6 @@ export default function DepthNav() {
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [mobileOpen]);
-
-  // active = the deepest station we've descended past (-1 = still at the hero)
-  let active = -1;
-  for (let i = 0; i < pts.length; i++) {
-    if (progress + 0.02 >= pts[i].frac) active = i;
-  }
 
   const go = (id: string) => {
     sound.play("blip");
@@ -124,11 +177,12 @@ export default function DepthNav() {
           DEPTH
         </button>
 
-        <div className="relative h-[58vh] max-h-[560px] w-px bg-line-faint">
+        <div ref={containerRef} className="relative h-[58vh] max-h-[560px] w-px bg-line-faint">
           {/* descent progress fill */}
           <div
-            className="absolute left-0 top-0 w-px bg-cyan"
-            style={{ height: `${progress * 100}%` }}
+            ref={progressFillRef}
+            className="absolute left-0 top-0 w-px bg-cyan h-full origin-top"
+            style={{ transform: "scaleY(0)" }}
           />
 
           {/* section stations */}
@@ -169,13 +223,14 @@ export default function DepthNav() {
 
           {/* you-are-here marker rides the axis */}
           <div
-            className="pointer-events-none absolute -left-[3.5px] z-10 h-2 w-2 rounded-full bg-cyan shadow-[0_0_10px_var(--cyan)]"
-            style={{ top: `calc(${progress * 100}% - 4px)` }}
+            ref={markerRef}
+            className="pointer-events-none absolute -left-[3.5px] z-10 top-0 h-2 w-2 rounded-full bg-cyan shadow-[0_0_10px_var(--cyan)]"
+            style={{ transform: "translateY(-4px)" }}
           />
         </div>
 
-        <span className="tech-label tabular-nums text-cyan">
-          {String(Math.round(progress * 100)).padStart(3, "0")}
+        <span ref={percentRef} className="tech-label tabular-nums text-cyan">
+          000
         </span>
       </div>
 
