@@ -14,10 +14,13 @@ import { revealContent } from "@/lib/contentReveal";
 
 gsap.registerPlugin(ScrollTrigger);
 
-
+const scannedProjects = new Set<string>();
 
 function ProjectBlock({ project, i }: { project: Project; i: number }) {
   const ref = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const beamRef = useRef<HTMLDivElement>(null);
+  const revealedRef = useRef<HTMLDivElement>(null);
   const reverse = i % 2 === 1;
   const [stackExpanded, setStackExpanded] = useState(false);
 
@@ -33,9 +36,62 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
         stagger: 0.08,
         ease: "power3.out",
       });
+
+      const media = gsap.matchMedia();
+      media.add({
+        motion: "(min-width: 1024px) and (prefers-reduced-motion: no-preference)"
+      }, () => {
+        const block = ref.current;
+        const stage = stageRef.current;
+        const beam = beamRef.current;
+        const revealed = revealedRef.current;
+        if (!block || !stage || !beam || !revealed) return;
+
+        const tl = gsap.timeline({ paused: true });
+
+        const q = gsap.utils.selector(stage);
+
+        // Beam and preview scan
+        tl.fromTo(beam, { y: 0, autoAlpha: 1 }, { y: () => Math.max(0, stage.offsetHeight - beam.offsetHeight), ease: "power1.inOut", duration: 0.9 }, 0);
+        tl.fromTo(revealed, { clipPath: "inset(0% 0% 100% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", ease: "power1.inOut", duration: 0.85 }, 0);
+        tl.to(beam, { autoAlpha: 0, duration: 0.2 }, 0.9);
+
+        // Assemble architecture progressively
+        const nodes = q<HTMLElement>("[data-arch-node]");
+        const bases = q<SVGPathElement>("[data-arch-base]");
+        
+        bases.forEach((base) => {
+           const length = base.getTotalLength();
+           gsap.set(base, { strokeDasharray: length, strokeDashoffset: length });
+        });
+
+        if (nodes.length && bases.length) {
+           tl.to(bases, { strokeDashoffset: 0, duration: 0.65, stagger: 0.025, ease: "power1.out" }, 0.15);
+           tl.fromTo(nodes, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.28, stagger: 0.025, ease: "power1.out" }, 0.25);
+        }
+
+        // Notify ProjectArchitecture to start repeating tracers
+        tl.call(() => {
+           stage.dispatchEvent(new CustomEvent('arch-assembled'));
+        }, undefined, 0.9);
+
+        ScrollTrigger.create({
+          trigger: stage,
+          start: "top 72%",
+          once: true,
+          onEnter: () => {
+            if (scannedProjects.has(project.name)) {
+              tl.progress(1);
+            } else {
+              scannedProjects.add(project.name);
+              tl.play();
+            }
+          }
+        });
+      });
     }, el);
     return () => ctx.revert();
-  }, []);
+  }, [project.name]);
 
   return (
     <div
@@ -122,8 +178,11 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
       </div>
 
       {/* ── VISUAL RAIL (PREVIEW + ARCHITECTURE) ── */}
-      <div className={`proj-reveal flex flex-col gap-12 ${reverse ? "lg:order-1" : ""}`}>
+      <div ref={stageRef} className={`flex flex-col gap-12 relative ${reverse ? "lg:order-1" : ""}`}>
         
+        {/* The beam */}
+        <div ref={beamRef} className="absolute z-20 left-0 right-0 h-px pointer-events-none hidden lg:block" style={{ background: "rgba(73, 214, 255, 0.95)", boxShadow: "0 0 8px rgba(73, 214, 255, 0.7), 0 0 28px rgba(73, 214, 255, 0.22)", top: 0, willChange: "transform", opacity: 0 }} />
+
         {/* SYS.PREVIEW */}
         <div>
           <div className="tech-label mb-3 flex items-center justify-between text-cyan">
@@ -133,17 +192,23 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
               ONLINE
             </span>
           </div>
-          <ProjectVisual
-            name={project.name}
-            image={project.image}
-            liveUrl={project.links?.live}
-          />
+          
+          <div className="relative">
+            <div ref={revealedRef} className="absolute inset-0 z-10 hidden lg:block" style={{ clipPath: "inset(0 0 100% 0)", willChange: "clip-path" }}>
+              <ProjectVisual name={project.name} image={project.image} liveUrl={project.links?.live} />
+            </div>
+            {/* The underlying dimmed layer for desktop, and normal layer for mobile */}
+            <div className="relative lg:opacity-30 lg:grayscale lg:blur-sm transition-all">
+              <ProjectVisual name={project.name} image={project.image} liveUrl={project.links?.live} />
+            </div>
+          </div>
         </div>
 
         {/* SYS.ARCHITECTURE (Inline) */}
         <ProjectArchitecture 
           architectureVariant={project.architectureVariant}
           architectureFlow={project.architectureFlow}
+          scrubMode={true}
         />
       </div>
     </div>

@@ -12,6 +12,7 @@ interface ArchitectureStage {
 interface ProjectArchitectureProps {
   architectureVariant?: "linear" | "branch" | "split-converge";
   architectureFlow?: ArchitectureStage[];
+  scrubMode?: boolean;
 }
 
 // The original connector stays untouched. Only its exposed span carries a packet.
@@ -107,9 +108,6 @@ function ArchEdge({
     <g data-arch-edge data-source={source} data-target={target} data-phase={phase}>
       <path
         d={d}
-        pathLength="100"
-        strokeDasharray="100"
-        strokeDashoffset="0"
         data-arch-base
         data-assembly-delay={delay}
         data-assembly-duration={duration}
@@ -133,6 +131,7 @@ function ArchEdge({
 export default function ProjectArchitecture({
   architectureVariant,
   architectureFlow,
+  scrubMode,
 }: ProjectArchitectureProps) {
   const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -153,7 +152,10 @@ export default function ProjectArchitecture({
       const tracers = [...root.querySelectorAll<SVGPathElement>("[data-arch-tracer]")];
       if (context.conditions?.reduce) {
         gsap.set(nodes, { opacity: 1 });
-        gsap.set(bases, { strokeDashoffset: 0 });
+        bases.forEach(base => {
+           const len = base.getTotalLength();
+           gsap.set(base, { strokeDasharray: len, strokeDashoffset: 0 });
+        });
         gsap.set(tracers, { opacity: 0 });
         assembledRef.current = true;
         root.dataset.assembled = "true";
@@ -175,31 +177,7 @@ export default function ProjectArchitecture({
         edge.points = traceSpan(edge.base, edge.source, edge.target);
         paintTracer(edge.tracer, edge.points, edge.position.value);
       });
-      const timeline = gsap.timeline({ paused: true });
-      if (!assembledRef.current) {
-        gsap.set(nodes, { opacity: 0 });
-        gsap.set(bases, { strokeDashoffset: 100 });
-        nodes.forEach(node => timeline.to(node, {
-          opacity: 1, duration: 0.25, ease: "power1.out",
-        }, Number(node.dataset.assemblyDelay) / 1000));
-        bases.forEach(base => timeline.to(base, {
-          strokeDashoffset: 0,
-          duration: Number(base.dataset.assemblyDuration) / 1000,
-          ease: "none",
-        }, Number(base.dataset.assemblyDelay) / 1000));
-        timeline.call(() => {
-          assembledRef.current = true;
-          root.dataset.assembled = "true";
-          measure();
-        });
-      } else {
-        gsap.set(nodes, { opacity: 1 });
-        gsap.set(bases, { strokeDashoffset: 0 });
-      }
-
-      // One owner: the entrance ends before this repeating transaction begins.
-      // Parallel edges share one tween, so arrivals wait for the whole phase.
-      const transaction = gsap.timeline({ repeat: -1 });
+      const transaction = gsap.timeline({ repeat: -1, paused: true });
       for (const phase of [0, 1]) {
         const active = edges.filter(edge => edge.phase === phase);
         const destinations = [...new Set(active.map(edge => edge.target))];
@@ -227,29 +205,84 @@ export default function ProjectArchitecture({
           });
       }
       transaction.set(root, { attr: { "data-phase": "idle" } }).to({}, { duration: 0.9 });
-      timeline.add(transaction);
 
+      const startTracers = () => {
+        assembledRef.current = true;
+        root.dataset.assembled = "true";
+        measure();
+        transaction.play();
+      };
+
+      const isScrubMode = root.hasAttribute("data-scrub-mode") && window.innerWidth >= 1024;
       let isVisible = false;
       const sync = () => {
         const playing = isVisible && !document.hidden;
         root.dataset.playback = playing ? "playing" : "paused";
-        timeline.paused(!playing);
+        if (assembledRef.current) transaction.paused(!playing);
       };
-      const observer = new IntersectionObserver(([entry]) => {
-        isVisible = entry.isIntersecting;
-        if (isVisible) measure();
-        sync();
-      }, { threshold: 0.3 });
-      const resize = new ResizeObserver(measure);
-      observer.observe(root);
-      resize.observe(root);
-      document.addEventListener("visibilitychange", sync);
-      return () => {
-        observer.disconnect();
-        resize.disconnect();
-        document.removeEventListener("visibilitychange", sync);
-        timeline.kill();
+
+      const onExternalAssembly = () => {
+        if (!assembledRef.current) startTracers();
       };
+      root.addEventListener("arch-assembled", onExternalAssembly);
+
+      if (!isScrubMode) {
+        const timeline = gsap.timeline({ paused: true });
+        if (!assembledRef.current) {
+          gsap.set(nodes, { opacity: 0 });
+          bases.forEach(base => {
+             const len = base.getTotalLength();
+             gsap.set(base, { strokeDasharray: len, strokeDashoffset: len });
+             timeline.to(base, { strokeDashoffset: 0, duration: Number(base.dataset.assemblyDuration) / 1000, ease: "none" }, Number(base.dataset.assemblyDelay) / 1000);
+          });
+          nodes.forEach(node => timeline.to(node, {
+            opacity: 1, duration: 0.25, ease: "power1.out",
+          }, Number(node.dataset.assemblyDelay) / 1000));
+          timeline.call(startTracers);
+        } else {
+          gsap.set(nodes, { opacity: 1 });
+          bases.forEach(base => {
+             const len = base.getTotalLength();
+             gsap.set(base, { strokeDasharray: len, strokeDashoffset: 0 });
+          });
+        }
+
+        const observer = new IntersectionObserver(([entry]) => {
+          isVisible = entry.isIntersecting;
+          if (isVisible) measure();
+          if (isVisible && !assembledRef.current) timeline.play();
+          sync();
+        }, { threshold: 0.3 });
+        const resize = new ResizeObserver(measure);
+        observer.observe(root);
+        resize.observe(root);
+        document.addEventListener("visibilitychange", sync);
+        return () => {
+          observer.disconnect();
+          resize.disconnect();
+          document.removeEventListener("visibilitychange", sync);
+          root.removeEventListener("arch-assembled", onExternalAssembly);
+          timeline.kill();
+          transaction.kill();
+        };
+      } else {
+        const observer = new IntersectionObserver(([entry]) => {
+          isVisible = entry.isIntersecting;
+          if (isVisible) measure();
+          sync();
+        }, { threshold: 0.1 });
+        const resize = new ResizeObserver(measure);
+        observer.observe(root);
+        resize.observe(root);
+        document.addEventListener("visibilitychange", sync);
+        return () => {
+          observer.disconnect();
+          resize.disconnect();
+          document.removeEventListener("visibilitychange", sync);
+          root.removeEventListener("arch-assembled", onExternalAssembly);
+          transaction.kill();
+        };
+      }
     }, root);
     return () => media.revert();
   }, [isMobile, architectureVariant, architectureFlow]);
@@ -326,7 +359,7 @@ export default function ProjectArchitecture({
   );
 
   return (
-    <div className="relative hidden w-full md:block" ref={containerRef}>
+    <div className="relative hidden w-full md:block" ref={containerRef} data-scrub-mode={scrubMode ? "true" : undefined}>
       <div className="tech-label mb-6 flex items-center justify-between text-cyan border-t border-line-faint/50 pt-8">
         <span>SYS.ARCHITECTURE</span>
       </div>

@@ -1,13 +1,11 @@
-import type Lenis from "lenis";
+import Lenis from "lenis";
 
 // Lenis is instantiated inside <SmoothScroll/>; navigation can reuse that
 // single desktop scroll owner without adding behavior to normal page scrolling.
 let instance: Lenis | null = null;
-let navigationRequest = 0;
 
 export function setLenis(next: Lenis | null) {
   instance = next;
-  navigationRequest += 1;
 }
 
 export function getLenis() {
@@ -15,89 +13,47 @@ export function getLenis() {
 }
 
 function normalizeSectionId(id: string) {
-  if (id === "architect" || id === "#architect") return "profile";
+  if (id === "architect" || id === "#architect") {
+    return "profile";
+  }
   return id.replace(/^#/, "");
 }
 
-function prefersReducedMotion() {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
-function moveToTarget(target: HTMLElement | number, reduce: boolean) {
-  if (document.body.style.overflow === "hidden" || instance?.isStopped) return;
-
-  navigationRequest += 1;
-
-  if (instance && !reduce) {
-    // Lenis handles programmatic interruptions natively when lock is false.
-    // No need for a custom cancellation state machine or force-scrolling on interrupt.
-    instance.scrollTo(target, {
-      offset: 0,
-      duration: 1.2,
-      lock: false,
-    });
+export function scrollToSection(rawId: string) {
+  if (document.body.style.overflow === "hidden") {
     return;
   }
-
-  if (typeof target === "number") {
-    window.scrollTo({ top: target, behavior: "instant" });
-  } else {
-    target.scrollIntoView({ behavior: "instant", block: "start" });
-  }
-}
-
-function waitForMountedSection(id: string, reduce: boolean) {
-  const request = ++navigationRequest;
-  let observer: MutationObserver | null = null;
-  let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-  const cleanup = () => {
-    observer?.disconnect();
-    if (timeoutId) clearTimeout(timeoutId);
-  };
-
-  const tryFinish = () => {
-    if (request !== navigationRequest) {
-      cleanup();
-      return true;
-    }
-
-    const section = document.getElementById(id);
-    if (!section || section.dataset.deferredPlaceholder === "true") return false;
-
-    cleanup();
-    moveToTarget(section, reduce);
-    return true;
-  };
-
-  if (tryFinish()) return;
-
-  observer = new MutationObserver(tryFinish);
-  observer.observe(document.body, { childList: true, subtree: true });
-  timeoutId = setTimeout(cleanup, 2000);
-}
-
-export function scrollToSection(rawId: string) {
-  if (document.body.style.overflow === "hidden") return;
 
   const id = normalizeSectionId(rawId);
-  const reduce = prefersReducedMotion();
+  const target = id === "top" ? 0 : document.getElementById(id);
 
-  if (id === "top") {
-    moveToTarget(0, reduce);
+  if (target === null) {
     return;
   }
 
-  const section = document.getElementById(id);
-  if (!section) return;
+  const lenis = instance;
 
-  if (section.dataset.deferredPlaceholder !== "true") {
-    moveToTarget(section, reduce);
+  if (!lenis || lenis.isStopped) {
+    if (typeof target === "number") {
+      window.scrollTo({
+        top: target,
+        behavior: "instant",
+      });
+    } else {
+      target.scrollIntoView({
+        behavior: "instant",
+        block: "start",
+      });
+    }
     return;
   }
 
-  window.dispatchEvent(
-    new CustomEvent("portfolio:section-request", { detail: id }),
-  );
-  waitForMountedSection(id, reduce);
+  lenis.scrollTo(target, {
+    offset: 0,
+    lock: false,
+    // This applies only to explicit navigation clicks.
+    // Normal wheel scrolling still uses the global lerp behavior.
+    duration: 0.9,
+    easing: (t: number) => 1 - Math.pow(1 - t, 4),
+  });
 }
