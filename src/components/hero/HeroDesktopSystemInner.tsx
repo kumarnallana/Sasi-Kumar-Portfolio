@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import HeroStackGlobe from "@/components/stack-story/three/HeroStackGlobe";
 import { stackStory } from "@/data/stack-story/stack-story.data";
+import { sound } from "@/lib/sound";
 
 const StackStory = dynamic(
   () => import("@/components/stack-story/StackStory"),
@@ -31,7 +32,11 @@ export default function HeroDesktopSystemInner() {
           {String(STACK_LEN).padStart(2, "0")} LAYERS · LIVE
         </div>
         <button
-          onClick={() => setStoryOpen(true)}
+          onClick={() => {
+            sound.play("stack-select");
+            setStoryOpen(true);
+          }}
+          onPointerEnter={(e) => e.pointerType === "mouse" && sound.play("hover")}
           className="pointer-events-auto absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap border border-cyan/40 bg-ink-900/80 px-3 py-1.5 backdrop-blur transition-all duration-300 hover:border-cyan hover:bg-cyan/10 hover:shadow-[0_0_12px_rgba(67,201,255,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900"
           aria-label="Explore the stack story"
         >
