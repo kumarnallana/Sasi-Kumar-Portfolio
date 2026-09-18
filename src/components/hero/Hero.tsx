@@ -22,12 +22,12 @@ export default function Hero() {
       <div className="mx-auto grid w-full max-w-7xl items-center gap-8 px-6 py-16 md:px-10 md:py-24 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-8 lg:py-16 xl:py-24">
         {/* ---- LEFT: text column ---- */}
         <div className="relative z-10">
-          <div className="hero-anim tech-label mb-6 flex items-center gap-3 text-cyan">
+          <div className="hero-anim telemetry-text mb-6 flex items-center gap-3 text-cyan">
             <span className="h-px w-10 bg-cyan" />
             DRAWING NO. NSK-2026 · MASTER SCHEMATIC
           </div>
 
-          <h1 className="hero-anim font-display text-[14vw] font-bold leading-[0.92] tracking-tight sm:text-[10vw] lg:text-[clamp(3.75rem,5.2vw,5.5rem)]">
+          <h1 className="hero-anim font-display text-[14vw] font-bold leading-[0.92] tracking-tight sm:text-[10vw] lg:text-[clamp(4.0rem,5.6vw,6.0rem)]">
             NALLANA
             <br />
             <span className="whitespace-nowrap text-line">SASI KUMAR</span>
@@ -96,7 +96,7 @@ export default function Hero() {
 
       {/* scroll cue */}
       <div className="hero-anim absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 md:flex [@media(max-height:700px)]:hidden">
-        <span className="tech-label">DESCEND THROUGH THE SYSTEM</span>
+        <span className="micro-label">DESCEND THROUGH THE SYSTEM</span>
         <span className="h-8 w-px animate-pulse bg-gradient-to-b from-cyan to-transparent" />
       </div>
     </section>

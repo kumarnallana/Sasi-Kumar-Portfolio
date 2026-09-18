@@ -187,7 +187,7 @@ export default function DepthNav() {
       <div className="pointer-events-none fixed right-6 top-1/2 z-50 hidden -translate-y-1/2 flex-col items-center gap-3 md:flex">
         <button
           onClick={() => go("operations")}
-          className="tech-label pointer-events-auto [writing-mode:vertical-rl] text-paper-dim transition-colors hover:text-cyan"
+          className="telemetry-text pointer-events-auto [writing-mode:vertical-rl] text-paper-dim transition-colors hover:text-cyan"
         >
           DEPTH
         </button>
@@ -210,7 +210,7 @@ export default function DepthNav() {
                 style={{ top: `${p.frac * 100}%` }}
               >
                 <span
-                  className={`tech-label pointer-events-none absolute right-full top-1/2 mr-3 -translate-y-1/2 whitespace-nowrap text-[0.6rem] transition-all duration-200 ${
+                  className={`telemetry-text pointer-events-none absolute right-full top-1/2 mr-3 -translate-y-1/2 whitespace-nowrap  transition-all duration-200 ${
                     isActive
                       ? "translate-x-0 text-cyan opacity-100"
                       : "-translate-x-1 text-paper-dim opacity-0 group-hover:translate-x-0 group-hover:opacity-70"
@@ -244,7 +244,7 @@ export default function DepthNav() {
           />
         </div>
 
-        <span ref={percentRef} className="tech-label tabular-nums text-cyan">
+        <span ref={percentRef} className="telemetry-text tabular-nums text-cyan">
           000
         </span>
       </div>
@@ -264,7 +264,7 @@ export default function DepthNav() {
               id="mobile-section-menu"
               className="mb-2 border border-line-faint bg-ink-900/95 p-2 shadow-[0_0_30px_rgba(0,0,0,0.55)] backdrop-blur"
             >
-              <div className="tech-label px-2 pb-2 pt-1 text-[0.55rem] text-paper-dim">
+              <div className="telemetry-text px-2 pb-2 pt-1  text-paper-dim">
                 JUMP TO SECTION
               </div>
               <div className="grid grid-cols-2 gap-1.5">
@@ -279,7 +279,7 @@ export default function DepthNav() {
                       : "border-line-faint text-paper hover:border-cyan/60"
                   }`}
                 >
-                  <span className="tech-label text-[0.55rem]">00</span>
+                  <span className="telemetry-text ">00</span>
                   <span className="font-display text-sm">Overview</span>
                 </button>
                 {pts.map((p, i) => {
@@ -297,7 +297,7 @@ export default function DepthNav() {
                           : "border-line-faint text-paper hover:border-cyan/60"
                       }`}
                     >
-                      <span className="tech-label text-[0.55rem]">
+                      <span className="telemetry-text ">
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       <span className="font-display text-sm">
@@ -324,7 +324,7 @@ export default function DepthNav() {
                 {currentMobileLabel}
               </span>
             </span>
-            <span className="tech-label shrink-0 text-[0.55rem] text-cyan">
+            <span className="telemetry-text shrink-0  text-cyan">
               {mobileOpen ? "CLOSE" : "MENU"}
             </span>
           </button>

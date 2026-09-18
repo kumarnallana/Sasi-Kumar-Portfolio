@@ -65,14 +65,14 @@ export default function HudFrame() {
       {/* top-left readout */}
       <div className="absolute left-9 top-7 flex items-center gap-3">
         <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan" />
-        <span className="tech-label text-cyan">{identity.callsign}</span>
-        <span className="tech-label">UPLINK ACTIVE</span>
+        <span className="telemetry-text text-cyan">{identity.callsign}</span>
+        <span className="telemetry-text">UPLINK ACTIVE</span>
       </div>
 
       {/* top-right: clock + signal */}
       <div className="absolute right-9 top-7 flex items-center gap-4">
         <span className="flex items-center gap-1.5">
-          <span className="tech-label">SIG</span>
+          <span className="telemetry-text">SIG</span>
           <span className="flex items-end gap-[2px]">
             {[1, 2, 3, 4, 5].map((b) => (
               <span
@@ -86,16 +86,16 @@ export default function HudFrame() {
             ))}
           </span>
         </span>
-        <span className="tech-label tabular-nums text-cyan">T {clock} IST</span>
+        <span className="telemetry-text tabular-nums text-cyan">T {clock} IST</span>
       </div>
 
       {/* bottom-left: location + telemetry */}
       <div className="absolute bottom-7 left-9 flex items-center gap-5">
-        <span className="tech-label">{identity.location.toUpperCase()}</span>
-        <span className="tech-label">
+        <span className="telemetry-text">{identity.location.toUpperCase()}</span>
+        <span className="telemetry-text">
           FPS <span className="text-cyan tabular-nums">{fps}</span>
         </span>
-        <span className="tech-label">
+        <span className="telemetry-text">
           SYS LOAD{" "}
           <span className="text-cyan tabular-nums">
             {String(load).padStart(2, "0")}%

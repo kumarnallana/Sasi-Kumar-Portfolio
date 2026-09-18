@@ -34,7 +34,7 @@ export default function SoundToggle() {
           />
         ))}
       </span>
-      <span className="tech-label text-[0.6rem]">
+      <span className="telemetry-text">
         {on ? "AUDIO ON" : "AUDIO OFF"}
       </span>
       <style jsx>{`

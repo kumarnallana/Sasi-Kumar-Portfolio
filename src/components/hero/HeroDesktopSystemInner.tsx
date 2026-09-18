@@ -26,8 +26,8 @@ export default function HeroDesktopSystemInner() {
       <div className="hero-globe group relative hidden h-[42vh] min-h-[320px] w-full md:block lg:h-[78vh]">
         <HeroStackGlobe activeRef={activeRef} onOpen={() => setStoryOpen(true)} />
         <div className="pointer-events-none absolute inset-0 grid-vignette" />
-        <div className="pointer-events-none absolute left-0 top-0 tech-label text-cyan/70">STACK GRAPH · ONLINE</div>
-        <div className="pointer-events-none absolute right-0 top-0 tech-label text-paper-dim">
+        <div className="pointer-events-none absolute left-0 top-0 telemetry-text text-cyan/70">STACK GRAPH · ONLINE</div>
+        <div className="pointer-events-none absolute right-0 top-0 telemetry-text text-paper-dim">
           {String(STACK_LEN).padStart(2, "0")} LAYERS · LIVE
         </div>
         <button
@@ -36,7 +36,7 @@ export default function HeroDesktopSystemInner() {
           aria-label="Explore the stack story"
         >
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan shadow-[0_0_8px_var(--cyan)]" />
-          <span className="tech-label text-[0.55rem] text-cyan">DOUBLE-TAP GLOBE OR CLICK TO EXPLORE STACK</span>
+          <span className="micro-label text-cyan">DOUBLE-TAP GLOBE OR CLICK TO EXPLORE STACK</span>
         </button>
       </div>
       {storyOpen && <StackStory open onClose={() => setStoryOpen(false)} />}

@@ -95,7 +95,7 @@ export default function About() {
     <section
       id="profile"
       ref={ref}
-      className="relative mx-auto max-w-6xl px-6 py-16 md:px-10 md:py-24"
+      className="relative mx-auto max-w-6xl px-4 sm:px-6 py-16 md:px-10 md:py-24"
     >
       {/* Anchor alias to ensure backward compatibility with lingering #architect URL hashes */}
       <span id="architect" className="sr-only pointer-events-none absolute -top-24" aria-hidden="true" />
@@ -108,7 +108,7 @@ export default function About() {
       <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
         
         {/* Portrait & Core Identity */}
-        <div className="portrait-container about-reveal relative mx-auto h-fit w-full max-w-[18rem] border border-line-faint bg-ink-800/40 p-1 sm:max-w-sm lg:max-w-none">
+        <div className="portrait-container about-reveal relative mx-auto h-fit w-full max-w-none sm:max-w-sm lg:max-w-none border border-line-faint bg-ink-800/40 p-1">
           
           <svg
             className="pointer-events-none absolute inset-0 h-full w-full z-10"
