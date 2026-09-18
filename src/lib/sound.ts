@@ -22,9 +22,19 @@ export type UiSoundEvent =
 class SoundEngine {
   private ctx: AudioContext | null = null;
   private master: GainNode | null = null;
-  private _enabled = false;
+  private _enabled = true;
   private ready = false;
   private listeners = new Set<(on: boolean) => void>();
+
+  constructor() {
+    if (typeof window !== "undefined") {
+      try {
+        if (localStorage.getItem("nsk-sound") === "off") {
+          this._enabled = false;
+        }
+      } catch {}
+    }
+  }
 
   get enabled() {
     return this._enabled;
@@ -43,9 +53,9 @@ class SoundEngine {
     this.master.connect(this.ctx.destination);
     this.ready = true;
 
-    try {
-      if (localStorage.getItem("nsk-sound") === "on") this.setEnabled(true);
-    } catch {}
+    if (this._enabled) {
+      this.master.gain.setTargetAtTime(0.65, this.ctx.currentTime, 0.05);
+    }
   }
 
   subscribe(fn: (on: boolean) => void): () => void {

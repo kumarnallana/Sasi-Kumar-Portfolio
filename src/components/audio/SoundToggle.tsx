@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { sound } from "@/lib/sound";
 
 export default function SoundToggle() {
-  const [on, setOn] = useState(false);
+  const [on, setOn] = useState(sound.enabled);
 
   useEffect(() => {
     const unsub = sound.subscribe(setOn);
@@ -13,6 +13,7 @@ export default function SoundToggle() {
 
   return (
     <button
+      suppressHydrationWarning
       onClick={() => sound.toggle()}
       onMouseEnter={() => sound.play("hover")}
       aria-label={on ? "Mute audio" : "Enable audio"}
