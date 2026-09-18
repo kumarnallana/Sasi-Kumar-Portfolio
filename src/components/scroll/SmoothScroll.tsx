@@ -6,8 +6,7 @@ import { setLenis } from "@/lib/lenis";
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const desktop = window.matchMedia("(min-width: 768px)").matches;
-    if (reduce || !desktop) return;
+    if (reduce) return;
 
     // Clean up legacy #architect anchor if present in URL bar
     if (typeof window !== "undefined" && window.location.hash === "#architect") {
