@@ -49,41 +49,31 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
 
         const tl = gsap.timeline({ paused: true });
 
-        const q = gsap.utils.selector(stage);
-
         // Beam and preview scan
         tl.fromTo(beam, { y: 0, autoAlpha: 1 }, { y: () => Math.max(0, stage.offsetHeight - beam.offsetHeight), ease: "power1.inOut", duration: 0.9 }, 0);
         tl.fromTo(revealed, { clipPath: "inset(0% 0% 100% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", ease: "power1.inOut", duration: 0.85 }, 0);
         tl.to(beam, { autoAlpha: 0, duration: 0.2 }, 0.9);
 
-        // Assemble architecture progressively
-        const nodes = q<HTMLElement>("[data-arch-node]");
-        const bases = q<SVGPathElement>("[data-arch-base]");
-        
-        bases.forEach((base) => {
-           const length = base.getTotalLength();
-           gsap.set(base, { strokeDasharray: length, strokeDashoffset: length });
-        });
-
-        if (nodes.length && bases.length) {
-           tl.to(bases, { strokeDashoffset: 0, duration: 0.65, stagger: 0.025, ease: "power1.out" }, 0.15);
-           tl.fromTo(nodes, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.28, stagger: 0.025, ease: "power1.out" }, 0.25);
-        }
-
-        // Notify ProjectArchitecture to start repeating tracers
+        // Outer scan completion
         tl.call(() => {
-           stage.dispatchEvent(new CustomEvent('arch-assembled'));
+           sound.play("project-online");
+           scannedProjects.add(project.name);
         }, undefined, 0.9);
+
+        const hasScannedRef = { current: false }; // Local ref to prevent Strict Mode double triggers
 
         ScrollTrigger.create({
           trigger: stage,
           start: "top 72%",
           once: true,
           onEnter: () => {
+            if (hasScannedRef.current) return;
+            hasScannedRef.current = true;
+            
             if (scannedProjects.has(project.name)) {
-              tl.progress(1);
+              tl.progress(1, true); // Skip animation and suppress GSAP audio callbacks
             } else {
-              scannedProjects.add(project.name);
+              sound.play("project-engage", { variant: i });
               tl.play();
             }
           }
@@ -91,7 +81,7 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
       });
     }, el);
     return () => ctx.revert();
-  }, [project.name]);
+  }, [project.name, i]);
 
   return (
     <div
@@ -156,7 +146,7 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
           <div className="proj-reveal mt-4">
             <button
               onClick={() => {
-                sound.play("blip");
+                sound.play("stack-select");
                 setStackExpanded(!stackExpanded);
               }}
               className="tech-label text-[0.6rem] text-cyan hover:text-cyan-bright transition-colors"
@@ -208,7 +198,6 @@ function ProjectBlock({ project, i }: { project: Project; i: number }) {
         <ProjectArchitecture 
           architectureVariant={project.architectureVariant}
           architectureFlow={project.architectureFlow}
-          scrubMode={true}
         />
       </div>
     </div>

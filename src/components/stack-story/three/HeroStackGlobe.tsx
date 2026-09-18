@@ -98,7 +98,7 @@ export default function HeroStackGlobe({
       const now = performance.now();
       if (now - lastTap.current < 320) {
         lastTap.current = 0;
-        sound.play("blip");
+        sound.play("stack-select");
         onOpen();
       } else {
         lastTap.current = now;
@@ -131,7 +131,7 @@ export default function HeroStackGlobe({
   return (
     <div
       ref={rootRef}
-      className="absolute inset-0 cursor-pointer touch-pan-y select-none"
+      className="absolute inset-x-4 inset-y-12 sm:inset-x-8 sm:inset-y-16 cursor-pointer touch-pan-y select-none"
       onPointerDown={onDown}
       onPointerMove={onMove}
       onPointerUp={onUp}

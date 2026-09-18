@@ -19,7 +19,7 @@ export default function Hero() {
       id="top"
       className="relative flex min-h-[100svh] items-center overflow-hidden"
     >
-      <div className="mx-auto grid w-full max-w-7xl items-center gap-8 px-6 py-16 md:px-10 md:py-24 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-6 lg:py-16 xl:py-24">
+      <div className="mx-auto grid w-full max-w-7xl items-center gap-8 px-6 py-16 md:px-10 md:py-24 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-8 lg:py-16 xl:py-24">
         {/* ---- LEFT: text column ---- */}
         <div className="relative z-10">
           <div className="hero-anim tech-label mb-6 flex items-center gap-3 text-cyan">

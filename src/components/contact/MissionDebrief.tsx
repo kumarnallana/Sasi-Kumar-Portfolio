@@ -100,7 +100,7 @@ export default function MissionDebrief() {
 
       tl.call(() => {
         setCompiled(true);
-        sound.play("online");
+        sound.play("mission-confirm");
       });
     }, el);
 
@@ -130,7 +130,7 @@ export default function MissionDebrief() {
   }, [compiled]);
 
   const initiate = () => {
-    sound.play("online");
+    sound.play("mission-confirm");
     setChoice("contact");
     sendCat({ type: "perk", label: "transmission incoming" });
     scrollToSection("comms");

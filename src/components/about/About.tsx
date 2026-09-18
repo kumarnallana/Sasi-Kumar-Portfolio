@@ -15,8 +15,12 @@ import { revealContent } from "@/lib/contentReveal";
 
 gsap.registerPlugin(ScrollTrigger);
 
+let profileVerified = false;
+
 export default function About() {
   const ref = useRef<HTMLDivElement>(null);
+  const profileTraceRef = useRef<SVGPathElement>(null);
+  const statusDotRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const el = ref.current;
@@ -32,16 +36,56 @@ export default function About() {
           immediateRender: false,
         });
       });
-      
-      // Blueprint line drawing animation around portrait
-      gsap.from(".portrait-line", {
-        scrollTrigger: { trigger: ".portrait-container", start: "top 85%" },
-        scaleX: 0,
-        opacity: 0,
-        duration: 1.2,
-        stagger: 0.2,
-        ease: "power3.inOut",
-        transformOrigin: "left center"
+      // Profile Verification Trace
+      const media = gsap.matchMedia();
+      media.add({
+        reduce: "(prefers-reduced-motion: reduce)",
+        motion: "(prefers-reduced-motion: no-preference)"
+      }, context => {
+        if (profileTraceRef.current && statusDotRef.current) {
+          const path = profileTraceRef.current;
+          
+          if (context.conditions?.reduce) {
+            gsap.set(path, { opacity: 0.65, strokeDashoffset: 0 });
+            return;
+          }
+
+          const length = path.getTotalLength();
+          gsap.set(path, { strokeDasharray: length, strokeDashoffset: length });
+
+          const traceTl = gsap.timeline({ paused: true });
+          
+          traceTl.to(path, {
+            strokeDashoffset: 0,
+            duration: 2,
+            delay: 0.15,
+            ease: "power1.inOut",
+          }).to(statusDotRef.current, {
+            boxShadow: "0 0 7px rgba(82, 217, 255, 0.95), 0 0 14px rgba(82, 217, 255, 0.5)",
+            backgroundColor: "#fff",
+            duration: 0.18,
+            yoyo: true,
+            repeat: 1,
+          }).to(path, {
+            opacity: 0.65,
+            duration: 0.4,
+            ease: "power1.out"
+          }, "-=0.36");
+
+          ScrollTrigger.create({
+            trigger: ".portrait-container",
+            start: "top 65%",
+            once: true,
+            onEnter: () => {
+              if (profileVerified) {
+                traceTl.progress(1);
+              } else {
+                profileVerified = true;
+                traceTl.play();
+              }
+            }
+          });
+        }
       });
     }, el);
     return () => ctx.revert();
@@ -65,9 +109,32 @@ export default function About() {
         
         {/* Portrait & Core Identity */}
         <div className="portrait-container about-reveal relative mx-auto h-fit w-full max-w-[18rem] border border-line-faint bg-ink-800/40 p-1 sm:max-w-sm lg:max-w-none">
-          {/* Decorative Blueprint frame */}
-          <div className="portrait-line absolute left-0 top-0 h-px w-full bg-cyan/50" />
-          <div className="portrait-line absolute bottom-0 left-0 h-px w-full bg-cyan/50" />
+          
+          <svg
+            className="pointer-events-none absolute inset-0 h-full w-full z-10"
+            viewBox="0 0 400 700"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            {/* Base Frame */}
+            <path
+              d="M 200 0 L 400 0 L 400 700 L 0 700 L 0 0 L 200 0"
+              fill="none"
+              stroke="rgba(82, 217, 255, 0.20)"
+              strokeWidth="1"
+              vectorEffect="non-scaling-stroke"
+            />
+            {/* Active Trace */}
+            <path
+              ref={profileTraceRef}
+              d="M 200 0 L 400 0 L 400 700 L 0 700 L 0 0 L 200 0"
+              fill="none"
+              stroke="#52D9FF"
+              strokeWidth="1.5"
+              vectorEffect="non-scaling-stroke"
+              style={{ filter: "drop-shadow(0 0 4px rgba(82, 217, 255, 1)) drop-shadow(0 0 12px rgba(82, 217, 255, 0.65)) drop-shadow(0 0 24px rgba(82, 217, 255, 0.3))" }}
+            />
+          </svg>
           
           <div className="relative aspect-[4/5] w-full overflow-hidden bg-ink-900 sm:aspect-[3/4]">
             <Image
@@ -81,8 +148,8 @@ export default function About() {
             <div className="absolute bottom-4 left-4 border border-cyan/30 bg-ink-900/80 px-2 py-1 backdrop-blur">
               <span className="font-mono text-[0.65rem] text-cyan">ID: {identity.callsign}</span>
             </div>
-            <div className="absolute right-4 top-4 flex items-center gap-2 border border-line-faint bg-ink-900/80 px-2 py-1 backdrop-blur">
-              <span className="mobile-signal-dot h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_6px_var(--cyan)]" />
+            <div className="absolute right-4 top-4 flex items-center gap-2 border border-line-faint bg-ink-900/80 px-2 py-1 backdrop-blur z-20">
+              <span ref={statusDotRef} className="h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_6px_var(--cyan)]" />
               <span className="font-mono text-[0.65rem] text-amber">STATUS: ONLINE</span>
             </div>
           </div>

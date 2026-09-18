@@ -12,7 +12,6 @@ interface ArchitectureStage {
 interface ProjectArchitectureProps {
   architectureVariant?: "linear" | "branch" | "split-converge";
   architectureFlow?: ArchitectureStage[];
-  scrubMode?: boolean;
 }
 
 // The original connector stays untouched. Only its exposed span carries a packet.
@@ -131,7 +130,6 @@ function ArchEdge({
 export default function ProjectArchitecture({
   architectureVariant,
   architectureFlow,
-  scrubMode,
 }: ProjectArchitectureProps) {
   const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -164,44 +162,87 @@ export default function ProjectArchitecture({
         return;
       }
 
-      const edges = [...root.querySelectorAll<SVGGElement>("[data-arch-edge]")]
-        .filter(edge => (edge.ownerSVGElement?.getBoundingClientRect().width ?? 0) > 0)
-        .map(edge => {
-          const base = edge.querySelector<SVGPathElement>("[data-arch-base]")!;
-          const tracer = edge.querySelector<SVGPathElement>("[data-arch-tracer]")!;
-          const source = nodes.find(node => node.dataset.archNode === edge.dataset.source)!;
-          const target = nodes.find(node => node.dataset.archNode === edge.dataset.target)!;
-          return { base, tracer, source, target, phase: Number(edge.dataset.phase), points: traceSpan(base, source, target), position: { value: 0 } };
+      let edges: {
+        base: SVGPathElement;
+        tracer: SVGPathElement;
+        source: HTMLElement;
+        target: HTMLElement;
+        phase: number;
+        points: ReturnType<typeof traceSpan>;
+        position: { value: number };
+        ready: boolean;
+      }[] = [];
+
+      const discoverEdges = () => {
+        edges = [...root.querySelectorAll<SVGGElement>("[data-arch-edge]")]
+          .filter(edge => (edge.ownerSVGElement?.getBoundingClientRect().width ?? 0) > 0)
+          .map(edge => {
+            const base = edge.querySelector<SVGPathElement>("[data-arch-base]")!;
+            const tracer = edge.querySelector<SVGPathElement>("[data-arch-tracer]")!;
+            const source = nodes.find(node => node.dataset.archNode === edge.dataset.source)!;
+            const target = nodes.find(node => node.dataset.archNode === edge.dataset.target)!;
+            // Retain existing position if already discovered
+            const existing = edges.find(e => e.base === base);
+            return {
+              base,
+              tracer,
+              source,
+              target,
+              phase: Number(edge.dataset.phase),
+              points: traceSpan(base, source, target),
+              position: existing ? existing.position : { value: 0 },
+              ready: true,
+            };
+          });
+      };
+
+      const measure = () => {
+        discoverEdges();
+        edges.forEach(edge => {
+          if (edge.ready) paintTracer(edge.tracer, edge.points, edge.position.value);
         });
-      const measure = () => edges.forEach(edge => {
-        edge.points = traceSpan(edge.base, edge.source, edge.target);
-        paintTracer(edge.tracer, edge.points, edge.position.value);
-      });
+      };
+
       const transaction = gsap.timeline({ repeat: -1, paused: true });
       for (const phase of [0, 1]) {
-        const active = edges.filter(edge => edge.phase === phase);
-        const destinations = [...new Set(active.map(edge => edge.target))];
-        const original = destinations.map(node => ({
-          borderColor: getComputedStyle(node).borderColor,
-          boxShadow: getComputedStyle(node).boxShadow,
-        }));
+        // We defer active edge resolution to the callbacks, so it picks up dynamically discovered edges
         transaction
           .set(root, { attr: { "data-phase": String(phase) } })
-          .call(() => active.forEach(edge => {
-            edge.position.value = 0;
-            paintTracer(edge.tracer, edge.points, 0);
-          }))
-          .set(active.map(edge => edge.tracer), { opacity: 1 })
-          .to(active.map(edge => edge.position), {
-            value: 1, duration: 0.95, ease: "none",
-            onUpdate: () => active.forEach(edge => paintTracer(edge.tracer, edge.points, edge.position.value)),
+          .call(() => {
+            const active = edges.filter(edge => edge.phase === phase);
+            active.forEach(edge => {
+              edge.position.value = 0;
+              if (edge.ready) paintTracer(edge.tracer, edge.points, 0);
+            });
+            gsap.set(active.map(edge => edge.tracer), { opacity: 1 });
           })
-          .set(active.map(edge => edge.tracer), { opacity: 0 })
-          .set(destinations, { borderColor: "var(--cyan)", boxShadow: "0 0 8px rgba(67, 201, 255, 0.25)" })
-          .to(destinations, {
-            borderColor: (i: number) => original[i].borderColor,
-            boxShadow: (i: number) => original[i].boxShadow,
-            duration: 0.18, ease: "power1.out",
+          .to({}, {
+            duration: 0.95,
+            ease: "none",
+            onUpdate: function() {
+              const active = edges.filter(edge => edge.phase === phase);
+              active.forEach(edge => {
+                edge.position.value = this.progress();
+                if (edge.ready) paintTracer(edge.tracer, edge.points, edge.position.value);
+              });
+            }
+          })
+          .call(() => {
+            const active = edges.filter(edge => edge.phase === phase);
+            gsap.set(active.map(edge => edge.tracer), { opacity: 0 });
+            
+            const destinations = [...new Set(active.map(edge => edge.target))];
+            const original = destinations.map(node => ({
+              borderColor: getComputedStyle(node).borderColor,
+              boxShadow: getComputedStyle(node).boxShadow,
+            }));
+            
+            gsap.set(destinations, { borderColor: "var(--cyan)", boxShadow: "0 0 8px rgba(67, 201, 255, 0.25)" });
+            gsap.to(destinations, {
+              borderColor: (i: number) => original[i].borderColor,
+              boxShadow: (i: number) => original[i].boxShadow,
+              duration: 0.18, ease: "power1.out",
+            });
           });
       }
       transaction.set(root, { attr: { "data-phase": "idle" } }).to({}, { duration: 0.9 });
@@ -213,7 +254,6 @@ export default function ProjectArchitecture({
         transaction.play();
       };
 
-      const isScrubMode = root.hasAttribute("data-scrub-mode") && window.innerWidth >= 1024;
       let isVisible = false;
       const sync = () => {
         const playing = isVisible && !document.hidden;
@@ -221,68 +261,45 @@ export default function ProjectArchitecture({
         if (assembledRef.current) transaction.paused(!playing);
       };
 
-      const onExternalAssembly = () => {
-        if (!assembledRef.current) startTracers();
-      };
-      root.addEventListener("arch-assembled", onExternalAssembly);
-
-      if (!isScrubMode) {
-        const timeline = gsap.timeline({ paused: true });
-        if (!assembledRef.current) {
-          gsap.set(nodes, { opacity: 0 });
-          bases.forEach(base => {
-             const len = base.getTotalLength();
-             gsap.set(base, { strokeDasharray: len, strokeDashoffset: len });
-             timeline.to(base, { strokeDashoffset: 0, duration: Number(base.dataset.assemblyDuration) / 1000, ease: "none" }, Number(base.dataset.assemblyDelay) / 1000);
-          });
-          nodes.forEach(node => timeline.to(node, {
-            opacity: 1, duration: 0.25, ease: "power1.out",
-          }, Number(node.dataset.assemblyDelay) / 1000));
-          timeline.call(startTracers);
-        } else {
-          gsap.set(nodes, { opacity: 1 });
-          bases.forEach(base => {
-             const len = base.getTotalLength();
-             gsap.set(base, { strokeDasharray: len, strokeDashoffset: 0 });
-          });
-        }
-
-        const observer = new IntersectionObserver(([entry]) => {
-          isVisible = entry.isIntersecting;
-          if (isVisible) measure();
-          if (isVisible && !assembledRef.current) timeline.play();
-          sync();
-        }, { threshold: 0.3 });
-        const resize = new ResizeObserver(measure);
-        observer.observe(root);
-        resize.observe(root);
-        document.addEventListener("visibilitychange", sync);
-        return () => {
-          observer.disconnect();
-          resize.disconnect();
-          document.removeEventListener("visibilitychange", sync);
-          root.removeEventListener("arch-assembled", onExternalAssembly);
-          timeline.kill();
-          transaction.kill();
-        };
+      const timeline = gsap.timeline({ paused: true });
+      if (!assembledRef.current) {
+        gsap.set(nodes, { opacity: 0 });
+        bases.forEach(base => {
+           const len = base.getTotalLength();
+           gsap.set(base, { strokeDasharray: len, strokeDashoffset: len });
+           timeline.to(base, { strokeDashoffset: 0, duration: Number(base.dataset.assemblyDuration) / 1000, ease: "none" }, Number(base.dataset.assemblyDelay) / 1000);
+        });
+        nodes.forEach(node => timeline.to(node, {
+          opacity: 1, duration: 0.25, ease: "power1.out",
+        }, Number(node.dataset.assemblyDelay) / 1000));
+        timeline.call(startTracers);
       } else {
-        const observer = new IntersectionObserver(([entry]) => {
-          isVisible = entry.isIntersecting;
-          if (isVisible) measure();
-          sync();
-        }, { threshold: 0.1 });
-        const resize = new ResizeObserver(measure);
-        observer.observe(root);
-        resize.observe(root);
-        document.addEventListener("visibilitychange", sync);
-        return () => {
-          observer.disconnect();
-          resize.disconnect();
-          document.removeEventListener("visibilitychange", sync);
-          root.removeEventListener("arch-assembled", onExternalAssembly);
-          transaction.kill();
-        };
+        gsap.set(nodes, { opacity: 1 });
+        bases.forEach(base => {
+           const len = base.getTotalLength();
+           gsap.set(base, { strokeDasharray: len, strokeDashoffset: 0 });
+        });
       }
+
+      const observer = new IntersectionObserver(([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible) measure();
+        if (isVisible && !assembledRef.current) timeline.play();
+        sync();
+      }, { threshold: 0.3 });
+      
+      const resize = new ResizeObserver(measure);
+      observer.observe(root);
+      resize.observe(root);
+      document.addEventListener("visibilitychange", sync);
+
+      return () => {
+        observer.disconnect();
+        resize.disconnect();
+        document.removeEventListener("visibilitychange", sync);
+        timeline.kill();
+        transaction.kill();
+      };
     }, root);
     return () => media.revert();
   }, [isMobile, architectureVariant, architectureFlow]);
@@ -359,7 +376,7 @@ export default function ProjectArchitecture({
   );
 
   return (
-    <div className="relative hidden w-full md:block" ref={containerRef} data-scrub-mode={scrubMode ? "true" : undefined}>
+    <div className="relative hidden w-full md:block" ref={containerRef} data-arch-root>
       <div className="tech-label mb-6 flex items-center justify-between text-cyan border-t border-line-faint/50 pt-8">
         <span>SYS.ARCHITECTURE</span>
       </div>

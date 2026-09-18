@@ -26,8 +26,8 @@ export default function HeroDesktopSystemInner() {
       <div className="hero-globe group relative hidden h-[42vh] min-h-[320px] w-full md:block lg:h-[78vh]">
         <HeroStackGlobe activeRef={activeRef} onOpen={() => setStoryOpen(true)} />
         <div className="pointer-events-none absolute inset-0 grid-vignette" />
-        <div className="pointer-events-none absolute left-3 top-3 tech-label text-cyan/70">STACK GRAPH · ONLINE</div>
-        <div className="pointer-events-none absolute right-3 top-3 tech-label text-paper-dim">
+        <div className="pointer-events-none absolute left-0 top-0 tech-label text-cyan/70">STACK GRAPH · ONLINE</div>
+        <div className="pointer-events-none absolute right-0 top-0 tech-label text-paper-dim">
           {String(STACK_LEN).padStart(2, "0")} LAYERS · LIVE
         </div>
         <button

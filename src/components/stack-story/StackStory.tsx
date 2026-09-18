@@ -132,7 +132,7 @@ export default function StackStory({
     document.body.style.position = "fixed";
     document.body.style.top = `-${lockedPageY}px`;
     document.body.style.width = "100%";
-    sound.play("online");
+    sound.play("stack-select");
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -189,7 +189,7 @@ export default function StackStory({
     if (i !== activeRef.current) {
       activeRef.current = i;
       setActive(i);
-      sound.play("blip");
+      sound.play("stack-select");
     }
   };
 
@@ -241,7 +241,7 @@ export default function StackStory({
         ref={closeButton}
         type="button"
         onClick={() => {
-          sound.play("online");
+          sound.play("skill-confirm");
           onClose();
         }}
         onMouseEnter={() => sound.play("hover")}

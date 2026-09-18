@@ -156,8 +156,23 @@ export default function DepthNav() {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [mobileOpen]);
 
+  const initialSoundRender = useRef(true);
+  useEffect(() => {
+    if (initialSoundRender.current) {
+      initialSoundRender.current = false;
+      return;
+    }
+    if (active === -1) return;
+
+    // Wait until scrolling settles slightly to avoid spamming during programmatic scrolls
+    const t = setTimeout(() => {
+      sound.play("section-acquire");
+    }, 150);
+    return () => clearTimeout(t);
+  }, [active]);
+
   const go = (id: string) => {
-    sound.play("blip");
+    sound.play("skill-confirm");
     setMobileOpen(false);
     scrollToSection(id);
   };

@@ -4,16 +4,20 @@
 // Subtle, tasteful, off by default. Respects autoplay policy.
 // ============================================================
 
-type SoundName =
-  | "blip"
-  | "hover"
-  | "boot"
-  | "online"
-  | "sweep"
-  | "toggle"
+export type UiSoundEvent =
+  | "skill-confirm"
+  | "section-acquire"
+  | "project-engage"
+  | "project-online"
+  | "stack-select"
+  | "mission-confirm"
+  | "hover" // preserve existing
+  | "boot" // preserve existing
+  | "toggle" // preserve existing
   | "meow"
-  | "chirp"
-  | "purr";
+  | "purr"
+  | "blip"
+  | "chirp";
 
 class SoundEngine {
   private ctx: AudioContext | null = null;
@@ -39,7 +43,6 @@ class SoundEngine {
     this.master.connect(this.ctx.destination);
     this.ready = true;
 
-    // restore persisted preference
     try {
       if (localStorage.getItem("nsk-sound") === "on") this.setEnabled(true);
     } catch {}
@@ -59,7 +62,7 @@ class SoundEngine {
     if (this.ctx?.state === "suspended") this.ctx.resume();
     if (this.master)
       this.master.gain.setTargetAtTime(
-        on ? 0.5 : 0.0,
+        on ? 0.65 : 0.0,
         this.ctx!.currentTime,
         0.05,
       );
@@ -88,7 +91,7 @@ class SoundEngine {
     osc.stop(t + dur + 0.02);
   }
 
-  play(name: SoundName) {
+  play(name: UiSoundEvent, options?: { variant?: number }) {
     if (!this.ready || !this._enabled || !this.ctx || !this.master) return;
     const ctx = this.ctx;
     const t = ctx.currentTime;
@@ -112,48 +115,52 @@ class SoundEngine {
     };
 
     switch (name) {
-      case "hover":
-        tone(2100, 0.05, "sine", 0.06);
-        break;
+      // Legacy preserves
       case "blip":
-        tone(1320, 0.06, "triangle", 0.12);
+      case "skill-confirm":
+        // 35% relative level - micro click + ping (previously blip but lighter)
+        tone(1320, 0.05, "triangle", 0.035);
+        break;
+      case "chirp":
+      case "section-acquire":
+        // 42% relative level - short chirp
+        tone(1400, 0.05, "sine", 0.042);
+        tone(1950, 0.06, "sine", 0.03, 0, 0.03);
+        break;
+      case "project-engage": {
+        // 48% relative level - soft low-mid engage
+        const variantOffset = (options?.variant || 0) * 2; // +2 semitones per variant
+        const baseFreq = 400 * Math.pow(2, variantOffset / 12);
+        tone(baseFreq, 0.12, "sine", 0.048);
+        tone(baseFreq * 1.5, 0.15, "sine", 0.03, 0, 0.04);
+        break;
+      }
+      case "project-online":
+        // 55% relative level - brighter confirmation ping
+        tone(587, 0.12, "sine", 0.055);
+        tone(880, 0.18, "sine", 0.045, 0, 0.08);
+        break;
+      case "stack-select":
+        // 48% relative level - digital switch/layer lock
+        tone(800, 0.04, "square", 0.02);
+        tone(1200, 0.06, "square", 0.048, 0, 0.04);
+        break;
+      case "mission-confirm":
+        // 60% relative level - strongest confirmation
+        tone(587, 0.15, "sine", 0.06);
+        tone(880, 0.22, "sine", 0.05, 0, 0.1);
+        break;
+      
+      // Legacy preserves
+      case "hover":
+        tone(2100, 0.05, "sine", 0.03);
         break;
       case "toggle":
-        tone(880, 0.07, "square", 0.07);
-        tone(1320, 0.09, "square", 0.05, 0, 0.06);
+        tone(880, 0.07, "square", 0.04);
+        tone(1320, 0.09, "square", 0.03, 0, 0.06);
         break;
       case "boot":
         tone(660, 0.05, "sine", 0.08);
-        break;
-      case "online":
-        // confident two-tone confirmation
-        tone(587, 0.12, "sine", 0.13);
-        tone(880, 0.18, "sine", 0.11, 0, 0.1);
-        break;
-      case "sweep": {
-        // low filtered sweep for section entry
-        const osc = ctx.createOscillator();
-        const g = ctx.createGain();
-        const filter = ctx.createBiquadFilter();
-        filter.type = "lowpass";
-        filter.frequency.value = 600;
-        osc.type = "sawtooth";
-        osc.frequency.setValueAtTime(110, t);
-        osc.frequency.exponentialRampToValueAtTime(330, t + 0.4);
-        osc.connect(filter);
-        filter.connect(g);
-        g.connect(this.master);
-        g.gain.setValueAtTime(0, t);
-        g.gain.linearRampToValueAtTime(0.08, t + 0.05);
-        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
-        osc.start(t);
-        osc.stop(t + 0.52);
-        break;
-      }
-      case "chirp":
-        // the cat noticing you - a quick rising trill
-        tone(1400, 0.05, "sine", 0.06);
-        tone(1950, 0.06, "sine", 0.05, 0, 0.05);
         break;
       case "meow": {
         const osc = ctx.createOscillator();
@@ -177,7 +184,6 @@ class SoundEngine {
         break;
       }
       case "purr": {
-        // short low rumble with tremolo - replayed while being pet
         const osc = ctx.createOscillator();
         const g = ctx.createGain();
         const filter = ctx.createBiquadFilter();
