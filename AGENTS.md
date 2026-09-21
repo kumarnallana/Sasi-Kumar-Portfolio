@@ -12,3 +12,4 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - NEVER automatically run `git push` after making code changes.
 - Always leave changes uncommitted (or just committed locally) and wait for the USER to explicitly review and manually push the code themselves.
 - Only run `git push` if the USER explicitly issues a command to do so in that exact prompt.
+- When providing git commands for the user to copy/run, ALWAYS provide the full sequence (`git add .`, `git commit -m "..."`, `git push`) inside a single `bash` markdown code block. This allows the user to use the UI's run button to execute them all at once.
