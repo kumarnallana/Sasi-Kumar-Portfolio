@@ -226,8 +226,8 @@ export default function StackStory({
       </div>
 
       {/* header */}
-      <div className="pointer-events-none absolute left-6 top-6 z-10 max-w-sm md:left-10">
-        <div id="stack-story-title" className="tech-label flex items-center gap-3 text-cyan">
+      <div className="pointer-events-none absolute left-6 top-9 z-10 max-w-sm md:left-10 md:top-10">
+        <div id="stack-story-title" className="tech-label flex items-center gap-3 text-[0.625rem] tracking-[0.18em] text-cyan">
           <span className="h-px w-8 bg-cyan" />
           {title} · {layers.length} LAYERS
         </div>
@@ -245,7 +245,7 @@ export default function StackStory({
           onClose();
         }}
         onMouseEnter={() => sound.play("hover")}
-        className={`absolute right-5 top-5 z-20 flex h-9 items-center gap-2 border px-3 font-mono text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900 md:right-10 ${
+        className={`absolute right-5 top-5 z-20 flex h-9 items-center gap-2 border px-3 font-mono text-[0.625rem] tracking-[0.12em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900 md:right-10 ${
           atEnd
             ? "border-cyan/60 bg-ink-900/80 text-cyan hover:bg-cyan/10"
             : "border-line-faint bg-ink-900/70 text-paper-dim hover:border-cyan hover:text-cyan"
@@ -254,11 +254,11 @@ export default function StackStory({
       >
         {atEnd ? (
           <>
-            RETURN <span className="text-base leading-none">↩</span>
+            RETURN <span className="text-sm leading-none">↩</span>
           </>
         ) : (
           <>
-            ESC <span className="text-base leading-none">×</span>
+            ESC <span className="text-sm leading-none">×</span>
           </>
         )}
       </button>
@@ -398,7 +398,7 @@ export default function StackStory({
 
       {/* scroll hint */}
       <div className="pointer-events-none absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-1.5 [@media(max-height:700px)]:hidden">
-        <span className="tech-label text-[0.55rem]">
+        <span className="tech-label text-[0.5rem] tracking-[0.18em] opacity-70">
           {atEnd ? "STACK COMPLETE · EXIT UNLOCKED" : "SCROLL TO DESCEND"}
         </span>
         <span className="h-7 w-px animate-pulse bg-gradient-to-b from-cyan to-transparent" />

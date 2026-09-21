@@ -93,8 +93,7 @@ function AppreciationMetric() {
       <div className="tech-label mt-2 grid min-h-9 grid-cols-[1rem_minmax(0,1fr)] items-start gap-x-1.5 text-[0.6rem] leading-relaxed tracking-[0.18em]">
         <Heart
           aria-hidden="true"
-          className={`mt-0.5 h-4 w-4 ${data?.appreciated ? "fill-current" : ""}`}
-          color="var(--amber)"
+          className={`mt-0.5 h-4 w-4 transition-colors ${data?.appreciated ? "fill-red-500 text-red-500" : "text-paper"}`}
           strokeWidth={2}
         />
         <span className="min-w-0">APPRECIATION</span>

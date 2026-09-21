@@ -63,14 +63,14 @@ export default function HudFrame() {
       </div>
 
       {/* top-left readout */}
-      <div className="absolute left-9 top-7 flex items-center gap-3">
+      <div className="absolute left-9 top-7 flex items-center gap-2.5 opacity-80 [&_.telemetry-text]:text-[0.625rem] [&_.telemetry-text]:tracking-[0.12em]">
         <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan" />
         <span className="telemetry-text text-cyan">{identity.callsign}</span>
         <span className="telemetry-text">UPLINK ACTIVE</span>
       </div>
 
       {/* top-right: clock + signal */}
-      <div className="absolute right-9 top-7 flex items-center gap-4">
+      <div className="absolute right-9 top-7 flex items-center gap-3.5 opacity-80 [&_.telemetry-text]:text-[0.625rem] [&_.telemetry-text]:tracking-[0.12em]">
         <span className="flex items-center gap-1.5">
           <span className="telemetry-text">SIG</span>
           <span className="flex items-end gap-[2px]">
@@ -90,7 +90,7 @@ export default function HudFrame() {
       </div>
 
       {/* bottom-left: location + telemetry */}
-      <div className="absolute bottom-7 left-9 flex items-center gap-5">
+      <div className="absolute bottom-7 left-9 flex items-center gap-4 opacity-80 [&_.telemetry-text]:text-[0.625rem] [&_.telemetry-text]:tracking-[0.12em]">
         <span className="telemetry-text">{identity.location.toUpperCase()}</span>
         <span className="telemetry-text">
           FPS <span className="text-cyan tabular-nums">{fps}</span>

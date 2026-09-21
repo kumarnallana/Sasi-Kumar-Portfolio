@@ -54,7 +54,7 @@ class SoundEngine {
     this.ready = true;
 
     if (this._enabled) {
-      this.master.gain.setTargetAtTime(0.65, this.ctx.currentTime, 0.05);
+      this.master.gain.setTargetAtTime(0.95, this.ctx.currentTime, 0.05);
     }
   }
 
@@ -72,7 +72,7 @@ class SoundEngine {
     if (this.ctx?.state === "suspended") this.ctx.resume();
     if (this.master)
       this.master.gain.setTargetAtTime(
-        on ? 0.65 : 0.0,
+        on ? 0.95 : 0.0,
         this.ctx!.currentTime,
         0.05,
       );

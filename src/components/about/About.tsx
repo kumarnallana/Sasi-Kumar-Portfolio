@@ -6,12 +6,12 @@ import { experience } from "@/data/profile/experience.data";
 import { identity } from "@/data/profile/profile.data";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useEffect, useRef } from "react";
-import Image from "next/image";
+import React, { useEffect, useRef } from "react";
 import Certifications from "./Certifications";
 import { internshipCredential } from "@/data/profile/certifications.data";
 import CapabilityMatrix from "./CapabilityMatrix";
 import { revealContent } from "@/lib/contentReveal";
+import LivingPortrait from "./LivingPortrait";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -136,22 +136,20 @@ export default function About() {
             />
           </svg>
           
-          <div className="relative aspect-[4/5] w-full overflow-hidden bg-ink-900 sm:aspect-[3/4]">
-            <Image
-              src="/logos/sasi-portrait-glasses-candidate-rgb.png"
-              alt="Nallana Sasi Kumar Portrait"
-              fill
-              sizes="(max-width: 639px) 288px, (max-width: 1023px) 384px, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover object-top opacity-100 grayscale-0 transition-all duration-700 md:opacity-90 md:mix-blend-screen md:grayscale md:hover:grayscale-0 md:hover:opacity-100"
-            />
-            {/* Tech annotations over portrait */}
-            <div className="absolute bottom-4 left-4 border border-cyan/30 bg-ink-900/80 px-2 py-1 backdrop-blur">
-              <span className="font-mono text-[0.65rem] text-cyan">ID: {identity.callsign}</span>
-            </div>
-            <div className="absolute right-4 top-4 flex items-center gap-2 border border-line-faint bg-ink-900/80 px-2 py-1 backdrop-blur z-20">
-              <span ref={statusDotRef} className="h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_6px_var(--cyan)]" />
-              <span className="font-mono text-[0.65rem] text-amber">STATUS: ONLINE</span>
-            </div>
+          <div className="relative aspect-[4/5] w-full overflow-hidden sm:aspect-[3/4]">
+            <LivingPortrait
+              portraitSrc="/logos/sasi-portrait-new-trimmed.webp"
+              alt="Sasi Kumar Nallana"
+            >
+              {/* Tech annotations over portrait */}
+              <div className="absolute bottom-4 left-4 border border-cyan/30 bg-ink-900/80 px-2 py-1 backdrop-blur">
+                <span className="font-mono text-[0.65rem] text-cyan">ID: {identity.callsign}</span>
+              </div>
+              <div className="absolute right-4 top-4 flex items-center gap-2 border border-line-faint bg-ink-900/80 px-2 py-1 backdrop-blur z-20">
+                <span ref={statusDotRef} className="h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_6px_var(--cyan)]" />
+                <span className="font-mono text-[0.65rem] text-amber">STATUS: ONLINE</span>
+              </div>
+            </LivingPortrait>
           </div>
           
           <div className="border-t border-line-faint bg-ink-900 p-5">
