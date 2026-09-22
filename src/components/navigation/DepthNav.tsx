@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import SoundToggle from "@/components/audio/SoundToggle";
 import { sound } from "@/lib/sound";
-import { scrollToSection } from "@/lib/lenis";
+import { getLenis, scrollToSection } from "@/lib/lenis";
 import { NAV_SECTIONS as SECTIONS } from "@/lib/sections";
 import { useIsDesktop } from "@/hooks/useIsMobile";
 
@@ -164,10 +165,18 @@ export default function DepthNav() {
     }
     if (active === -1) return;
 
-    // Wait until scrolling settles slightly to avoid spamming during programmatic scrolls
-    const t = setTimeout(() => {
+    // A long journey can spend over 150ms in an intermediate section.
+    // Defer acquisition until it settles; active changes cancel stale timers.
+    let t: ReturnType<typeof setTimeout>;
+    const acquire = () => {
+      const lenis = getLenis();
+      if (lenis?.userData.source === "section-navigation" && lenis.isScrolling) {
+        t = setTimeout(acquire, 150);
+        return;
+      }
       sound.play("section-acquire");
-    }, 150);
+    };
+    t = setTimeout(acquire, 150);
     return () => clearTimeout(t);
   }, [active]);
 
@@ -306,6 +315,9 @@ export default function DepthNav() {
                     </button>
                   );
                 })}
+              </div>
+              <div className="mt-2 flex justify-end border-t border-line-faint pt-2">
+                <SoundToggle />
               </div>
             </div>
           )}

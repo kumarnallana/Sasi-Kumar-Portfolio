@@ -137,12 +137,16 @@ export default function Contact() {
             </span>
           </div>
 
-          <h3 className="contact-reveal mt-6 font-display text-4xl font-bold leading-tight md:text-6xl">
-            Let&apos;s build
-            <br />
-            <span className="text-cyan glow-cyan">something</span>
-            <br />
-            ambitious.
+          <h3 className="contact-reveal mt-6 font-display text-[clamp(1.375rem,7vw,2.25rem)] font-bold leading-[1.08] tracking-[-0.025em] sm:text-4xl md:text-6xl md:leading-tight md:tracking-normal">
+            <span className="block">Let&apos;s build</span>
+            <span className="block md:hidden">
+              <span className="text-cyan glow-cyan">something</span> ambitious.
+            </span>
+            <span className="hidden md:block">
+              <span className="text-cyan glow-cyan">something</span>
+              <br />
+              ambitious.
+            </span>
           </h3>
 
           <p className="contact-reveal mt-6 max-w-md text-sm leading-relaxed text-paper-dim">

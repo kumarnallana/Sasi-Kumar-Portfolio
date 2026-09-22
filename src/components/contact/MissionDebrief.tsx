@@ -144,7 +144,7 @@ export default function MissionDebrief() {
   return (
     <div ref={root} className="mt-16 border-t border-line-faint pt-10 md:mt-24 md:pt-12">
       {/* header */}
-      <div className="debrief-head flex flex-wrap items-end justify-between gap-6">
+      <div className="debrief-head flex flex-wrap items-end justify-between gap-5 sm:gap-6">
         <div>
           <div className="tech-label flex items-center gap-3 text-cyan">
             <span className="h-px w-8 bg-cyan" />
@@ -156,14 +156,14 @@ export default function MissionDebrief() {
         </div>
 
         {/* SYNC meter */}
-        <div className="w-full max-w-xs">
+        <div className="w-full sm:max-w-xs">
           <div className="flex items-center justify-between">
             <span className="tech-label text-paper-dim/70">SYNC</span>
             <span className="font-mono text-sm text-cyan glow-cyan">
               <span ref={pct}>000</span>%
             </span>
           </div>
-          <div className="relative mt-2 h-2 overflow-hidden border border-line-faint bg-ink-800">
+          <div className="relative mt-2 h-1.5 overflow-hidden border border-line-faint bg-ink-800 sm:h-2">
             <div
               ref={bar}
               className="absolute inset-y-0 left-0 bg-cyan shadow-[0_0_12px_var(--cyan)]"
@@ -174,7 +174,7 @@ export default function MissionDebrief() {
       </div>
 
       {/* chapter dossier */}
-      <div className="mt-10 grid grid-cols-1 gap-px border border-line-faint bg-line-faint sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-8 grid grid-cols-1 gap-px border border-line-faint bg-line-faint sm:mt-10 sm:grid-cols-2 lg:grid-cols-3">
         {NAV_SECTIONS.map((s, i) => {
           const done = i < reviewed;
           return (

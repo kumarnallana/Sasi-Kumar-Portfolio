@@ -23,8 +23,8 @@ export default function Hero() {
       <div className="mx-auto grid w-full max-w-7xl items-center gap-8 px-6 py-16 md:px-10 md:py-24 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-8 lg:py-16 xl:py-24">
         {/* ---- LEFT: text column ---- */}
         <div className="relative z-10">
-          <div className="hero-anim telemetry-text mb-6 flex items-center gap-3 text-cyan">
-            <span className="h-px w-10 bg-cyan" />
+          <div className="hero-anim telemetry-text mb-6 flex items-start gap-2 text-cyan sm:items-center sm:gap-3">
+            <span className="mt-[0.4rem] h-px w-6 shrink-0 bg-cyan sm:mt-0 sm:w-10" />
             DRAWING NO. NSK-2026 · MASTER SCHEMATIC
           </div>
 

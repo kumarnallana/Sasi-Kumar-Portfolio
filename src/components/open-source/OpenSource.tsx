@@ -36,18 +36,20 @@ function MetricLabel({
   filled?: boolean;
 }) {
   const color =
-    accent === "amber"
+    filled
+      ? "text-red-500"
+      : accent === "amber"
       ? "text-amber"
       : "text-cyan";
 
   return (
-    <div className="mt-2 grid min-h-8 grid-cols-[0.875rem_minmax(0,1fr)] items-start gap-x-2">
+    <div className="mt-2 grid min-h-8 grid-cols-[1rem_minmax(0,1fr)] items-start gap-x-2">
       <Icon
         aria-hidden="true"
-        className={`mt-[0.12rem] h-3.5 w-3.5 shrink-0 ${color} ${filled ? "fill-current" : "fill-none"}`}
-        strokeWidth={1.75}
+        className={`h-4 w-4 shrink-0 ${color} ${filled ? "fill-current" : "fill-none"}`}
+        strokeWidth={2}
       />
-      <span className="tech-label min-w-0 text-[0.6rem] leading-[1.45] tracking-[0.18em]">
+      <span className="min-w-0 font-mono text-[0.6rem] uppercase leading-[1.45] tracking-[0.18em] text-paper-dim [overflow-wrap:anywhere]">
         {label}
       </span>
     </div>
@@ -92,7 +94,7 @@ function SignalMetric({
         icon={Icon}
         accent={accent}
       />
-      {displayUnavailable && <div className="mt-1 pl-[1.375rem] font-mono text-[0.58rem] uppercase leading-[1.35] tracking-wider text-paper-dim">{unavailableLabel}</div>}
+      {displayUnavailable && <div className="mt-1 pl-6 font-mono text-[0.58rem] uppercase leading-[1.35] tracking-wider text-paper-dim">{unavailableLabel}</div>}
     </div>
   );
 }
@@ -122,7 +124,7 @@ function AppreciationMetric() {
         accent="amber"
         filled={Boolean(data?.appreciated)}
       />
-      <div className="mt-1 pl-[1.375rem] font-mono text-[0.58rem] uppercase leading-[1.35] tracking-wider text-paper-dim">
+      <div className="mt-1 pl-6 font-mono text-[0.58rem] uppercase leading-[1.35] tracking-wider text-paper-dim">
         {isPending
           ? "Loading stored count"
           : unavailable

@@ -749,23 +749,8 @@ export default function FlowingBackgroundText({
           document.addEventListener("visibilitychange", handleVisibilityChange);
         }
 
-        const render = (
-          time: number,
-          deltaTime: number,
-        ) => {
-          if (
-            !allowMotion ||
-            !isVisible ||
-            document.hidden
-          ) {
-            return;
-          }
-
-          const dt = Math.min(
-            deltaTime / 1000,
-            1 / 30,
-          );
-
+        let simulationTime = gsap.ticker.time;
+        const simulate = (time: number, dt: number) => {
           const pointerBlend = 1 - Math.exp(
             -7 * dt,
           );
@@ -856,9 +841,32 @@ export default function FlowingBackgroundText({
                     config.damping,
                     dt * 60,
                   );
-                  point.offset += point.velocity * dt;
                 },
               );
+
+              // All neighbor forces read the same state, without a left-to-right bias.
+              points.forEach((point) => {
+                point.offset += point.velocity * dt;
+              });
+            },
+          );
+        };
+
+        const render = (_time: number, deltaTime: number) => {
+          if (!allowMotion || !isVisible || document.hidden) return;
+
+          // Bound integration to 120Hz-sized steps (at most eight after a stall).
+          // Render once per ticker frame; do not catch up time spent offscreen.
+          const dt = Math.min(Math.max(deltaTime / 1000, 0), 1 / 15);
+          const steps = Math.max(1, Math.ceil(dt * 120));
+          const step = dt / steps;
+          for (let i = 0; i < steps; i += 1) {
+            simulationTime += step;
+            simulate(simulationTime, step);
+          }
+
+          runtimeMap.forEach((runtime) => {
+              const { config, points } = runtime;
 
               const centerPositions =
                 buildDeformedGeometry(points);

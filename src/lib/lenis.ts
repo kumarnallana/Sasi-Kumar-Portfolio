@@ -18,8 +18,8 @@ type ScrollToSectionOptions = {
 
 const premiumEase = (t: number) => 1 - Math.pow(1 - t, 4);
 
-function navigationDuration(targetY: number) {
-  const distance = Math.abs(targetY - window.scrollY);
+function navigationDuration(targetY: number, currentY: number) {
+  const distance = Math.abs(targetY - currentY);
   return Math.min(1.25, Math.max(0.7, 0.7 + distance / 5500));
 }
 
@@ -61,7 +61,13 @@ export function scrollToSection(
 
   const lenis = instance;
 
-  if (!lenis || lenis.isStopped || reduceMotion) {
+  if (lenis && !lenis.isStopped && reduceMotion) {
+    // Cancel any journey already running when the motion preference changes.
+    lenis.scrollTo(target, { immediate: true });
+    return;
+  }
+
+  if (!lenis || lenis.isStopped) {
     if (typeof target === "number") {
       window.scrollTo({
         top: target,
@@ -81,7 +87,8 @@ export function scrollToSection(
     lock: false,
     // This applies only to explicit navigation clicks.
     // Normal wheel scrolling still uses the global lerp behavior.
-    duration: navigationDuration(targetY),
+    duration: navigationDuration(targetY, lenis.animatedScroll),
     easing: premiumEase,
+    userData: { source: "section-navigation", target: id },
   });
 }
