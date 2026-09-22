@@ -239,7 +239,7 @@ export default function MissionDebrief() {
                 <span className="block font-display text-lg font-semibold text-cyan transition-colors group-hover:text-ink-900">
                   INITIATE CONTACT
                 </span>
-                <span className="tech-label text-paper-dim transition-colors group-hover:text-ink-900/70">
+                <span className="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-paper-dim transition-colors group-hover:text-ink-900">
                   open the channel
                 </span>
               </span>
