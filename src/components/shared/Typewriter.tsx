@@ -72,9 +72,10 @@ export default function Typewriter({
   const isStatic = reduce;
 
   return (
-    <span className={className}>
+    <span
+      className={`${className} typewriter-cursor${isStatic ? " typewriter-cursor-static" : ""}`}
+    >
       {isStatic ? (words[0] ?? "") : text}
-      <span className={isStatic ? "text-cyan" : "cursor-blink text-cyan"}>▮</span>
     </span>
   );
 }

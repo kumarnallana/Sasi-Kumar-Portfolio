@@ -10,5 +10,9 @@ const HeroDesktopSystemInner = dynamic(
 
 export default function HeroDesktopSystem() {
   const isDesktop = useIsDesktop();
-  return isDesktop ? <HeroDesktopSystemInner /> : null;
+  return (
+    <div className="hidden h-[42vh] min-h-[320px] w-full md:block lg:h-[78vh]">
+      {isDesktop ? <HeroDesktopSystemInner /> : null}
+    </div>
+  );
 }

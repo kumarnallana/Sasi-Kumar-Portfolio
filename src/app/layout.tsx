@@ -11,8 +11,8 @@ import {
   personJsonLd,
   websiteJsonLd,
 } from "@/lib/seo";
-import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import PortfolioWebAnalytics from "@/integrations/analytics/portfolio-web-analytics";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space",
@@ -102,7 +102,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }}
         />
         {children}
-        <Analytics />
+        <PortfolioWebAnalytics />
         <SpeedInsights />
       </body>
     </html>

@@ -35,7 +35,7 @@ export default function Hero() {
           </h1>
 
           <div className="hero-anim mt-5 max-w-xl">
-            <p className="min-h-7 font-mono text-base font-medium text-cyan glow-cyan md:min-h-8 md:text-xl">
+            <p className="min-h-12 font-mono text-base font-medium text-cyan glow-cyan md:min-h-8 md:text-xl">
               <Typewriter
                 words={identity.roleFramings}
                 className="text-cyan"

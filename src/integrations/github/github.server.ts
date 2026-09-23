@@ -11,6 +11,8 @@ const GITHUB_FAILURE_CODES = [
   "INVALID_RESPONSE",
 ] as const;
 
+const GITHUB_REQUEST_TIMEOUT_MS = 12_000;
+
 export type GitHubFailureCode = (typeof GITHUB_FAILURE_CODES)[number];
 
 export function getGitHubFailureCode(error: unknown): GitHubFailureCode {
@@ -45,7 +47,7 @@ async function requestGitHub(query: string, variables: Record<string, unknown>, 
       body: JSON.stringify({ query, variables }),
       cache: "force-cache",
       next: { revalidate },
-      signal: AbortSignal.timeout(6_000),
+      signal: AbortSignal.timeout(GITHUB_REQUEST_TIMEOUT_MS),
     });
   } catch {
     throw new Error("UPSTREAM_UNAVAILABLE");

@@ -292,6 +292,18 @@ body {
   animation: blink 1s step-end infinite;
 }
 
+/* Keep the typing caret inside the text node's paint box. A separate inline
+   caret moves on every character and is reported as cumulative layout shift. */
+.typewriter-cursor::after {
+  content: "▮";
+  color: var(--cyan);
+  animation: blink 1s step-end infinite;
+}
+
+.typewriter-cursor-static::after {
+  animation: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

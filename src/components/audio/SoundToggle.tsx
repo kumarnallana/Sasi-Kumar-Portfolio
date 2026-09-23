@@ -23,11 +23,13 @@ export default function SoundToggle() {
         {[0, 1, 2, 3].map((i) => (
           <span
             key={i}
-            className={`w-[2px] transition-all duration-300 ${
+            className={`h-3 w-[2px] origin-bottom transition-[transform,background-color] duration-300 ${
               on ? "bg-cyan" : "bg-line-dim"
             }`}
             style={{
-              height: on ? `${4 + ((i * 3 + 5) % 9)}px` : "3px",
+              transform: on
+                ? `scaleY(${(4 + ((i * 3 + 5) % 9)) / 12})`
+                : "scaleY(0.25)",
               animation: on
                 ? `eq 0.9s ease-in-out ${i * 0.12}s infinite alternate`
                 : "none",
@@ -41,10 +43,10 @@ export default function SoundToggle() {
       <style jsx>{`
         @keyframes eq {
           from {
-            height: 3px;
+            transform: scaleY(0.25);
           }
           to {
-            height: 12px;
+            transform: scaleY(1);
           }
         }
       `}</style>
