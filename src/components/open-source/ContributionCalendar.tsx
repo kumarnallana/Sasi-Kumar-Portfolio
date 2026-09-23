@@ -21,32 +21,44 @@ function CalendarYear({ calendar, isCurrent }: { calendar: GitHubContributionYea
     const reported = weeks.flatMap((week) => Array.isArray(week?.contributionDays) ? week.contributionDays : []);
     const byDate = new Map(reported.map((day) => [day.date, day]));
     const lastReportedDate = reported.at(-1)?.date ?? "";
-    const result: Array<{ day: GitHubContributionDay; future: boolean }> = [];
+    const result: Array<{ day: GitHubContributionDay; column: number; row: number }> = [];
+    const firstWeekday = new Date(Date.UTC(calendar.year, 0, 1)).getUTCDay();
+    let index = 0;
     for (let date = new Date(Date.UTC(calendar.year, 0, 1)); date.getUTCFullYear() === calendar.year; date.setUTCDate(date.getUTCDate() + 1)) {
       const iso = date.toISOString().slice(0, 10);
-      result.push({
-        day: byDate.get(iso) ?? { contributionCount: 0, contributionLevel: "NONE", date: iso, weekday: date.getUTCDay() },
-        future: Boolean(isCurrent && lastReportedDate && iso > lastReportedDate),
-      });
+      const future = Boolean(isCurrent && lastReportedDate && iso > lastReportedDate);
+      if (!future) {
+        result.push({
+          day: byDate.get(iso) ?? { contributionCount: 0, contributionLevel: "NONE", date: iso, weekday: date.getUTCDay() },
+          column: Math.floor((index + firstWeekday) / 7) + 1,
+          row: date.getUTCDay() + 1,
+        });
+      }
+      index += 1;
     }
-    return result;
+    return {
+      entries: result,
+      columnCount: Math.ceil((index + firstWeekday) / 7),
+    };
   }, [calendar.weeks, calendar.year, isCurrent]);
   const [active, setActive] = useState<GitHubContributionDay | null>(null);
   const describe = (day: GitHubContributionDay) => `${day.contributionCount} contribution${day.contributionCount === 1 ? "" : "s"} on ${new Date(`${day.date}T00:00:00Z`).toLocaleDateString(undefined, { dateStyle: "long", timeZone: "UTC" })}`;
   return <div className="min-w-0">
     <h4 className="font-display text-base font-semibold text-paper">{Number(calendar.totalContributions || 0).toLocaleString()} contributions in {calendar.year}</h4>
     <div className="mt-3 max-w-full overflow-x-auto pb-2" aria-label={`GitHub contributions in ${calendar.year}`}>
-      <div className="grid min-w-max grid-flow-col grid-rows-7 gap-[0.2rem]">
-        {days.map(({ day, future }, index) => <button key={day.date} type="button" aria-label={future ? `Future date ${day.date}` : describe(day)} title={future ? undefined : describe(day)} disabled={future}
-          style={index === 0 ? { gridRow: day.weekday + 1 } : undefined}
-          onFocus={() => !future && setActive(day)}
+      <div
+        className="grid min-w-max grid-rows-7 gap-[0.2rem] [--calendar-cell:1.5rem] sm:[--calendar-cell:0.7rem]"
+        style={{ gridTemplateColumns: `repeat(${days.columnCount}, var(--calendar-cell))` }}
+      >
+        {days.entries.map(({ day, column, row }) => <button key={day.date} type="button" aria-label={describe(day)} title={describe(day)}
+          style={{ gridColumn: column, gridRow: row }}
+          onFocus={() => setActive(day)}
           onMouseEnter={() => {
-            if (future) return;
             setActive(day);
             if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) sound.play("hover");
           }}
-          onClick={() => !future && setActive(day)}
-          className={`relative h-6 w-6 after:absolute after:left-1/2 after:top-1/2 after:h-[0.7rem] after:w-[0.7rem] after:-translate-x-1/2 after:-translate-y-1/2 after:border after:border-line-faint/70 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-cyan disabled:cursor-default disabled:opacity-35 disabled:after:bg-transparent sm:h-[0.7rem] sm:w-[0.7rem] ${levelClass[day.contributionLevel]}`} />)}
+          onClick={() => setActive(day)}
+          className={`relative h-6 w-6 after:absolute after:left-1/2 after:top-1/2 after:h-[0.7rem] after:w-[0.7rem] after:-translate-x-1/2 after:-translate-y-1/2 after:border after:border-line-faint/70 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-cyan sm:h-[0.7rem] sm:w-[0.7rem] ${levelClass[day.contributionLevel]}`} />)}
       </div>
     </div>
     <div className="mt-1 min-h-4 font-mono text-[0.62rem] text-paper-dim" aria-live="polite">{active ? describe(active) : "Focus or tap a cell for its daily count."}</div>
