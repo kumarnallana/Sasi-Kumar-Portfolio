@@ -53,7 +53,7 @@ export default function Operations() {
       <div className="max-w-5xl">
         <div className="tech-label mb-7 flex items-center gap-3 text-cyan">
           <span className="h-px w-8 bg-cyan" />
-          CURRENT ENGINEERING DIRECTION
+          OPERATING PHILOSOPHY
         </div>
         {manifesto.map((line, i) => (
           <p

@@ -102,7 +102,7 @@ export default function About() {
       <SectionHeader
         index="04"
         title="PROFILE"
-        caption="Experience and learning behind the demonstrated signal."
+        caption="Operator identity & professional narrative."
       />
 
       <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">

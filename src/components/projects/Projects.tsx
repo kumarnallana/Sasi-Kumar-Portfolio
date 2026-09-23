@@ -213,7 +213,7 @@ export default function Projects() {
       <SectionHeader
         index="02"
         title="DEPLOYED SYSTEMS"
-        caption="Principles translated into deployed systems."
+        caption="Self-assembling architecture schematics - drawn as you read."
       />
       <div>
         {projects.map((p, i) => (

@@ -49,7 +49,7 @@ function MetricLabel({
         className={`h-4 w-4 shrink-0 ${color} ${filled ? "fill-current" : "fill-none"}`}
         strokeWidth={2}
       />
-      <span className="min-w-0 break-normal font-mono text-[0.6rem] uppercase leading-[1.45] tracking-[0.18em] text-paper-dim">
+      <span className="min-w-0 font-mono text-[0.6rem] uppercase leading-[1.45] tracking-[0.18em] text-paper-dim [overflow-wrap:anywhere]">
         {label}
       </span>
     </div>
@@ -187,7 +187,7 @@ export default function OpenSource() {
       <SectionHeader
         index="03"
         title="OPEN-SOURCE SIGNALS"
-        caption="Public engineering evidence sourced directly from GitHub."
+        caption="Public repositories and activity sourced directly from GitHub."
       />
 
       <div className="mb-10" aria-busy={isPending || isAnalyticsPending} aria-live="polite">
