@@ -5,8 +5,7 @@ import { setLenis } from "@/lib/lenis";
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return;
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     // Clean up legacy #architect anchor if present in URL bar
     if (typeof window !== "undefined" && window.location.hash === "#architect") {
@@ -15,13 +14,24 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     let cancelled = false;
     let cleanup: (() => void) | undefined;
+    let startToken = 0;
 
-    void Promise.all([
-      import("lenis"),
-      import("gsap"),
-      import("gsap/ScrollTrigger"),
-    ]).then(([{ default: Lenis }, { gsap }, { ScrollTrigger }]) => {
-      if (cancelled) return;
+    const stop = () => {
+      startToken += 1;
+      cleanup?.();
+      cleanup = undefined;
+    };
+
+    const start = async () => {
+      if (cleanup || motionPreference.matches) return;
+      const token = ++startToken;
+      const [{ default: Lenis }, { gsap }, { ScrollTrigger }] = await Promise.all([
+        import("lenis"),
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ]);
+      if (cancelled || motionPreference.matches || token !== startToken) return;
+
       gsap.registerPlugin(ScrollTrigger);
       const lenis = new Lenis({
         autoRaf: false,
@@ -44,11 +54,23 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
         lenis.destroy();
         setLenis(null);
       };
-    });
+    };
+
+    const syncMotionPreference = () => {
+      if (motionPreference.matches) {
+        stop();
+      } else {
+        void start();
+      }
+    };
+
+    motionPreference.addEventListener("change", syncMotionPreference);
+    syncMotionPreference();
 
     return () => {
       cancelled = true;
-      cleanup?.();
+      motionPreference.removeEventListener("change", syncMotionPreference);
+      stop();
     };
   }, []);
 

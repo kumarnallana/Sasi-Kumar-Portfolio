@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import SoundToggle from "@/components/audio/SoundToggle";
 import { sound } from "@/lib/sound";
-import { getLenis, scrollToSection } from "@/lib/lenis";
+import { getLenis, scrollToSection, subscribeLenis } from "@/lib/lenis";
 import { NAV_SECTIONS as SECTIONS } from "@/lib/sections";
 import { useIsDesktop } from "@/hooks/useIsMobile";
 
@@ -35,7 +35,7 @@ export default function DepthNav() {
   const containerRef = useRef<HTMLDivElement>(null);
   const containerHeightRef = useRef(0);
 
-  // Sync pts to ref to use in rAF loop without causing dependency re-binds
+  // Sync pts to ref for scroll telemetry without causing dependency re-binds
   const ptsRef = useRef(pts);
   useEffect(() => {
     ptsRef.current = pts;
@@ -52,10 +52,11 @@ export default function DepthNav() {
       if (document.body.style.position === "fixed") return;
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const denom = max > 0 ? max : 1;
+      const scrollY = getLenis()?.animatedScroll ?? window.scrollY;
       setPts(
         SECTIONS.map((s) => {
           const el = document.getElementById(s.id);
-          const top = el ? el.getBoundingClientRect().top + window.scrollY : 0;
+          const top = el ? el.getBoundingClientRect().top + scrollY : 0;
           return { ...s, frac: Math.max(0, Math.min(1, top / denom)) };
         }),
       );
@@ -64,11 +65,9 @@ export default function DepthNav() {
       }
     };
 
-    let rafId = 0;
-    const update = () => {
-      rafId = 0;
+    const update = (scrollY: number) => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = max > 0 ? Math.max(0, Math.min(1, window.scrollY / max)) : 0;
+      const progress = max > 0 ? Math.max(0, Math.min(1, scrollY / max)) : 0;
 
       // Direct DOM updates via transforms
       if (progressFillRef.current) {
@@ -94,13 +93,23 @@ export default function DepthNav() {
       }
     };
 
-    const onScroll = () => {
-      if (rafId) return;
-      rafId = window.requestAnimationFrame(update);
-    };
-
     measure();
-    onScroll();
+
+    let unsubscribeScroll: (() => void) | undefined;
+    const unsubscribeLenis = subscribeLenis((lenis) => {
+      unsubscribeScroll?.();
+      if (lenis) {
+        const updateFromLenis = () => update(lenis.animatedScroll);
+        unsubscribeScroll = lenis.on("scroll", updateFromLenis);
+        updateFromLenis();
+        return;
+      }
+
+      const updateFromNativeScroll = () => update(window.scrollY);
+      window.addEventListener("scroll", updateFromNativeScroll, { passive: true });
+      unsubscribeScroll = () => window.removeEventListener("scroll", updateFromNativeScroll);
+      updateFromNativeScroll();
+    });
 
     // re-measure after late layout shifts (fonts, the 3D canvas, images)
     const t1 = setTimeout(measure, 400);
@@ -112,16 +121,15 @@ export default function DepthNav() {
     
     window.addEventListener("resize", measure, { passive: true });
     window.addEventListener("portfolio:layout-stable", measure);
-    window.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
       layoutObserver.disconnect();
-      if (rafId) cancelAnimationFrame(rafId);
+      unsubscribeLenis();
+      unsubscribeScroll?.();
       window.removeEventListener("resize", measure);
       window.removeEventListener("portfolio:layout-stable", measure);
-      window.removeEventListener("scroll", onScroll);
     };
   }, [isDesktop]);
 

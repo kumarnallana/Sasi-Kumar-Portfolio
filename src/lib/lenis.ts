@@ -3,13 +3,23 @@ import Lenis from "lenis";
 // Lenis is instantiated inside <SmoothScroll/>; navigation can reuse that
 // single desktop scroll owner without adding behavior to normal page scrolling.
 let instance: Lenis | null = null;
+type LenisInstanceListener = (next: Lenis | null) => void;
+const instanceListeners = new Set<LenisInstanceListener>();
 
 export function setLenis(next: Lenis | null) {
+  if (instance === next) return;
   instance = next;
+  instanceListeners.forEach((listener) => listener(next));
 }
 
 export function getLenis() {
   return instance;
+}
+
+export function subscribeLenis(listener: LenisInstanceListener) {
+  instanceListeners.add(listener);
+  listener(instance);
+  return () => instanceListeners.delete(listener);
 }
 
 type ScrollToSectionOptions = {
