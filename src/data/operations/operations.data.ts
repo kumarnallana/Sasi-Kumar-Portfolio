@@ -6,7 +6,7 @@ export const operations: Operation[] = [
     status: "ACTIVE",
   },
   {
-    name: "CSR Mentorship",
+    name: "Full-Stack Mentorship",
     detail: "Mentoring 60+ aspiring developers through CoroVidya.",
     status: "ACTIVE",
   },

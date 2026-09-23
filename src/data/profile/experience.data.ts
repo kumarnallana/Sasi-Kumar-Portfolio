@@ -14,7 +14,7 @@ export const experience: Experience[] = [
     ],
   },
   {
-    role: "CSR Mentorship",
+    role: "Full-Stack Mentorship",
     period: "May 2026 – July 2026",
     company: "CoroVidya",
     mode: "Parallel Contribution",

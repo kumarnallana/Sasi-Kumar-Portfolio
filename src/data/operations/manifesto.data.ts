@@ -1,7 +1,5 @@
 export const manifesto = [
-  "Understand the requirement before coding.",
-  "Break interfaces and workflows into maintainable components.",
-  "Treat API and data flow as product behavior.",
-  "Debug root causes with browser and network evidence.",
-  "Validate complete workflows before calling work finished.",
+  "Building production web platforms.",
+  "Mentoring aspiring full-stack developers.",
+  "Expanding into Python APIs and backend systems.",
 ];
