@@ -17,17 +17,13 @@ import PortfolioWebAnalytics from "@/integrations/analytics/portfolio-web-analyt
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "optional",
-  preload: false,
+  display: "swap",
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  display: "optional",
-  preload: false,
+  display: "swap",
 });
 
 export const metadata: Metadata = {
