@@ -6,7 +6,9 @@ export async function GET(_request: Request, { params }: { params: Promise<{ yea
   const year = Number((await params).year);
   try {
     return NextResponse.json(await getGitHubContributionYear(year), {
-      headers: { "Cache-Control": "no-store" },
+      headers: {
+        "Cache-Control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400",
+      },
     });
   } catch (error) {
     const reason = getGitHubFailureCode(error);

@@ -13,7 +13,7 @@ export class GitHubClientError extends Error {
 
 export const githubClient = {
   portfolio: async (): Promise<GitHubPortfolioData> => {
-    const res = await fetch("/api/github/graphql", { cache: "no-store" });
+    const res = await fetch("/api/github/graphql");
     if (!res.ok) {
       if (res.status === 429) {
         throw new GitHubClientError("RATE_LIMIT");
@@ -26,7 +26,7 @@ export const githubClient = {
     return res.json() as Promise<GitHubPortfolioData>;
   },
   contributionYear: async (year: number): Promise<GitHubContributionYear> => {
-    const res = await fetch(`/api/github/contributions/${year}`, { cache: "no-store" });
+    const res = await fetch(`/api/github/contributions/${year}`);
     if (!res.ok) {
       if (res.status === 429) throw new GitHubClientError("RATE_LIMIT");
       throw new GitHubClientError("UNAVAILABLE");

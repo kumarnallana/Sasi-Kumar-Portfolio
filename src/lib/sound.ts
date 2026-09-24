@@ -1,7 +1,7 @@
 // ============================================================
 // MISSION-CONTROL SOUND ENGINE
 // Fully synthesized via Web Audio API - no asset files.
-// Subtle, tasteful, off by default. Respects autoplay policy.
+// Subtle, tasteful, on by default. Respects autoplay policy.
 // ============================================================
 
 export type UiSoundEvent =
@@ -58,6 +58,19 @@ class SoundEngine {
     }
   }
 
+  activate() {
+    this.init();
+    if (!this._enabled || !this.ctx) return;
+
+    const confirm = () => this.play("boot");
+    if (this.ctx.state === "suspended") {
+      void this.ctx.resume().then(confirm).catch(() => {});
+      return;
+    }
+
+    confirm();
+  }
+
   subscribe(fn: (on: boolean) => void): () => void {
     this.listeners.add(fn);
     fn(this._enabled);
@@ -69,18 +82,26 @@ class SoundEngine {
   setEnabled(on: boolean) {
     if (!this.ready) this.init();
     this._enabled = on;
-    if (this.ctx?.state === "suspended") this.ctx.resume();
-    if (this.master)
-      this.master.gain.setTargetAtTime(
-        on ? 0.95 : 0.0,
-        this.ctx!.currentTime,
-        0.05,
-      );
+    const apply = () => {
+      if (this.master && this.ctx) {
+        this.master.gain.setTargetAtTime(
+          on ? 0.95 : 0.0,
+          this.ctx.currentTime,
+          0.05,
+        );
+      }
+      if (on) this.play("toggle");
+    };
+
+    if (on && this.ctx?.state === "suspended") {
+      void this.ctx.resume().then(apply).catch(() => {});
+    } else {
+      apply();
+    }
     try {
       localStorage.setItem("nsk-sound", on ? "on" : "off");
     } catch {}
     this.listeners.forEach((fn) => fn(on));
-    if (on) this.play("toggle");
   }
 
   toggle() {
@@ -229,7 +250,7 @@ export const sound = new SoundEngine();
 // lazily init audio on the first user gesture anywhere
 if (typeof window !== "undefined") {
   const kick = () => {
-    sound.init();
+    sound.activate();
     window.removeEventListener("pointerdown", kick);
     window.removeEventListener("keydown", kick);
   };

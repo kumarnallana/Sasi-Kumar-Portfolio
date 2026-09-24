@@ -15,11 +15,9 @@ export function useGithubPortfolio() {
     refetchOnReconnect: true,
     refetchOnWindowFocus: true,
     refetchInterval: (query) => query.state.status === "error" ? 60_000 : false,
-    retry: (failureCount, error) => {
-      if (error instanceof GitHubClientError && error.code !== "UNAVAILABLE") {
-        return false;
-      }
-      return failureCount < 2;
-    },
+    // The API already classifies failures and retries once per minute while
+    // unavailable. Avoid repeating an expensive timed-out request immediately.
+    retry: (failureCount, error) =>
+      !(error instanceof GitHubClientError) && failureCount < 2,
   });
 }

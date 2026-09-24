@@ -12,7 +12,9 @@ export async function GET() {
   try {
     const data = await getGitHubPortfolioData();
     return NextResponse.json(data, {
-      headers: { "Cache-Control": "no-store" },
+      headers: {
+        "Cache-Control": "public, max-age=60, s-maxage=600, stale-while-revalidate=3600",
+      },
     });
   } catch (error: unknown) {
     const reason = getGitHubFailureCode(error);
