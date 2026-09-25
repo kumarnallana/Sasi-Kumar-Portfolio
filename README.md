@@ -1,7 +1,7 @@
 <div align="center">
 
 <!-- You can replace this with a GIF of your 3D globe later! -->
-<img src="https://raw.githubusercontent.com/kumarnallana/Sasi-Kumar-Portfolio/main/public/logos/sasi-portrait-new-trimmed.webp" width="140" style="border-radius: 50%; border: 2px solid #52D9FF; box-shadow: 0 0 20px rgba(82, 217, 255, 0.4);" alt="Nallana Sasi Kumar" />
+<img src="https://raw.githubusercontent.com/kumarnallana/Sasi-Kumar-Portfolio/main/public/logos/sasi-portrait-glasses-candidate-rgb.png" width="180" style="border-radius: 24px; border: 2px solid #52D9FF; box-shadow: 0 0 20px rgba(82, 217, 255, 0.4);" alt="Nallana Sasi Kumar" />
 
 # Nallana Sasi Kumar
 ### FULL-STACK DEVELOPER & SYSTEMS ENGINEER
