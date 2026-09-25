@@ -1,287 +1,113 @@
-Nallana Sasi Kumar | Full-Stack Developer Portfolio
+<div align="center">
 
-A full-stack developer portfolio designed and engineered as an interactive digital product rather than a conventional static portfolio.
+<!-- You can replace this with a GIF of your 3D globe later! -->
+<img src="https://raw.githubusercontent.com/kumarnallana/Sasi-Kumar-Portfolio/main/public/logos/sasi-portrait-new-trimmed.webp" width="140" style="border-radius: 50%; border: 2px solid #52D9FF; box-shadow: 0 0 20px rgba(82, 217, 255, 0.4);" alt="Nallana Sasi Kumar" />
 
-The experience combines system-inspired visual design, 3D interactions, motion, live engineering data, project architecture, and production-focused performance.
+# Nallana Sasi Kumar
+### FULL-STACK DEVELOPER & SYSTEMS ENGINEER
 
-Live
+*A digital portfolio engineered as an interactive product—combining system-inspired visual design, 3D interactions, motion physics, live engineering data, and production-grade performance.*
 
-Live Demo: https://nallana-sasi-kumar-portfolio.vercel.app/
-Repository: https://github.com/kumarnallana/Sasi-Kumar-Portfolio
+[![Live Demo](https://img.shields.io/badge/Live_Deployment-52D9FF?style=for-the-badge&logo=vercel&logoColor=black)](https://nallana-sasi-kumar-portfolio.vercel.app/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sasi-kumar-nallana)
+[![GitHub](https://img.shields.io/badge/GitHub-Profile-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/kumarnallana)
 
-Overview
+<br/>
 
-I wanted my portfolio to represent more than a list of skills and projects.
+| Performance | Accessibility | Best Practices | SEO |
+| :---: | :---: | :---: | :---: |
+| <img src="https://img.shields.io/badge/100-success?style=for-the-badge&logo=lighthouse" /> | <img src="https://img.shields.io/badge/100-success?style=for-the-badge&logo=lighthouse" /> | <img src="https://img.shields.io/badge/100-success?style=for-the-badge&logo=lighthouse" /> | <img src="https://img.shields.io/badge/100-success?style=for-the-badge&logo=lighthouse" /> |
 
-The interface is built around a system-oriented visual language using blueprint-inspired layouts, technical typography, restrained motion, interactive depth, and a dark cyan-and-amber palette.
+</div>
 
-The goal is to communicate not only what I build, but how I think about engineering, product development, architecture, performance, and user experience.
+---
 
-Performance
+## ✦ The Core Experience
 
-Lighthouse performance results:
+I built this portfolio to communicate not just what I build, but **how I think about engineering, product development, architecture, and user experience.** The interface is built around a system-oriented visual language using blueprint-inspired layouts, technical typography, restrained motion, and interactive depth.
 
-Device
+### 🌐 3D Interactive Technology Globe
+Built with **React Three Fiber**, this visualization represents different areas of my stack and engineering experience. It features 360-degree interaction, technology constellations, post-processing bloom effects, and motion designed to support the interface rather than distract from it.
 
-Performance
+### 〰️ Elastic Signal Physics
+The background leverages a custom **GSAP ticker** paired with normal-based displacement, neighbor tension (Laplacian coupling), and projected pointer forces to create an organic, elastic ribbon wave effect that dynamically reacts to user interactions.
 
-Mobile
+### 📊 Live Telemetry & GitHub Integration
+GitHub data is integrated dynamically to surface repositories, stars, followers, and contribution history. The integration uses **GitHub GraphQL APIs** together with client-side caching. Furthermore, view counts are retrieved from **Vercel Web Analytics** entirely on the server. *If telemetry is unavailable, the UI explicitly reports it—I strictly avoid fabricating data.*
 
-95
+---
 
-Desktop
+## ✦ Technology Stack
 
-100
+<table>
+  <tr>
+    <td align="center" width="25%">
+      <h3>Frontend</h3>
+      <img src="https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=next.js&logoColor=white" /><br/>
+      <img src="https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB" /><br/>
+      <img src="https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white" /><br/>
+      <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white" />
+    </td>
+    <td align="center" width="25%">
+      <h3>Backend</h3>
+      <img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white" /><br/>
+      <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white" /><br/>
+      <img src="https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white" /><br/>
+      <img src="https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql&logoColor=white" />
+    </td>
+    <td align="center" width="25%">
+      <h3>Motion & 3D</h3>
+      <img src="https://img.shields.io/badge/Three.js-000000?style=flat-square&logo=threedotjs&logoColor=white" /><br/>
+      <img src="https://img.shields.io/badge/React_Three_Fiber-000000?style=flat-square&logo=react&logoColor=white" /><br/>
+      <img src="https://img.shields.io/badge/GSAP-88CE02?style=flat-square&logo=greensock&logoColor=white" /><br/>
+      <img src="https://img.shields.io/badge/Framer_Motion-0055FF?style=flat-square&logo=framer&logoColor=white" />
+    </td>
+    <td align="center" width="25%">
+      <h3>Infrastructure</h3>
+      <img src="https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white" /><br/>
+      <img src="https://img.shields.io/badge/Supabase-3ECF8E?style=flat-square&logo=supabase&logoColor=white" /><br/>
+      <img src="https://img.shields.io/badge/GraphQL-E10098?style=flat-square&logo=graphql&logoColor=white" /><br/>
+      <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white" />
+    </td>
+  </tr>
+</table>
 
-Performance was treated as an engineering requirement alongside interaction design, responsiveness, and visual quality.
+---
 
-Core Experience
+## ✦ Featured Engineering Work
 
-Interactive Technology Globe
+### Zylxy Technologies (Web Developer Intern)
+Worked on a production-focused corporate website and CRM workflow platform. 
+* **Contributions:** Built reusable responsive UI components, developed lead-generation workflows utilizing **Next.js Server Actions**, integrated complex REST APIs, and debugged frontend-to-backend data flows via browser developer tools.
 
-A 3D technology visualization built with React Three Fiber that represents different areas of my stack and engineering experience.
+### CoroVidya CSR Mentorship
+Mentored **60+ aspiring developers** through JavaScript guidance, React concepts, Node.js fundamentals, code reviews, and live technical sessions.
 
-It includes:
+---
 
-360-degree interaction
+## ✦ Local Development & Telemetry Configuration
 
-Technology nodes and constellations
+To run this project locally with full telemetry integration, configure your `.env.local` with the following:
 
-Post-processing and bloom effects
+```env
+# GitHub GraphQL API 
+GITHUB_TOKEN=your_token
 
-Motion designed to support the interface rather than distract from it
+# Portfolio Appreciation Data (Server-side only)
+SUPABASE_URL=your_supabase_url
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
-System-Inspired Navigation
-
-The portfolio uses an engineering-console-inspired interaction model with:
-
-Depth-based navigation
-
-Structured section transitions
-
-GSAP animation sequencing
-
-Smooth scrolling
-
-Technical telemetry and interface details
-
-Responsive behavior across desktop and mobile
-
-Live GitHub Integration
-
-GitHub data is integrated dynamically to surface:
-
-Repositories
-
-Stars
-
-Followers
-
-Profile information
-
-Contribution history
-
-Selectable contribution years
-
-The integration uses GitHub APIs together with client-side data management for controlled fetching and caching.
-
-Production Portfolio Analytics
-
-Portfolio view information is retrieved from Vercel Web Analytics on the server.
-
-The implementation intentionally avoids displaying fabricated fallback values. If authorized analytics data is unavailable, the interface reports the metric as unavailable instead of presenting misleading information.
-
-Engineering Architecture
-
-The portfolio also includes visual architecture and workflow representations for real engineering problems, including:
-
-Frontend-to-backend request flows
-
-API integrations
-
-CRM workflows
-
-Lead-generation systems
-
-Application architecture
-
-Deployment and delivery concepts
-
-Technology Stack
-
-Frontend
-
-React.js
-
-Next.js
-
-TypeScript
-
-HTML5
-
-CSS3
-
-Tailwind CSS
-
-Motion and 3D
-
-Three.js
-
-React Three Fiber
-
-GSAP
-
-ScrollTrigger
-
-Framer Motion
-
-Lenis
-
-Backend and APIs
-
-Node.js
-
-Express.js
-
-Next.js Server Actions
-
-REST APIs
-
-GitHub GraphQL API
-
-SQL
-
-Browser Storage
-
-Expanding Backend Stack
-
-Python
-
-FastAPI
-
-Pydantic
-
-SQLAlchemy
-
-Data and Infrastructure
-
-Supabase / PostgreSQL
-
-Vercel Web Analytics
-
-Vercel
-
-GitHub APIs
-
-Quality and Delivery
-
-Git
-
-GitHub
-
-GitHub Actions
-
-Jest
-
-Postman
-
-Responsive Design
-
-Accessibility
-
-Performance Optimization
-
-Featured Engineering Work
-
-Zylxy Technologies
-
-Corporate Website and CRM Consulting Platform
-
-Worked as a Web Developer Intern on a production-focused corporate website and CRM workflow.
-
-Key contributions included:
-
-Building reusable responsive UI components
-
-Developing lead-generation workflows
-
-Using Next.js Server Actions
-
-Integrating REST APIs
-
-Debugging frontend-to-backend data flows
-
-Investigating CRM integration issues using browser developer tools
-
-CoroVidya CSR Mentorship
-
-Mentored more than 60 aspiring developers through:
-
-JavaScript guidance
-
-React concepts
-
-Node.js fundamentals
-
-Code reviews
-
-Technical sessions
-
-Development support
-
-Engineering Principles
-
-The portfolio reflects several principles I try to follow while building software:
-
-Build systems, not isolated screens
-
-Keep interfaces purposeful
-
-Prefer real data over fabricated presentation
-
-Treat responsiveness as part of the product
-
-Optimize without sacrificing experience
-
-Design motion with intent
-
-Keep implementation understandable and maintainable
-
-Open Source Signal Configuration
-
-GitHub telemetry requires:
-
-GITHUB_TOKEN=
-
-Optional Vercel production analytics require:
-
+# Optional: Vercel Production Analytics
 VERCEL_ANALYTICS_TOKEN=
 VERCEL_ANALYTICS_PROJECT_ID=
 VERCEL_ANALYTICS_TEAM_ID=
+```
 
-The team ID is required only when the Vercel project belongs to a team.
+> **Note:** The `SUPABASE_SERVICE_ROLE_KEY` strictly remains server-side and is never exposed to the browser. If telemetry credentials are not provided, the application gracefully handles the fallback without fabricating metrics.
 
-Portfolio appreciation data uses Supabase/PostgreSQL and requires:
+<br/>
 
-SUPABASE_URL=
-SUPABASE_SERVICE_ROLE_KEY=
-
-The service-role key remains server-side and is never exposed to the browser.
-
-If analytics credentials are unavailable, the application preserves the interface without replacing missing metrics with fabricated values.
-
-Connect
-
-Portfolio:
-https://nallana-sasi-kumar-portfolio.vercel.app/
-
-LinkedIn:
-https://www.linkedin.com/in/sasi-kumar-nallana
-
-GitHub:
-https://github.com/kumarnallana
-
-Email:
-sasikumarnallana956@gmail.com
-
-Designed and developed by Nallana Sasi Kumar.
+<div align="center">
+  <p><i>"Build systems, not isolated screens. Optimize without sacrificing experience."</i></p>
+  <p><b>Designed and developed by Nallana Sasi Kumar.</b></p>
+</div>
