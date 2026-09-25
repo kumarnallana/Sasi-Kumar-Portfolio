@@ -1,76 +1,287 @@
-# Nallana Sasi Kumar — Full-Stack Developer Portfolio
+Nallana Sasi Kumar | Full-Stack Developer Portfolio
 
-Welcome to the personal portfolio of **Nallana Sasi Kumar**, a Full-Stack Developer focused on building scalable, intuitive, and user-focused web applications across modern frontend, backend, and API systems.
+A full-stack developer portfolio designed and engineered as an interactive digital product rather than a conventional static portfolio.
 
-## 🚀 Overview
+The experience combines system-inspired visual design, 3D interactions, motion, live engineering data, project architecture, and production-focused performance.
 
-This portfolio is built as a highly interactive, cinematic engineering experience. It utilizes a deep blueprint visual language, 3D technology representations, and dynamic data integration to showcase technical capabilities and professional experience.
+Live
 
-## 🛠️ Technology Stack
+Live Demo: https://nallana-sasi-kumar-portfolio.vercel.app/
+Repository: https://github.com/kumarnallana/Sasi-Kumar-Portfolio
 
-**Interface & Frontend:**
-- React.js & Next.js
-- Tailwind CSS, HTML5, CSS3
-- Three.js / React Three Fiber (R3F)
-- Framer Motion & GSAP (ScrollTrigger)
-- Lenis Smooth Scrolling
+Overview
 
-**Backend, Data & APIs:**
-- Node.js & Express.js
-- Next.js Server Actions & REST API Integration
-- SQL & Browser Storage
-- **Expanding Backend Stack:** Python, FastAPI, Pydantic, SQLAlchemy
+I wanted my portfolio to represent more than a list of skills and projects.
 
-**Quality & Delivery:**
-- Git & GitHub
-- GitHub Actions, Jest, Postman
-- Agile / Scrum Methodologies
+The interface is built around a system-oriented visual language using blueprint-inspired layouts, technical typography, restrained motion, interactive depth, and a dark cyan-and-amber palette.
 
-## 🌟 Key Features
+The goal is to communicate not only what I build, but how I think about engineering, product development, architecture, performance, and user experience.
 
-- **Interactive 3D Stack Globe:** A React Three Fiber globe representing the technology stack with 360-degree drag rotation, bloom post-processing, and node constellations.
-- **Cinematic Navigation:** Depth navigation, GSAP sequencing, and timeline reveals for an authored engineering atmosphere.
-- **Dynamic GitHub Integration:** Live repositories, stars, followers, profile metadata, and selectable calendar-year contribution history using TanStack Query and the GitHub GraphQL API.
-- **Truthful Portfolio Analytics:** The public view count is read server-side from Vercel Web Analytics when authorized, and never falls back to a fabricated number.
-- **System Architecture Diagrams:** Interactive blueprint diagrams showcasing real-world workflows, such as CRM integrations and lead-generation architecture.
+Performance
 
-## Open-source signal configuration
+Lighthouse performance results:
 
-The GitHub telemetry requires `GITHUB_TOKEN`. To show the optional lifetime production view count, configure these server-only Vercel environment variables:
+Device
 
-- `VERCEL_ANALYTICS_TOKEN` — a Vercel access token with access to the project
-- `VERCEL_ANALYTICS_PROJECT_ID` — the portfolio project ID
-- `VERCEL_ANALYTICS_TEAM_ID` — required only when the project belongs to a team
+Performance
 
-Without the Vercel credentials, the portfolio keeps the analytics slot stable and reports the view metric as unavailable. Tokens are never sent to the browser.
+Mobile
 
-The global appreciation counter uses the Supabase/Postgres migration in
-`supabase/migrations/20260915090000_portfolio_appreciations.sql`. Apply that
-migration to the approved Supabase project, then configure these server-side
-deployment variables:
+95
 
-- `SUPABASE_URL` (or `NEXT_PUBLIC_SUPABASE_URL` when that project URL already exists)
-- `SUPABASE_SERVICE_ROLE_KEY`
+Desktop
 
-The service-role key stays on the server and is used only by the appreciation
-Route Handler. Without these credentials, the portfolio reports the metric as
-unavailable rather than displaying a seeded count.
+100
 
-## 💼 Featured Work
+Performance was treated as an engineering requirement alongside interaction design, responsiveness, and visual quality.
 
-### Zylxy Technologies — Corporate Website & CRM Consulting Platform
-A production-focused corporate website and CRM consulting platform.
-- **Role:** Web Developer Intern
-- **Impact:** Built reusable and responsive UI components, developed lead-generation forms with Next.js Server Actions, integrated REST APIs, and debugged end-to-end CRM workflows using browser DevTools.
+Core Experience
 
-### CoroVidya CSR Mentorship
-Mentored 60+ aspiring developers through technical guidance, code reviews, and instructor-led sessions on JavaScript, React, and Node.js.
+Interactive Technology Globe
 
-## 📞 Connect
+A 3D technology visualization built with React Three Fiber that represents different areas of my stack and engineering experience.
 
-- **Email:** [sasikumarnallana956@gmail.com](mailto:sasikumarnallana956@gmail.com)
-- **LinkedIn:** [linkedin.com/in/sasi-kumar-nallana](https://linkedin.com/in/sasi-kumar-nallana)
-- **GitHub:** [github.com/kumarnallana](https://github.com/kumarnallana)
+It includes:
 
----
-*Location: Kakinada, Andhra Pradesh, India*
+360-degree interaction
+
+Technology nodes and constellations
+
+Post-processing and bloom effects
+
+Motion designed to support the interface rather than distract from it
+
+System-Inspired Navigation
+
+The portfolio uses an engineering-console-inspired interaction model with:
+
+Depth-based navigation
+
+Structured section transitions
+
+GSAP animation sequencing
+
+Smooth scrolling
+
+Technical telemetry and interface details
+
+Responsive behavior across desktop and mobile
+
+Live GitHub Integration
+
+GitHub data is integrated dynamically to surface:
+
+Repositories
+
+Stars
+
+Followers
+
+Profile information
+
+Contribution history
+
+Selectable contribution years
+
+The integration uses GitHub APIs together with client-side data management for controlled fetching and caching.
+
+Production Portfolio Analytics
+
+Portfolio view information is retrieved from Vercel Web Analytics on the server.
+
+The implementation intentionally avoids displaying fabricated fallback values. If authorized analytics data is unavailable, the interface reports the metric as unavailable instead of presenting misleading information.
+
+Engineering Architecture
+
+The portfolio also includes visual architecture and workflow representations for real engineering problems, including:
+
+Frontend-to-backend request flows
+
+API integrations
+
+CRM workflows
+
+Lead-generation systems
+
+Application architecture
+
+Deployment and delivery concepts
+
+Technology Stack
+
+Frontend
+
+React.js
+
+Next.js
+
+TypeScript
+
+HTML5
+
+CSS3
+
+Tailwind CSS
+
+Motion and 3D
+
+Three.js
+
+React Three Fiber
+
+GSAP
+
+ScrollTrigger
+
+Framer Motion
+
+Lenis
+
+Backend and APIs
+
+Node.js
+
+Express.js
+
+Next.js Server Actions
+
+REST APIs
+
+GitHub GraphQL API
+
+SQL
+
+Browser Storage
+
+Expanding Backend Stack
+
+Python
+
+FastAPI
+
+Pydantic
+
+SQLAlchemy
+
+Data and Infrastructure
+
+Supabase / PostgreSQL
+
+Vercel Web Analytics
+
+Vercel
+
+GitHub APIs
+
+Quality and Delivery
+
+Git
+
+GitHub
+
+GitHub Actions
+
+Jest
+
+Postman
+
+Responsive Design
+
+Accessibility
+
+Performance Optimization
+
+Featured Engineering Work
+
+Zylxy Technologies
+
+Corporate Website and CRM Consulting Platform
+
+Worked as a Web Developer Intern on a production-focused corporate website and CRM workflow.
+
+Key contributions included:
+
+Building reusable responsive UI components
+
+Developing lead-generation workflows
+
+Using Next.js Server Actions
+
+Integrating REST APIs
+
+Debugging frontend-to-backend data flows
+
+Investigating CRM integration issues using browser developer tools
+
+CoroVidya CSR Mentorship
+
+Mentored more than 60 aspiring developers through:
+
+JavaScript guidance
+
+React concepts
+
+Node.js fundamentals
+
+Code reviews
+
+Technical sessions
+
+Development support
+
+Engineering Principles
+
+The portfolio reflects several principles I try to follow while building software:
+
+Build systems, not isolated screens
+
+Keep interfaces purposeful
+
+Prefer real data over fabricated presentation
+
+Treat responsiveness as part of the product
+
+Optimize without sacrificing experience
+
+Design motion with intent
+
+Keep implementation understandable and maintainable
+
+Open Source Signal Configuration
+
+GitHub telemetry requires:
+
+GITHUB_TOKEN=
+
+Optional Vercel production analytics require:
+
+VERCEL_ANALYTICS_TOKEN=
+VERCEL_ANALYTICS_PROJECT_ID=
+VERCEL_ANALYTICS_TEAM_ID=
+
+The team ID is required only when the Vercel project belongs to a team.
+
+Portfolio appreciation data uses Supabase/PostgreSQL and requires:
+
+SUPABASE_URL=
+SUPABASE_SERVICE_ROLE_KEY=
+
+The service-role key remains server-side and is never exposed to the browser.
+
+If analytics credentials are unavailable, the application preserves the interface without replacing missing metrics with fabricated values.
+
+Connect
+
+Portfolio:
+https://nallana-sasi-kumar-portfolio.vercel.app/
+
+LinkedIn:
+https://www.linkedin.com/in/sasi-kumar-nallana
+
+GitHub:
+https://github.com/kumarnallana
+
+Email:
+sasikumarnallana956@gmail.com
+
+Designed and developed by Nallana Sasi Kumar.
