@@ -15,8 +15,6 @@ import LivingPortrait from "./LivingPortrait";
 
 gsap.registerPlugin(ScrollTrigger);
 
-let profileVerified = false;
-
 export default function About() {
   const ref = useRef<HTMLDivElement>(null);
   const profileTraceRef = useRef<SVGPathElement>(null);
@@ -77,12 +75,7 @@ export default function About() {
             start: "top 65%",
             once: true,
             onEnter: () => {
-              if (profileVerified) {
-                traceTl.progress(1);
-              } else {
-                profileVerified = true;
-                traceTl.play();
-              }
+              traceTl.play();
             }
           });
         }
