@@ -49,8 +49,8 @@ GitHub data is integrated dynamically to surface repositories, stars, followers,
     <td align="center" width="25%">
       <h3>Backend</h3>
       <img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white" /><br/>
-      <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white" /><br/>
-      <img src="https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white" /><br/>
+      <img src="https://img.shields.io/badge/Express.js-000000?style=flat-square&logo=express&logoColor=white" /><br/>
+      <img src="https://img.shields.io/badge/REST_APIs-005571?style=flat-square&logo=json&logoColor=white" /><br/>
       <img src="https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql&logoColor=white" />
     </td>
     <td align="center" width="25%">
