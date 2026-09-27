@@ -29,5 +29,5 @@ export default function LazyMount({
     return () => observer.disconnect();
   }, [inView, rootMargin]);
 
-  return <div ref={ref} className="contents">{inView ? children : fallback}</div>;
+  return <div ref={ref} className="h-full w-full">{inView ? children : fallback}</div>;
 }
