@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useSyncExternalStore, useState } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 
 const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
 
@@ -39,8 +39,14 @@ export default function Typewriter({
     getServerReducedMotionSnapshot,
   );
 
+  const [started, setStarted] = useState(false);
   useEffect(() => {
-    if (reduce || words.length === 0) return;
+    const timer = setTimeout(() => setStarted(true), 2500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (reduce || words.length === 0 || !started) return;
 
     const current = words[wordIdx % words.length];
     let delay = deleting ? deleteSpeed : typeSpeed;
@@ -61,7 +67,7 @@ export default function Typewriter({
         setText(
           deleting
             ? current.slice(0, text.length - 1)
-            : current.slice(0, text.length + 1)
+            : current.slice(0, text.length + 1),
         );
       }
     }, delay);
