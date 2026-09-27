@@ -1,21 +1,18 @@
 "use client";
 
-import React from "react";
 import { useIsDesktop } from "@/hooks/useIsMobile";
+import dynamic from "next/dynamic";
 
-const HeroDesktopSystemInner = React.lazy(
-  () => import("@/components/hero/HeroDesktopSystemInner")
+const HeroDesktopSystemInner = dynamic(
+  () => import("@/components/hero/HeroDesktopSystemInner"),
+  { ssr: false },
 );
 
 export default function HeroDesktopSystem() {
   const isDesktop = useIsDesktop();
   return (
     <div className="hidden h-[42vh] min-h-[320px] w-full md:block lg:h-[78vh]">
-      {isDesktop ? (
-        <React.Suspense fallback={null}>
-          <HeroDesktopSystemInner />
-        </React.Suspense>
-      ) : null}
+      {isDesktop ? <HeroDesktopSystemInner /> : null}
     </div>
   );
 }

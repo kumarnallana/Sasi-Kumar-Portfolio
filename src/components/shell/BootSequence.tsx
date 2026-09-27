@@ -103,7 +103,8 @@ export default function BootSequence({ onDone }: { onDone?: () => void }) {
     const reduce = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    if (reduce) {
+    const isMobile = window.innerWidth < 768;
+    if (reduce || isMobile) {
       done.current = true;
       root.current?.style.setProperty("display", "none");
       onDone?.();
