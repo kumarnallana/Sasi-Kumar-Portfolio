@@ -11,7 +11,8 @@ import Certifications from "./Certifications";
 import { internshipCredential } from "@/data/profile/certifications.data";
 import CapabilityMatrix from "./CapabilityMatrix";
 import { revealContent } from "@/lib/contentReveal";
-import LivingPortrait from "./LivingPortrait";
+import dynamic from "next/dynamic";
+const LivingPortrait = dynamic(() => import("./LivingPortrait"), { ssr: false, loading: () => <div className="h-full w-full bg-ink-900 animate-pulse" /> });
 
 gsap.registerPlugin(ScrollTrigger);
 

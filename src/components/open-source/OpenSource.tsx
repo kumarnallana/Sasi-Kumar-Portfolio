@@ -9,7 +9,8 @@ import { sound } from "@/lib/sound";
 import { useGithubPortfolio } from "@/integrations/github/use-github-portfolio";
 import AnimatedMetric from "@/components/shared/AnimatedMetric";
 import { revealContent } from "@/lib/contentReveal";
-import ContributionCalendar from "./ContributionCalendar";
+import dynamic from "next/dynamic";
+const ContributionCalendar = dynamic(() => import("./ContributionCalendar"), { ssr: false, loading: () => <div className="os-card mb-10 h-[216px] w-full animate-pulse border border-line-faint bg-ink-900/40 p-4 sm:p-5" /> });
 import { usePortfolioAnalytics } from "@/integrations/analytics/use-portfolio-analytics";
 import { usePortfolioAppreciation } from "@/integrations/appreciation/use-portfolio-appreciation";
 import {

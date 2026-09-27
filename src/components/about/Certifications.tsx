@@ -72,7 +72,7 @@ export default function Certifications() {
       </div>
       <div className={styles.details} id="credential-details">
         <a href={active.image} target="_blank" rel="noopener noreferrer" className={styles.preview} aria-label={`Open ${active.title} certificate image (new tab)`}>
-          <Image key={active.id} src={active.image} alt={`${active.issuer} ${active.title} certificate for Sasi Kumar Nallana`} fill sizes="(max-width: 767px) 280px, 320px" className={`object-contain ${styles.image}`} loading="eager" />
+          <Image key={active.id} src={active.image} alt={`${active.issuer} ${active.title} certificate for Sasi Kumar Nallana`} fill sizes="(max-width: 767px) 380px, 400px" className={`object-contain ${styles.image}`} loading="lazy" />
         </a>
         <div className={styles.metadata} aria-live="polite" aria-atomic="true">
           <div key={active.id} className={styles.metadataContent}>
