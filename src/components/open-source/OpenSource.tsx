@@ -10,6 +10,7 @@ import { useGithubPortfolio } from "@/integrations/github/use-github-portfolio";
 import AnimatedMetric from "@/components/shared/AnimatedMetric";
 import { revealContent } from "@/lib/contentReveal";
 import dynamic from "next/dynamic";
+import LazyMount from "@/components/shared/LazyMount";
 const ContributionCalendar = dynamic(() => import("./ContributionCalendar"), { ssr: false, loading: () => <div className="os-card mb-10 h-[216px] w-full animate-pulse border border-line-faint bg-ink-900/40 p-4 sm:p-5" /> });
 import { usePortfolioAnalytics } from "@/integrations/analytics/use-portfolio-analytics";
 import { usePortfolioAppreciation } from "@/integrations/appreciation/use-portfolio-appreciation";
@@ -247,7 +248,9 @@ export default function OpenSource() {
       </div>
 
       {!isPending && !isError && data && (
-        <ContributionCalendar history={data.contributionHistory} availableYears={data.contributionYears} />
+        <LazyMount fallback={<div className="os-card mb-10 h-[216px] w-full animate-pulse border border-line-faint bg-ink-900/40 p-4 sm:p-5" />}>
+          <ContributionCalendar history={data.contributionHistory} availableYears={data.contributionYears} />
+        </LazyMount>
       )}
 
       {isPending ? (

@@ -12,6 +12,8 @@ import { internshipCredential } from "@/data/profile/certifications.data";
 import CapabilityMatrix from "./CapabilityMatrix";
 import { revealContent } from "@/lib/contentReveal";
 import dynamic from "next/dynamic";
+import LazyMount from "@/components/shared/LazyMount";
+
 const LivingPortrait = dynamic(() => import("./LivingPortrait"), { ssr: false, loading: () => <div className="h-full w-full bg-ink-900 animate-pulse" /> });
 
 gsap.registerPlugin(ScrollTrigger);
@@ -131,19 +133,21 @@ export default function About() {
           </svg>
           
           <div className="relative aspect-[4/5] w-full overflow-hidden sm:aspect-[3/4]">
-            <LivingPortrait
-              portraitSrc="/logos/sasi-portrait-new-trimmed.webp"
-              alt="Sasi Kumar Nallana"
-            >
-              {/* Tech annotations over portrait */}
-              <div className="absolute bottom-4 left-4 border border-cyan/30 bg-ink-900/80 px-2 py-1 backdrop-blur">
-                <span className="font-mono text-[0.65rem] text-cyan">ID: {identity.callsign}</span>
-              </div>
-              <div className="absolute right-4 top-4 flex items-center gap-2 border border-line-faint bg-ink-900/80 px-2 py-1 backdrop-blur z-20">
-                <span ref={statusDotRef} className="h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_6px_var(--cyan)]" />
-                <span className="font-mono text-[0.65rem] text-amber">STATUS: ONLINE</span>
-              </div>
-            </LivingPortrait>
+            <LazyMount fallback={<div className="h-full w-full bg-ink-900 animate-pulse" />}>
+              <LivingPortrait
+                portraitSrc="/logos/sasi-portrait-new-trimmed.webp"
+                alt="Sasi Kumar Nallana"
+              >
+                {/* Tech annotations over portrait */}
+                <div className="absolute bottom-4 left-4 border border-cyan/30 bg-ink-900/80 px-2 py-1 backdrop-blur z-20">
+                  <span className="font-mono text-[0.65rem] text-cyan">ID: {identity.callsign}</span>
+                </div>
+                <div className="absolute right-4 top-4 flex items-center gap-2 border border-line-faint bg-ink-900/80 px-2 py-1 backdrop-blur z-20">
+                  <span ref={statusDotRef} className="h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_6px_var(--cyan)]" />
+                  <span className="font-mono text-[0.65rem] text-amber">STATUS: ONLINE</span>
+                </div>
+              </LivingPortrait>
+            </LazyMount>
           </div>
           
           <div className="border-t border-line-faint bg-ink-900 p-5">
