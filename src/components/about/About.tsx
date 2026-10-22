@@ -128,12 +128,12 @@ export default function About() {
               stroke="#52D9FF"
               strokeWidth="1.5"
               vectorEffect="non-scaling-stroke"
-              style={{ filter: "drop-shadow(0 0 4px rgba(82, 217, 255, 1)) drop-shadow(0 0 12px rgba(82, 217, 255, 0.65)) drop-shadow(0 0 24px rgba(82, 217, 255, 0.3))" }}
+              style={{ filter: "drop-shadow(0 0 6px rgba(82, 217, 255, 0.95)) drop-shadow(0 0 16px rgba(82, 217, 255, 0.45))" }}
             />
           </svg>
           
           <div className="relative aspect-[4/5] w-full overflow-hidden sm:aspect-[3/4]">
-            <LazyMount fallback={<div className="h-full w-full bg-ink-900 animate-pulse" />}>
+            <LazyMount rootMargin="800px" fallback={<div className="h-full w-full bg-ink-900 animate-pulse" />}>
               <LivingPortrait
                 portraitSrc="/logos/sasi-portrait-new-trimmed.webp"
                 alt="Sasi Kumar Nallana"

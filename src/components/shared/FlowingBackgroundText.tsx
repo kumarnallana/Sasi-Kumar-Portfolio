@@ -573,20 +573,19 @@ export default function FlowingBackgroundText({
         const measureText = () => {
           runtimeMap.forEach(
             (runtime) => {
-              const styles = window.getComputedStyle(runtime.measure);
               const canvas = document.createElement("canvas");
               const context2d = canvas.getContext("2d");
-              const nativeMeasure = runtime.measure.getComputedTextLength;
               let measuredLength = 0;
 
-              if (typeof nativeMeasure === "function") {
-                measuredLength = nativeMeasure.call(runtime.measure);
-              } else if (context2d) {
-                context2d.font = styles.font;
+              if (context2d) {
+                const styles = window.getComputedStyle(runtime.measure);
+                context2d.font = styles.font || `${runtime.config.fontSize}px monospace`;
                 const letterSpacing = Number.parseFloat(styles.letterSpacing) || 0;
                 measuredLength =
                   context2d.measureText(runtime.config.phrase).width +
                   letterSpacing * Math.max(runtime.config.phrase.length - 1, 0);
+              } else if (typeof runtime.measure.getComputedTextLength === "function") {
+                measuredLength = runtime.measure.getComputedTextLength();
               }
 
               runtime.phraseLength = Math.max(
@@ -921,14 +920,14 @@ export default function FlowingBackgroundText({
           );
         };
 
-        if (allowMotion) {
+        if (allowMotion && allowPointer) {
           gsap.ticker.add(render);
         }
 
         return () => {
           observer.disconnect();
 
-          if (allowMotion) {
+          if (allowMotion && allowPointer) {
             gsap.ticker.remove(
               render,
             );

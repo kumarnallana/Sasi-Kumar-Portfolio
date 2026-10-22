@@ -41,9 +41,12 @@ export default function Typewriter({
 
   const [started, setStarted] = useState(false);
   useEffect(() => {
-    const timer = setTimeout(() => setStarted(true), 2500);
+    if (reduce) return;
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+    // Short defer past initial paint to prevent layout thrashing on first frame
+    const timer = setTimeout(() => setStarted(true), isMobile ? 350 : 500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [reduce]);
 
   useEffect(() => {
     if (reduce || words.length === 0 || !started) return;
@@ -73,7 +76,7 @@ export default function Typewriter({
     }, delay);
 
     return () => clearTimeout(id);
-  }, [text, deleting, wordIdx, words, typeSpeed, deleteSpeed, hold, reduce]);
+  }, [text, deleting, wordIdx, words, typeSpeed, deleteSpeed, hold, reduce, started]);
 
   const isStatic = reduce;
 

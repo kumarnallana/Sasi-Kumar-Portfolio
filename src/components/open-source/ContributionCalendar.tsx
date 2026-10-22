@@ -15,6 +15,11 @@ const legendLevelClass = {
   THIRD_QUARTILE: "bg-cyan/70", FOURTH_QUARTILE: "bg-cyan shadow-[0_0_7px_rgba(67,201,255,0.45)]",
 } as const;
 
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  dateStyle: "long",
+  timeZone: "UTC",
+});
+
 function CalendarYear({ calendar, isCurrent }: { calendar: GitHubContributionYear; isCurrent: boolean }) {
   const days = useMemo(() => {
     const weeks = Array.isArray(calendar.weeks) ? calendar.weeks : [];
@@ -42,7 +47,7 @@ function CalendarYear({ calendar, isCurrent }: { calendar: GitHubContributionYea
     };
   }, [calendar.weeks, calendar.year, isCurrent]);
   const [active, setActive] = useState<GitHubContributionDay | null>(null);
-  const describe = (day: GitHubContributionDay) => `${day.contributionCount} contribution${day.contributionCount === 1 ? "" : "s"} on ${new Date(`${day.date}T00:00:00Z`).toLocaleDateString(undefined, { dateStyle: "long", timeZone: "UTC" })}`;
+  const describe = (day: GitHubContributionDay) => `${day.contributionCount} contribution${day.contributionCount === 1 ? "" : "s"} on ${dateFormatter.format(new Date(`${day.date}T00:00:00Z`))}`;
   return <div className="min-w-0">
     <h4 className="font-display text-base font-semibold text-paper">{Number(calendar.totalContributions || 0).toLocaleString()} contributions in {calendar.year}</h4>
     <div className="mt-3 max-w-full overflow-x-auto pb-2" aria-label={`GitHub contributions in ${calendar.year}`}>
