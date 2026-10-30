@@ -160,4 +160,80 @@ export const projects: Project[] = [
       { label: "VERIFICATION", stack: "Playwright E2E" },
     ],
   },
+  {
+    id: "krono",
+    index: "SYS-04",
+    name: "Krono: High-Concurrency Hardware Commerce & Fulfillment Engine",
+    client: "Independent Product Engineering",
+    year: "2026",
+    classification: "DISTRIBUTED TRANSACTIONS · INVENTORY CONCURRENCY · MODULAR COMMERCE · FULL-STACK",
+    summary:
+      "Engineered a production-grade minimalist hardware commerce platform and fulfillment engine built with Next.js 14 (App Router), TypeScript, FastAPI, and PostgreSQL. Designed to eliminate race conditions during scarce hardware drops, Krono couples pessimistic row-level inventory locking (SELECT ... FOR UPDATE) and deadlock-prevention transaction sorting with server-authoritative pricing, 0ms optimistic UI interactions, and a strict linear fulfillment state machine.",
+    stack: [
+      "Next.js 14",
+      "React",
+      "TypeScript",
+      "FastAPI",
+      "SQLAlchemy 2.0",
+      "PostgreSQL",
+      "Pydantic v2",
+      "Tailwind CSS",
+      "Concurrency Control",
+      "Optimistic UI",
+    ],
+    expandedStack: {
+      "Core Platform": [
+        "Next.js 14 (App Router)",
+        "React",
+        "TypeScript",
+        "Python 3.14",
+        "FastAPI",
+      ],
+      "Concurrency & Locking": [
+        "Pessimistic Row-Level Locks (.with_for_update())",
+        "Mutex Guard",
+        "Deadlock-Free Sorting",
+      ],
+      "Storage & Persistence": [
+        "Supabase PostgreSQL (Primary Pooler)",
+        "Local SQLite (Resilient Fallback)",
+      ],
+      "Security & Validation": [
+        "Server-Authoritative Pricing",
+        "Pydantic v2 Contract Validation",
+        "Verified Buyer Review Gates",
+      ],
+      "Performance & Optimization": [
+        "Eager joinedload Query Graph",
+        "Connection Pool Pre-Warming",
+        "250ms Debounced Filters",
+      ],
+      "UX & Localization": [
+        "0ms Optimistic UI Cart State",
+        "Dynamic Routing (generateStaticParams)",
+        "INR (₹) Currency Localization",
+      ],
+    },
+    metrics: [
+      { value: "0%", label: "INVENTORY OVERSELL & DRIFT" },
+      { value: "0ms", label: "OPTIMISTIC CART LATENCY" },
+    ],
+    highlights: [
+      "Engineered race-condition-proof checkout transactions utilizing SQLAlchemy .with_for_update() row locking and ascending SKU ID sorting to eliminate database deadlocks under simultaneous multithreaded traffic.",
+      "Enforced server-authoritative pricing and dynamic coupon discount engine, shielding unit prices, subtotals, and threshold restrictions from frontend tampering.",
+      "Architected a resilient dual-database layer connecting to Supabase PostgreSQL poolers with connection pre-warming and transparent local SQLite fallback, alongside a strict order state machine (Placed → Shipped → Delivered) and verified buyer review guards.",
+    ],
+    links: {
+      live: "https://krono-commerce.vercel.app/",
+      github: "https://github.com/kumarnallana/krono-commerce",
+    },
+    image: "/projects/krono-preview.png",
+    architectureVariant: "branch",
+    architectureFlow: [
+      { label: "CLIENT & STOREFRONT", stack: "Next.js 14 App Router · TypeScript · Optimistic UI" },
+      { label: "TRANSACTION & PRICING ENGINE", stack: "FastAPI · Pydantic v2 · Server Authoritative" },
+      { label: "PERSISTENCE & CONCURRENCY", stack: "Supabase PostgreSQL · Row Locks (SELECT FOR UPDATE)" },
+      { label: "STATE & FULFILLMENT", stack: "Order State Machine · Resilient SQLite Fallback" },
+    ],
+  },
 ];
